@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:moreway/core/utils/colors.dart';
 
 class WelcomePage extends StatelessWidget {
   const WelcomePage({super.key});
+
+  void onClickEnter(BuildContext context){
+    context.go("/home");
+  }
 
   Widget buildTitle(){
     return Column(
@@ -149,7 +154,7 @@ class WelcomePage extends StatelessWidget {
                     right: screenSize.width * 0.06
                   ),
                   child: LayoutBuilder(
-                    builder: (context, constraints) => Container(
+                    builder: (layoutContext, constraints) => Container(
                       decoration: const BoxDecoration(
                         color: AppColor.white,
                         borderRadius: BorderRadius.only(
@@ -178,7 +183,7 @@ class WelcomePage extends StatelessWidget {
                                     width: constraints.maxWidth * 0.65,//screenSize.width * 0.88 * 4 / 6,
                                     height: constraints.maxHeight * 0.14,//screenSize.width * 0.88 / 6,
                                     child: ElevatedButton(
-                                      onPressed: (){}, 
+                                      onPressed: () => onClickEnter(context), 
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.black,
                                         foregroundColor: AppColor.white,
@@ -197,38 +202,6 @@ class WelcomePage extends StatelessWidget {
                             )
                           )
                         )
-                        /*
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            buildSlogan(),
-                            const SizedBox(height: 10),
-                            buildDescription(),
-                            Expanded(
-                              child: Center(
-                                child: SizedBox(
-                                    width: constraints.maxWidth * 0.65,//screenSize.width * 0.88 * 4 / 6,
-                                    height: constraints.maxHeight * 0.14,//screenSize.width * 0.88 / 6,
-                                    child: ElevatedButton(
-                                      onPressed: (){}, 
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.black,
-                                        foregroundColor: AppColor.white,
-                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                                      ),
-                                      child: const Text(
-                                        "Войти",
-                                        style: TextStyle(
-                                          fontSize: 20
-                                        ),
-                                      )
-                                    ),
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-                        */
                       )
                     ),
                   ),
