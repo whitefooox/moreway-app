@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:moreway/core/utils/colors.dart';
+import 'package:moreway/core/const/colors.dart';
 
 class WelcomePage extends StatelessWidget {
   const WelcomePage({super.key});
@@ -21,7 +21,6 @@ class WelcomePage extends StatelessWidget {
               fontWeight: FontWeight.w500,
               height: 1.1,
               color: AppColor.black,
-              //backgroundColor: Colors.white
             ),
             textAlign: TextAlign.start,
           ),
@@ -157,20 +156,13 @@ class WelcomePage extends StatelessWidget {
                     builder: (layoutContext, constraints) => Container(
                       decoration: const BoxDecoration(
                         color: AppColor.white,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(32),
-                          topRight: Radius.circular(32)
-                        ),
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(32),
+                        )
                       ),
                       child: Padding(
-                        padding: EdgeInsets.only(
-                          left: constraints.maxWidth * 0.1,//screenSize.width * 0.08,
-                          right: constraints.maxWidth * 0.1,//screenSize.width * 0.08,
-                          //top: constraints.maxWidth * 0.05,
-                        ),
+                        padding: EdgeInsets.symmetric(horizontal: constraints.maxWidth * 0.1),
                         child: Expanded(
-                            //width: constraints.maxWidth,
-                            //height: constraints.maxHeight,
                             child: Center(
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -180,19 +172,16 @@ class WelcomePage extends StatelessWidget {
                                   buildDescription(),
                                   SizedBox(height: constraints.maxHeight * 0.14),
                                   SizedBox(
-                                    width: constraints.maxWidth * 0.65,//screenSize.width * 0.88 * 4 / 6,
-                                    height: constraints.maxHeight * 0.14,//screenSize.width * 0.88 / 6,
+                                    width: constraints.maxWidth * 0.74,
                                     child: ElevatedButton(
                                       onPressed: () => onClickEnter(context), 
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.black,
-                                        foregroundColor: AppColor.white,
-                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                                      ),
-                                      child: const Text(
-                                        "Войти",
-                                        style: TextStyle(
-                                          fontSize: 20
+                                      child: const Padding(
+                                        padding: EdgeInsets.symmetric(vertical: 13),
+                                        child: Text(
+                                          "Начать путешествие",
+                                          style: TextStyle(
+                                            fontSize: 20
+                                          ),
                                         ),
                                       )
                                     ),

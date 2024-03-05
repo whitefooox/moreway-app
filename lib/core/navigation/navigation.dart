@@ -1,16 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:moreway/module/auth/presentation/page/signin.dart';
 import 'package:moreway/module/auth/presentation/page/welcome.dart';
-import 'package:moreway/module/place/presentation/page/main_page.dart';
+import 'package:moreway/core/navigation/root_page.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
-    initialLocation: '/',
+    initialLocation: '/signin',
     routes: [
       GoRoute(
         path: "/",
         builder: (context, state) {
           return const WelcomePage();
+        },
+      ),
+      GoRoute(
+        path: "/signin",
+        builder: (context, state) {
+          return const SignInPage();
         },
       ),
       StatefulShellRoute.indexedStack(
