@@ -36,7 +36,7 @@ class MainApp extends StatelessWidget {
           ),
           elevatedButtonTheme: ElevatedButtonThemeData(
             style: Styles.blButtonStyle
-          )
+          ),
         ),
       ),
     );

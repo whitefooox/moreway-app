@@ -43,6 +43,16 @@ class _SignInPageState extends State<SignInPage> {
     );
   }
 
+  Widget buildWelcomeText(){
+    return const Text(
+      "Добро пожаловать в наше приложение",
+      style: TextStyle(
+        fontSize: 28,
+        fontWeight: FontWeight.bold
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
@@ -66,13 +76,7 @@ class _SignInPageState extends State<SignInPage> {
                   ),
                 ),
                 const Spacer(flex: 2,),
-                const Text(
-                  "Добро пожаловать в наше приложение",
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold
-                  ),
-                ),
+                buildWelcomeText(),
                 const SizedBox(height: 22,),
                 TextFormField(
                   decoration: const InputDecoration(
@@ -80,8 +84,7 @@ class _SignInPageState extends State<SignInPage> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(8)),
                     ),
-                    //prefixIcon: Icon(Icons.email)
-                  ),
+                  )
                 ),
                 const SizedBox(height: 15,),
                 TextFormField(
@@ -90,7 +93,6 @@ class _SignInPageState extends State<SignInPage> {
                     border: const OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(8))
                     ),
-                   // prefixIcon: Icon(Icons.lock),
                     suffixIcon: IconButton(
                       onPressed: changePasswordVisible, 
                       icon: Icon(
@@ -134,16 +136,28 @@ class _SignInPageState extends State<SignInPage> {
                 const Spacer(flex: 5,),
                 Wrap(
                   children: [
-                    Text(
+                    const Text(
                       "У вас нет аккаунта? ",
                       style: TextStyle(
-                        fontSize: 13
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold
                       ),
                     ),
-                    Text(
-                      "Зарегистрируйтесь сейчас",
-                      style: TextStyle(
-                        fontSize: 13
+                    Container(
+                      decoration: const BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            color: AppColor.pink,
+                          )
+                        )
+                      ),
+                      child: const Text(
+                        "Зарегистрируйтесь сейчас",
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          color: AppColor.pink,
+                        ),
                       ),
                     ),
                   ],

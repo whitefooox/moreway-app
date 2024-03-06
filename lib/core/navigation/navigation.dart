@@ -6,7 +6,7 @@ import 'package:moreway/core/navigation/root_page.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
-    initialLocation: '/signin',
+    initialLocation: '/',
     routes: [
       GoRoute(
         path: "/",

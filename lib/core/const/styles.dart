@@ -7,4 +7,5 @@ class Styles {
     foregroundColor: AppColor.white,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
   );
+  // static final textFormFieldStyle = 
 }
