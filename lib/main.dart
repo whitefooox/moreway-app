@@ -1,44 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:moreway/core/const/colors.dart';
-import 'package:moreway/core/const/styles.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:get_it/get_it.dart';
+import 'package:moreway/core/app.dart';
+import 'package:moreway/core/di/di_container.dart';
 import 'package:moreway/core/navigation/navigation.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  final diContainer = DIContainer();
+  diContainer.buildDependencies();
+  final router = GetIt.instance.get<AppRouter>();
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
-  runApp(const MainApp());
-}
-
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return ScreenUtilInit(
-      designSize: const Size(390, 786),
-      builder: (_, child) => MaterialApp.router(
-        debugShowCheckedModeBanner: false,
-        routerConfig: AppRouter.router,
-        theme: ThemeData(
-          fontFamily: "Poppins",
-          bottomNavigationBarTheme: BottomNavigationBarThemeData(
-            type: BottomNavigationBarType.fixed,
-            showSelectedLabels: false,
-            showUnselectedLabels: false,
-            backgroundColor: AppColor.black,
-            selectedItemColor: AppColor.white,
-            unselectedItemColor: AppColor.white.withOpacity(0.5),
-          ),
-          elevatedButtonTheme: ElevatedButtonThemeData(
-            style: Styles.blButtonStyle
-          ),
-        ),
-      ),
-    );
-  }
+  runApp(App(router));
+  FlutterNativeSplash.remove();
 }

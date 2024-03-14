@@ -1,7 +1,14 @@
-import 'package:auto_size_text/auto_size_text.dart';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:moreway/core/const/assets.dart';
 import 'package:moreway/core/const/colors.dart';
-import 'package:moreway/core/utils/responsive.dart';
+import 'package:moreway/core/widget/app_form_field.dart';
+import 'package:moreway/module/auth/presentation/bloc/auth_bloc.dart';
+import 'package:moreway/module/auth/presentation/validation/auth_validator.dart';
+import 'package:moreway/module/auth/presentation/widget/auth_snackbar.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -11,163 +18,222 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
+  final _formKey = GlobalKey<FormState>();
+  bool _isHiddenPassword = true;
+  final _emailTextController = TextEditingController();
+  final _passwordTextController = TextEditingController();
 
-  bool isHiddenPassword = true;
+  void _clickSignIn(AuthBloc authBloc) {
+    if (_formKey.currentState!.validate()) {
+      authBloc.add(AuthSignInEvent(
+          email: _emailTextController.text,
+          password: _passwordTextController.text));
+    }
+  }
 
-  void changePasswordVisible(){
+  void _changePasswordVisible() {
     setState(() {
-      isHiddenPassword = !isHiddenPassword;
+      _isHiddenPassword = !_isHiddenPassword;
     });
   }
 
-  Widget buildTitle(){
-    return const Row(
+  Widget _buildLogo() {
+    return Image.asset(
+      Assets.logoImage,
+      width: 80,
+    );
+  }
+
+  Widget _buildTitle() {
+    return const Wrap(
       children: [
         Text(
           "More",
           style: TextStyle(
-            fontSize: 14,
-            color: AppColor.black,
-            fontWeight: FontWeight.w500
-          ),
+              fontSize: 36, color: AppColor.black, fontWeight: FontWeight.w500),
         ),
         Text(
           "Way",
           style: TextStyle(
-            fontSize: 14,
-            color: AppColor.pink,
-            fontWeight: FontWeight.w500
-          ),
+              fontSize: 36, color: AppColor.pink, fontWeight: FontWeight.w500),
         ),
       ],
     );
   }
 
-  Widget buildWelcomeText(){
-    return const Text(
-      "Добро пожаловать в наше приложение",
-      style: TextStyle(
-        fontSize: 28,
-        fontWeight: FontWeight.bold
-      ),
+  Widget _buildSignUpLink(BuildContext context) {
+    return Wrap(
+        children: [
+          const Text(
+            "Не зарегистрированны? ",
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          ),
+          Container(
+            decoration: const BoxDecoration(
+                border: Border(
+                    bottom: BorderSide(
+              color: AppColor.pink,
+            ))),
+            child: GestureDetector(
+              onTap: () {
+                log("go to sign up page");
+                context.go("/signup");
+              },
+              child: const Text(
+                "Создать аккаунт",
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: AppColor.pink,
+                ),
+              ),
+            ),
+          ),
+        ],
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
+    final authBloc = context.read<AuthBloc>();
+
     return Scaffold(
-      appBar: AppBar(
-        title: buildTitle(),
-      ),body: Form(
-        child: Center(
-          child: SizedBox(
-            width: screenSize.width * 0.85,
-            child: Column(
-              //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                const Spacer(),
-                const Text(
-                  "Авторизация",
-                  style: TextStyle(
-                    fontSize: 30,
-                    color: AppColor.gray,
-                    fontWeight: FontWeight.bold
-                  ),
-                ),
-                const Spacer(flex: 2,),
-                buildWelcomeText(),
-                const SizedBox(height: 22,),
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: "Введите email",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(8)),
-                    ),
-                  )
-                ),
-                const SizedBox(height: 15,),
-                TextFormField(
-                  decoration: InputDecoration(
-                    labelText: "Введите пароль",
-                    border: const OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(8))
-                    ),
-                    suffixIcon: IconButton(
-                      onPressed: changePasswordVisible, 
-                      icon: Icon(
-                        isHiddenPassword ? Icons.visibility : Icons.visibility_off
-                      )
-                    )
-                  ),
-                  obscureText: isHiddenPassword,
-                ),
-                const SizedBox(height: 10,),
-                const Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      "Забыли пароль?",
-                      style: TextStyle(
-                        color: AppColor.pink,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold
-                      ),
-                    )
-                  ],
-                ),
-                const Spacer(flex: 2,),
-                SizedBox(
-                  width: screenSize.width * 0.85,
-                  child: ElevatedButton(
-                    onPressed: (){}, 
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 13),
-                      child: Text(
-                        "Войти",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold
+        body: SingleChildScrollView(
+      child: BlocListener<AuthBloc, AuthState>(
+        bloc: authBloc,
+        listener: (context, state) {
+          if(state.status == AuthStatus.failure){
+            ScaffoldMessenger.of(context).showSnackBar(buildAuthSnackBar(state.errorMessage!));
+          } else if(state.status == AuthStatus.authorized){
+            ScaffoldMessenger.of(context).clearSnackBars();
+            context.go("/home");
+          }
+        },
+        child: SizedBox(
+          height: screenSize.height,
+          child: Column(
+            children: [
+              Expanded(
+                  flex: 1,
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [_buildLogo(), _buildTitle()])),
+              Expanded(
+                  flex: 2,
+                  child: Center(
+                    child: SizedBox(
+                      width: screenSize.width * 0.85,
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Авторизация",
+                              style: TextStyle(
+                                  fontSize: 32,
+                                  color: AppColor.black,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            const Spacer(
+                              flex: 1,
+                            ),
+                            AppFormField(
+                              labelText: "Почта",
+                              textController: _emailTextController,
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return "Нужна почта";
+                                } else if (!AuthValidator.isEmailValid(value)) {
+                                  return "Введите правильную почту";
+                                } else {
+                                  return null;
+                                }
+                              },
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            AppFormField(
+                              labelText: "Пароль",
+                              textController: _passwordTextController,
+                              suffixIcon: IconButton(
+                                  onPressed: _changePasswordVisible,
+                                  icon: Icon(_isHiddenPassword
+                                      ? Icons.visibility
+                                      : Icons.visibility_off)),
+                              obscureText: _isHiddenPassword,
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return "Нужен пароль";
+                                } else if (!AuthValidator.isPasswordValid(
+                                    value)) {
+                                  return "Не менее 8 символов";
+                                } else {
+                                  return null;
+                                }
+                              },
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            const Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text(
+                                  "Забыли пароль?",
+                                  style: TextStyle(
+                                      color: AppColor.pink,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold),
+                                )
+                              ],
+                            ),
+                            const Spacer(
+                              flex: 2,
+                            ),
+                            SizedBox(
+                              width: screenSize.width * 0.85,
+                              child: BlocBuilder<AuthBloc, AuthState>(
+                                bloc: authBloc,
+                                builder: (context, state) {
+                                  final isLoading = state.status == AuthStatus.loading;
+                                  return ElevatedButton(
+                                      onPressed: isLoading ? null : () => _clickSignIn(authBloc),
+                                      child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 13),
+                                          child: isLoading
+                                              ? const CircularProgressIndicator(
+                                                  color: AppColor.white,
+                                                )
+                                              : const Text(
+                                                  "Войти",
+                                                  style: TextStyle(
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                )));
+                                },
+                              ),
+                            ),
+                            const Spacer(
+                              flex: 6,
+                            ),
+                            Center(child: _buildSignUpLink(context)),
+                            const Spacer(
+                              flex: 1,
+                            ),
+                          ],
                         ),
                       ),
-                    )
-                  ),
-                ),
-                const Spacer(flex: 5,),
-                Wrap(
-                  children: [
-                    const Text(
-                      "У вас нет аккаунта? ",
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold
-                      ),
                     ),
-                    Container(
-                      decoration: const BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(
-                            color: AppColor.pink,
-                          )
-                        )
-                      ),
-                      child: const Text(
-                        "Зарегистрируйтесь сейчас",
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold,
-                          color: AppColor.pink,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const Spacer(),
-              ],
-            ),
+                  ))
+            ],
           ),
-        )
+        ),
       ),
-    );
+    ));
   }
 }

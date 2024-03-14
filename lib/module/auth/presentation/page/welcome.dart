@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:moreway/core/const/colors.dart';
 
 class WelcomePage extends StatelessWidget {
+
   const WelcomePage({super.key});
 
   void onClickEnter(BuildContext context){
