@@ -241,7 +241,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                                   color: AppColor.white,
                                                 )
                                               : const Text(
-                                                  "Создать акккаунт",
+                                                  "Создать аккаунт",
                                                   style: TextStyle(
                                                       fontSize: 20,
                                                       fontWeight:
