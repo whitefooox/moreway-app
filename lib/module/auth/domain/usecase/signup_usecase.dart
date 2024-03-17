@@ -3,25 +3,25 @@ import 'dart:developer';
 import 'package:moreway/core/case/future_usecase.dart';
 import 'package:moreway/module/auth/domain/dependency/i_auth_service.dart';
 import 'package:moreway/module/auth/domain/dependency/i_token_manager.dart';
-import 'package:moreway/module/auth/domain/entity/signin_data.dart';
+import 'package:moreway/module/auth/domain/entity/signup_data.dart';
 
-class SignInUseCase extends FutureUseCase<SignInData, void> {
+class SignUpUseCase implements FutureUseCase<SignUpData, void> {
 
   final IAuthService _authService;
   final ITokenManager _tokenManager;
 
-  SignInUseCase(
+  SignUpUseCase(
     this._authService,
     this._tokenManager
   );
 
   @override
-  Future<void> call(SignInData input) async {
+  Future<void> call(SignUpData input) async {
     try {
-      final token = await _authService.signIn(input);
+      final token = await _authService.signUp(input);
       _tokenManager.save(token);
     } catch (e) {
-      log("[sign in use case] $e");
+      log("[sign up use case] $e");
       rethrow;
     }
   }

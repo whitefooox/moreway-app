@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:moreway/core/const/colors.dart';
+import 'package:moreway/core/theme/colors.dart';
 
 class WelcomePage extends StatelessWidget {
 

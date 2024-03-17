@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:moreway/module/auth/presentation/bloc/auth_bloc.dart';
-import 'package:moreway/module/auth/presentation/page/signin.dart';
-import 'package:moreway/module/auth/presentation/page/signup.dart';
+import 'package:moreway/module/auth/presentation/page/auth/signin.dart';
+import 'package:moreway/module/auth/presentation/page/auth/signup.dart';
+import 'package:moreway/module/auth/presentation/page/password/reset_password.dart';
 import 'package:moreway/module/auth/presentation/page/welcome.dart';
 import 'package:moreway/core/navigation/root_page.dart';
 
@@ -36,6 +37,14 @@ class AppRouter {
                 child: const SignInPage(),
               );
             },
+            routes: [
+              GoRoute(
+                path: "reset-password",
+                builder: (context, state) {
+                  return const EmailForResetPasswordPage();
+                },
+              ),
+            ]
           ),
           GoRoute(
             path: "/signup",
@@ -92,7 +101,11 @@ class AppRouter {
 
   String? redirect(BuildContext context, GoRouterState state) {
     final isAuthorized = _authBloc.state.status == AuthStatus.authorized;
-    final isUnauthorizedRoute = state.fullPath == '/' || state.fullPath == '/signin' || state.fullPath == '/signup';
+    final isUnauthorizedRoute = 
+    state.fullPath == '/' || 
+    state.fullPath == '/signin' || 
+    state.fullPath == '/signin/reset-password' || 
+    state.fullPath == '/signup';
     
     if (!isAuthorized && !isUnauthorizedRoute) {
       return '/signin';

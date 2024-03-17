@@ -8,6 +8,6 @@ class AuthValidator {
   }
 
   static bool isUsernameValid(String username) {
-    return RegExp(r'^[a-zA-Z0-9]+$').hasMatch(username);
+    return RegExp(r'^[\p{L}\p{N}]+$', unicode: true).hasMatch(username);
   }
 }

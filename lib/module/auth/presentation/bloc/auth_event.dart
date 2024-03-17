@@ -16,10 +16,12 @@ class AuthSignInEvent extends AuthEvent {
 }
 
 class AuthSignUpEvent extends AuthEvent {
+  final String name;
   final String email;
   final String password;
 
   AuthSignUpEvent({
+    required this.name,
     required this.email,
     required this.password
   });

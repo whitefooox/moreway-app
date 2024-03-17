@@ -5,16 +5,18 @@ import 'package:moreway/module/auth/data/token_mock_storage.dart';
 import 'package:moreway/module/auth/domain/dependency/i_auth_service.dart';
 import 'package:moreway/module/auth/domain/dependency/i_token_manager.dart';
 import 'package:moreway/module/auth/domain/usecase/signin_usecase.dart';
+import 'package:moreway/module/auth/domain/usecase/signup_usecase.dart';
 import 'package:moreway/module/auth/presentation/bloc/auth_bloc.dart';
 
 class DIContainer {
   final GetIt locator = GetIt.instance;
 
   void _injectAuthModule(){
-    final tokenManager = locator.registerSingleton<ITokenManager>(TokenMockStorage());
-    final authService = locator.registerSingleton<IAuthService>(MockAuthService());
-    final signInUseCase = locator.registerLazySingleton(() => SignInUseCase(locator(), locator()));
-    final authBloc = locator.registerSingleton(AuthBloc(locator()));
+    locator.registerSingleton<ITokenManager>(TokenMockStorage());
+    locator.registerSingleton<IAuthService>(MockAuthService());
+    locator.registerLazySingleton(() => SignInUseCase(locator(), locator()));
+    locator.registerLazySingleton(() => SignUpUseCase(locator(), locator()));
+    locator.registerSingleton(AuthBloc(locator(), locator()));
   }
 
   void _injectRouter(){

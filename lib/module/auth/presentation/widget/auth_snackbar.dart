@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:moreway/core/const/colors.dart';
+import 'package:moreway/core/theme/colors.dart';
 
 SnackBar buildAuthSnackBar(String message){
   return SnackBar(

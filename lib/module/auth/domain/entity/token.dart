@@ -1,7 +1,7 @@
 class Token {
-  final String data;
+  final String accessToken;
 
   Token(
-    this.data
+    this.accessToken
   );
 }
