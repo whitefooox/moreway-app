@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -51,7 +49,7 @@ class AppRouter {
                           builder: (context, state) {
                             return const VerifyCodePage();
                           },
-                          routes: []),
+                          routes: const []),
                     ]),
               ]),
           GoRoute(
@@ -100,7 +98,7 @@ class AppRouter {
                       path: '/profile',
                       builder: (context, state) => BlocProvider<AuthBloc>.value(
                             value: _authBloc,
-                            child: TestSettingsPage(),
+                            child: const TestSettingsPage(),
                           )),
                 ]),
               ]),

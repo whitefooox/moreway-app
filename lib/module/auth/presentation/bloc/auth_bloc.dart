@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:moreway/module/auth/domain/entity/signin_data.dart';
@@ -38,7 +40,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       await _signOutUseCase.execute();
       emit(state.copyWith(status: AuthStatus.unauthorized));
     } catch (e) {
-      
+      log(e.toString());
     }
   }
 
