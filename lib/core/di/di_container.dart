@@ -31,7 +31,7 @@ class DIContainer {
 
   void _injectRouter(){
     final authBloc = locator.get<AuthBloc>();
-    final router = locator.registerSingleton<AppRouter>(AppRouter(authBloc));
+    locator.registerSingleton<AppRouter>(AppRouter(authBloc));
   }
 
   void buildDependencies(){

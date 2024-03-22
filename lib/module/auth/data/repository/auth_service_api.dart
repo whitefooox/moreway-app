@@ -35,7 +35,7 @@ class AuthServiceAPI implements IAuthService {
   @override
   Future<void> signOut() async {
     try {
-      final response = await _dio.post(Api.logoutUrl);
+      await _dio.post(Api.logoutUrl);
     } on DioException catch (e) {
       log(e.message!);
       throw _handleException(e);
@@ -50,7 +50,7 @@ class AuthServiceAPI implements IAuthService {
       password: data.password
     );
     try {
-      final registerResponse = await _dio.post(Api.registerUrl, data: signUpDataModel.toJson());
+      await _dio.post(Api.registerUrl, data: signUpDataModel.toJson());
       final signInData = SignInData(
         email: data.email, 
         password: data.password

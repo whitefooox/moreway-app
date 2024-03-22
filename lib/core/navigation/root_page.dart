@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:moreway/core/theme/colors.dart';
 
 class RootPage extends StatelessWidget {
   final StatefulNavigationShell navigationShell;

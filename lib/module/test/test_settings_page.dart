@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:moreway/module/auth/presentation/bloc/auth_bloc.dart';
 
 class TestSettingsPage extends StatelessWidget {
+  const TestSettingsPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     final authBloc = BlocProvider.of<AuthBloc>(context);
