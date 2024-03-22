@@ -7,6 +7,7 @@ import 'package:moreway/core/di/di_container.dart';
 import 'package:moreway/core/navigation/navigation.dart';
 
 void main() {
+  //place test ci
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   final diContainer = DIContainer();
