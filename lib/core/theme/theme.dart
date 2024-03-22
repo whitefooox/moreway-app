@@ -13,15 +13,12 @@ final appThemeData = ThemeData(
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
-      padding: const EdgeInsets.only(
-        top: 12,
-        bottom: 12
-      ),
+      minimumSize: const Size.fromHeight(64),
       backgroundColor: Colors.black,
       foregroundColor: AppColor.white,
       disabledBackgroundColor: Colors.black,
       disabledForegroundColor: AppColor.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
     )
   ),
   inputDecorationTheme: const InputDecorationTheme(
@@ -31,15 +28,15 @@ final appThemeData = ThemeData(
     focusedBorder: OutlineInputBorder(
       borderSide: BorderSide(
         color: AppColor.black
-      )
+      ),
+      borderRadius: BorderRadius.all(Radius.circular(8))
     ),
     labelStyle: TextStyle(
       color: AppColor.black
     ),
-    
   ),
   textSelectionTheme: const TextSelectionThemeData(
     cursorColor: AppColor.black
-  )
+  ),
   // textTheme: TextTheme()
 );

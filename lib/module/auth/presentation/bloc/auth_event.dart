@@ -5,6 +5,8 @@ sealed class AuthEvent {}
 
 class AuthCheckAuthorizationEvent extends AuthEvent {}
 
+class AuthSignOutEvent extends AuthEvent {}
+
 class AuthSignInEvent extends AuthEvent {
   final String email;
   final String password;

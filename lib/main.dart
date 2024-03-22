@@ -16,6 +16,14 @@ void main() {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    systemStatusBarContrastEnforced: true,
+    systemNavigationBarColor: Colors.transparent,
+    systemNavigationBarDividerColor: Colors.transparent,
+    systemNavigationBarIconBrightness: Brightness.dark,
+    statusBarIconBrightness: Brightness.dark)
+  );
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [SystemUiOverlay.top]);
   runApp(App(router));
   FlutterNativeSplash.remove();
 }

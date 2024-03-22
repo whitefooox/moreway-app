@@ -1,7 +1,7 @@
 import 'package:moreway/module/auth/domain/entity/token.dart';
 
-abstract class ITokenManager {
+abstract class ITokenStorage {
   void save(Token token);
   void delete();
-  Token? get();
+  Future<Token?> get();
 }

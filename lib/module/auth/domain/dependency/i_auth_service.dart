@@ -5,4 +5,5 @@ import 'package:moreway/module/auth/domain/entity/token.dart';
 abstract class IAuthService {
   Future<Token> signIn(SignInData data);
   Future<Token> signUp(SignUpData data);
+  Future<void> signOut();
 }

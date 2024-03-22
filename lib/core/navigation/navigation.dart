@@ -7,8 +7,10 @@ import 'package:moreway/module/auth/presentation/bloc/auth_bloc.dart';
 import 'package:moreway/module/auth/presentation/page/auth/signin.dart';
 import 'package:moreway/module/auth/presentation/page/auth/signup.dart';
 import 'package:moreway/module/auth/presentation/page/password/reset_password.dart';
+import 'package:moreway/module/auth/presentation/page/password/verify_code.dart';
 import 'package:moreway/module/auth/presentation/page/welcome.dart';
 import 'package:moreway/core/navigation/root_page.dart';
+import 'package:moreway/module/test/test_settings_page.dart';
 
 class AppRouter {
   final AuthBloc _authBloc;
@@ -30,22 +32,28 @@ class AppRouter {
             },
           ),
           GoRoute(
-            path: "/signin",
-            builder: (context, state) {
-              return BlocProvider<AuthBloc>.value(
-                value: _authBloc,
-                child: const SignInPage(),
-              );
-            },
-            routes: [
-              GoRoute(
-                path: "reset-password",
-                builder: (context, state) {
-                  return const EmailForResetPasswordPage();
-                },
-              ),
-            ]
-          ),
+              path: "/signin",
+              builder: (context, state) {
+                return BlocProvider<AuthBloc>.value(
+                  value: _authBloc,
+                  child: const SignInPage(),
+                );
+              },
+              routes: [
+                GoRoute(
+                    path: "reset-password",
+                    builder: (context, state) {
+                      return EmailForResetPasswordPage();
+                    },
+                    routes: [
+                      GoRoute(
+                          path: "verify-code",
+                          builder: (context, state) {
+                            return const VerifyCodePage();
+                          },
+                          routes: []),
+                    ]),
+              ]),
           GoRoute(
             path: "/signup",
             builder: (context, state) {
@@ -89,10 +97,11 @@ class AppRouter {
                 ]),
                 StatefulShellBranch(routes: [
                   GoRoute(
-                    path: '/profile',
-                    builder: (context, state) =>
-                        const Scaffold(body: Center(child: Text("profile"))),
-                  ),
+                      path: '/profile',
+                      builder: (context, state) => BlocProvider<AuthBloc>.value(
+                            value: _authBloc,
+                            child: TestSettingsPage(),
+                          )),
                 ]),
               ]),
         ],
@@ -101,12 +110,11 @@ class AppRouter {
 
   String? redirect(BuildContext context, GoRouterState state) {
     final isAuthorized = _authBloc.state.status == AuthStatus.authorized;
-    final isUnauthorizedRoute = 
-    state.fullPath == '/' || 
-    state.fullPath == '/signin' || 
-    state.fullPath == '/signin/reset-password' || 
-    state.fullPath == '/signup';
-    
+    final isUnauthorizedRoute = state.fullPath == '/' ||
+        state.fullPath == '/signin' ||
+        state.fullPath == '/signin/reset-password' ||
+        state.fullPath == '/signup';
+
     if (!isAuthorized && !isUnauthorizedRoute) {
       return '/signin';
     }
