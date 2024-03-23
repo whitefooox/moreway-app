@@ -133,7 +133,7 @@ class _SignInPageState extends State<SignInPage> {
                     flex: 2,
                     child: Center(
                       child: SizedBox(
-                        width: screenSize.width * 0.85,
+                        width: screenSize.width * 0.90,
                         child: Form(
                           key: _formKey,
                           child: Column(
@@ -222,7 +222,7 @@ class _SignInPageState extends State<SignInPage> {
                                 flex: 2,
                               ),
                               SizedBox(
-                                width: screenSize.width * 0.85,
+                                width: screenSize.width * 0.90,
                                 child: BlocBuilder<AuthBloc, AuthState>(
                                   bloc: authBloc,
                                   builder: (context, state) {

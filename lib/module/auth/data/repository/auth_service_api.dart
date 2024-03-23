@@ -27,7 +27,6 @@ class AuthServiceAPI implements IAuthService {
       final tokenString = response.data["data"]["accessToken"];
       return Token(tokenString as String);
     } on DioException catch (e) {
-      log(e.message!);
       throw _handleException(e);
     }
   }
@@ -37,7 +36,6 @@ class AuthServiceAPI implements IAuthService {
     try {
       await _dio.post(Api.logoutUrl);
     } on DioException catch (e) {
-      log(e.message!);
       throw _handleException(e);
     }
   }
@@ -57,7 +55,6 @@ class AuthServiceAPI implements IAuthService {
       );
       return await signIn(signInData);
     } on DioException catch (e) {
-      log(e.message!);
       throw _handleException(e);
     }
   }

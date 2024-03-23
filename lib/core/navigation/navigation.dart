@@ -8,6 +8,7 @@ import 'package:moreway/module/auth/presentation/page/password/reset_password.da
 import 'package:moreway/module/auth/presentation/page/password/verify_code.dart';
 import 'package:moreway/module/auth/presentation/page/welcome.dart';
 import 'package:moreway/core/navigation/root_page.dart';
+import 'package:moreway/module/place/presentation/page/home_page.dart';
 import 'package:moreway/module/test/test_settings_page.dart';
 
 class AppRouter {
@@ -69,7 +70,7 @@ class AppRouter {
                   GoRoute(
                     path: '/home',
                     builder: (context, state) =>
-                        const Scaffold(body: Center(child: Text("home"))),
+                        HomePage()
                   ),
                 ]),
                 StatefulShellBranch(routes: [
