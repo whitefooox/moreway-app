@@ -14,6 +14,7 @@ class RootPage extends StatelessWidget {
     final screenSize = MediaQuery.of(context).size;
     return SafeArea(
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         body: 
         Stack(
           children: [
@@ -23,7 +24,7 @@ class RootPage extends StatelessWidget {
               left: screenSize.width * 0.05,
               right: screenSize.width * 0.05,
               child: SizedBox(
-                height: 80,
+                height: 70,
                 child: ClipRRect(
                   borderRadius: const BorderRadius.all( Radius.circular(15)),
                   child: BottomNavigationBar(

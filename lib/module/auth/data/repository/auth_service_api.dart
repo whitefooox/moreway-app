@@ -1,6 +1,6 @@
-import 'dart:developer';
 
 import 'package:dio/dio.dart';
+import 'package:injectable/injectable.dart';
 import 'package:moreway/core/api/api.dart';
 import 'package:moreway/module/auth/data/mapping/signin_data_model.dart';
 import 'package:moreway/module/auth/data/mapping/signup_data_model.dart';
@@ -10,6 +10,7 @@ import 'package:moreway/module/auth/domain/entity/signup_data.dart';
 import 'package:moreway/module/auth/domain/entity/token.dart';
 import 'package:moreway/module/auth/domain/exception/auth_exception.dart';
 
+@Singleton(as: IAuthService)
 class AuthServiceAPI implements IAuthService {
 
   final Dio _dio;

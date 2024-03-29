@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
+import 'package:injectable/injectable.dart';
 import 'package:meta/meta.dart';
 import 'package:moreway/module/auth/domain/entity/signin_data.dart';
 import 'package:moreway/module/auth/domain/entity/signup_data.dart';
@@ -13,6 +14,7 @@ import 'package:moreway/module/auth/domain/usecase/signup_usecase.dart';
 part 'auth_event.dart';
 part 'auth_state.dart';
 
+@Singleton()
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   final SignInUseCase _signInUseCase;
@@ -58,7 +60,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     emit(state.copyWith(status: AuthStatus.loading));
     try {
-      await _signInUseCase.call(SignInData(
+      await _signInUseCase.execute(SignInData(
         email: event.email, 
         password: event.password
       ));
@@ -74,7 +76,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     emit(state.copyWith(status: AuthStatus.loading));
     try {
-      await _signUpUseCase.call(SignUpData(
+      await _signUpUseCase.execute(SignUpData(
         name: event.name,
         email: event.email, 
         password: event.password

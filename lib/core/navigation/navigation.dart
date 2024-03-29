@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:moreway/core/di/inject.dart';
 import 'package:moreway/module/auth/presentation/bloc/auth_bloc.dart';
 import 'package:moreway/module/auth/presentation/page/auth/signin.dart';
 import 'package:moreway/module/auth/presentation/page/auth/signup.dart';
@@ -12,11 +13,11 @@ import 'package:moreway/module/place/presentation/page/home_page.dart';
 import 'package:moreway/module/test/test_settings_page.dart';
 
 class AppRouter {
-  final AuthBloc _authBloc;
+  late final AuthBloc _authBloc;
   late GoRouter router;
 
-  AppRouter(this._authBloc) {
-    _authBloc.add(AuthCheckAuthorizationEvent());
+  AppRouter() {
+    _authBloc = getIt<AuthBloc>()..add(AuthCheckAuthorizationEvent());
     initRouter();
   }
 
@@ -70,7 +71,7 @@ class AppRouter {
                   GoRoute(
                     path: '/home',
                     builder: (context, state) =>
-                        HomePage()
+                        const HomePage()
                   ),
                 ]),
                 StatefulShellBranch(routes: [
