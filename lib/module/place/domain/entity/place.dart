@@ -6,8 +6,7 @@ class Place {
   final double lat;
   final double lon;
   final double rating;
-  final String description;
-  final List<String> images;
+  final String image;
   final String location;
   Place({
     required this.id,
@@ -16,8 +15,7 @@ class Place {
     required this.lat,
     required this.lon,
     required this.rating,
-    required this.description,
-    required this.images,
+    required this.image,
     required this.location,
   });
 }

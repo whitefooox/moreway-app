@@ -1,7 +1,9 @@
 class Api {
   static const baseUrl = "https://more-way.ru/api/v1";
-  static const loginUrl = "$baseUrl/auth/login";
-  static const registerUrl = "$baseUrl/auth/register";
-  static const logoutUrl = "$baseUrl/auth/logout";
-  static const refreshToken = "$baseUrl/auth/refresh-token";
+  static const loginUrl = "/auth/login";
+  static const registerUrl = "/auth/register";
+  static const logoutUrl = "/auth/logout";
+  static const refreshToken = "/auth/refresh-token";
+
+  static const places = "/places";
 }

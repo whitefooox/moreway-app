@@ -5,7 +5,7 @@ import 'package:moreway/core/const/assets.dart';
 import 'package:moreway/core/theme/colors.dart';
 import 'package:moreway/module/auth/presentation/bloc/auth_bloc.dart';
 import 'package:moreway/module/auth/presentation/validation/auth_validator.dart';
-import 'package:moreway/module/auth/presentation/widget/auth_snackbar.dart';
+import 'package:moreway/core/snackbar.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -123,7 +123,7 @@ class _SignUpPageState extends State<SignUpPage> {
           bloc: authBloc,
           listener: (context, state) {
             if(state.status == AuthStatus.failure){
-              ScaffoldMessenger.of(context).showSnackBar(buildAuthSnackBar(state.errorMessage!));
+              ScaffoldMessenger.of(context).showSnackBar(buildSnackBar(state.errorMessage!));
             } else if(state.status == AuthStatus.authorized){
               ScaffoldMessenger.of(context).clearSnackBars();
               context.go("/home");

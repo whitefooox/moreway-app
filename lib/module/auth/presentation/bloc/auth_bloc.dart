@@ -14,7 +14,7 @@ import 'package:moreway/module/auth/domain/usecase/signup_usecase.dart';
 part 'auth_event.dart';
 part 'auth_state.dart';
 
-@Singleton()
+@LazySingleton()
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   final SignInUseCase _signInUseCase;
@@ -32,6 +32,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthSignInEvent>(_signIn);
     on<AuthSignUpEvent>(_signUp);
     on<AuthSignOutEvent>(_signOut);
+    super.add(AuthCheckAuthorizationEvent());
   }
 
   void _signOut(

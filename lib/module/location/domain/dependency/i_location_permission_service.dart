@@ -1,4 +1,4 @@
-import 'package:moreway/module/permission/domain/entity/location_permission_status.dart';
+import 'package:moreway/module/location/domain/entity/location_permission_status.dart';
 
 abstract class ILocationPermissionService {
   Future<LocationPermissionStatus> requestPermission();

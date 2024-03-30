@@ -26,6 +26,7 @@ dependencies:
   injectable: ^2.3.5
   json_annotation: ^4.8.1
   meta: ^1.10.0
+  shared_preferences: ^2.2.2
   
 
 dev_dependencies:

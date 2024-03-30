@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:moreway/core/theme/colors.dart';
 
-SnackBar buildAuthSnackBar(String message){
+SnackBar buildSnackBar(String message){
   return SnackBar(
     backgroundColor: AppColor.black,
     shape: const RoundedRectangleBorder(
