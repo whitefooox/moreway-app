@@ -7,7 +7,7 @@ import 'package:moreway/core/const/assets.dart';
 import 'package:moreway/core/theme/colors.dart';
 import 'package:moreway/module/auth/presentation/bloc/auth_bloc.dart';
 import 'package:moreway/module/auth/presentation/validation/auth_validator.dart';
-import 'package:moreway/module/auth/presentation/widget/auth_snackbar.dart';
+import 'package:moreway/core/snackbar.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -114,7 +114,7 @@ class _SignInPageState extends State<SignInPage> {
           bloc: authBloc,
           listener: (context, state) {
             if(state.status == AuthStatus.failure){
-              ScaffoldMessenger.of(context).showSnackBar(buildAuthSnackBar(state.errorMessage!));
+              ScaffoldMessenger.of(context).showSnackBar(buildSnackBar(state.errorMessage!));
             } else if(state.status == AuthStatus.authorized){
               ScaffoldMessenger.of(context).clearSnackBars();
               context.go("/home");
@@ -133,7 +133,7 @@ class _SignInPageState extends State<SignInPage> {
                     flex: 2,
                     child: Center(
                       child: SizedBox(
-                        width: screenSize.width * 0.85,
+                        width: screenSize.width * 0.90,
                         child: Form(
                           key: _formKey,
                           child: Column(
@@ -222,7 +222,7 @@ class _SignInPageState extends State<SignInPage> {
                                 flex: 2,
                               ),
                               SizedBox(
-                                width: screenSize.width * 0.85,
+                                width: screenSize.width * 0.90,
                                 child: BlocBuilder<AuthBloc, AuthState>(
                                   bloc: authBloc,
                                   builder: (context, state) {

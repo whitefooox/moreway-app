@@ -1,32 +1,43 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:moreway/core/di/inject.dart';
 import 'package:moreway/module/auth/presentation/bloc/auth_bloc.dart';
 import 'package:moreway/module/auth/presentation/page/auth/signin.dart';
 import 'package:moreway/module/auth/presentation/page/auth/signup.dart';
 import 'package:moreway/module/auth/presentation/page/password/reset_password.dart';
 import 'package:moreway/module/auth/presentation/page/password/verify_code.dart';
-import 'package:moreway/module/auth/presentation/page/welcome.dart';
+import 'package:moreway/module/location/presentation/state/bloc/location_bloc.dart';
+import 'package:moreway/module/place/presentation/state/bloc/places_bloc.dart';
+import 'package:moreway/module/welcome/presentation/bloc/launch_bloc.dart';
+import 'package:moreway/module/welcome/presentation/page/welcome.dart';
 import 'package:moreway/core/navigation/root_page.dart';
+import 'package:moreway/module/place/presentation/page/home_page.dart';
 import 'package:moreway/module/test/test_settings_page.dart';
 
 class AppRouter {
-  final AuthBloc _authBloc;
+  late final AuthBloc _authBloc;
+  late final LaunchBloc _launchBloc;
   late GoRouter router;
 
-  AppRouter(this._authBloc) {
-    _authBloc.add(AuthCheckAuthorizationEvent());
+  AppRouter() {
+    _authBloc = getIt<AuthBloc>();
+    _launchBloc = getIt<LaunchBloc>()..add(CheckFirstLaunchEvent());
     initRouter();
   }
 
   void initRouter() {
     router = GoRouter(
-        initialLocation: '/signin',
+        //debugLogDiagnostics: true,
+        initialLocation: "/home",
         routes: [
           GoRoute(
-            path: "/",
+            path: WelcomePage.path,
+            name: WelcomePage.name,
             builder: (context, state) {
-              return const WelcomePage();
+              return WelcomePage.create();
             },
           ),
           GoRoute(
@@ -67,10 +78,18 @@ class AppRouter {
               branches: [
                 StatefulShellBranch(routes: [
                   GoRoute(
-                    path: '/home',
-                    builder: (context, state) =>
-                        const Scaffold(body: Center(child: Text("home"))),
-                  ),
+                      path: '/home',
+                      builder: (context, state) => MultiBlocProvider(
+                            providers: [
+                              BlocProvider<PlacesBloc>(
+                                create: (_) => getIt<PlacesBloc>(),
+                              ),
+                              BlocProvider(
+                                create: (_) => getIt<LocationBloc>(),
+                              ),
+                            ],
+                            child: const HomePage(),
+                          )),
                 ]),
                 StatefulShellBranch(routes: [
                   GoRoute(
@@ -107,16 +126,32 @@ class AppRouter {
   }
 
   String? redirect(BuildContext context, GoRouterState state) {
-    final isAuthorized = _authBloc.state.status == AuthStatus.authorized;
-    final isUnauthorizedRoute = state.fullPath == '/' ||
-        state.fullPath == '/signin' ||
-        state.fullPath == '/signin/reset-password' ||
-        state.fullPath == '/signup';
+    final isFirstLaunchGuard = firstLaunchMiddleware(context, state);
+    if (isFirstLaunchGuard != null) {
+      return isFirstLaunchGuard;
+    }
+    final isAuthenticationGuard = authorizationMiddleware(context, state);
+    if (isAuthenticationGuard != null) {
+      return isAuthenticationGuard;
+    }
+    return null;
+  }
 
-    if (!isAuthorized && !isUnauthorizedRoute) {
+  String? firstLaunchMiddleware(BuildContext context, GoRouterState state) {
+    final isFirstLaunch = _launchBloc.state.isFirstLaunch;
+    if (isFirstLaunch) {
+      return state.namedLocation(WelcomePage.name);
+    }
+    return null;
+  }
+
+  String? authorizationMiddleware(BuildContext context, GoRouterState state) {
+    final isAuthorized = _authBloc.state.status == AuthStatus.authorized;
+    final isAuthenticating = state.matchedLocation.contains("/signin") ||
+        state.matchedLocation.contains("/signup");
+    if (!isAuthorized && !isAuthenticating) {
       return '/signin';
     }
-
     return null;
   }
 }

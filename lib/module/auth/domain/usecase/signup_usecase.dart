@@ -1,11 +1,12 @@
 import 'dart:developer';
 
-import 'package:moreway/core/case/future_usecase.dart';
+import 'package:injectable/injectable.dart';
 import 'package:moreway/module/auth/domain/dependency/i_auth_service.dart';
 import 'package:moreway/module/auth/domain/dependency/i_token_storage.dart';
 import 'package:moreway/module/auth/domain/entity/signup_data.dart';
 
-class SignUpUseCase implements FutureUseCase<SignUpData, void> {
+@Singleton()
+class SignUpUseCase {
 
   final IAuthService _authService;
   final ITokenStorage _tokenStorage;
@@ -15,8 +16,7 @@ class SignUpUseCase implements FutureUseCase<SignUpData, void> {
     this._tokenStorage
   );
 
-  @override
-  Future<void> call(SignUpData input) async {
+  Future<void> execute(SignUpData input) async {
     try {
       final token = await _authService.signUp(input);
       _tokenStorage.save(token);

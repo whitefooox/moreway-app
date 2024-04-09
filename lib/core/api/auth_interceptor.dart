@@ -24,20 +24,11 @@ class AuthInterceptor extends Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
-    if (err.response?.statusCode == 401) {
+    if(err.response?.statusCode == 401 && await _tokenStorage.get() != null){
       await _refreshToken();
-      RequestOptions options = err.requestOptions;
-      final opts = Options(
-        method: err.requestOptions.method,
-        headers: err.requestOptions.headers);
-      final req = await _dio.request(
-        options.path,
-        options: opts,
-        queryParameters: err.requestOptions.queryParameters
-      );
-      return handler.resolve(req);
+      return handler.resolve(await _dio.fetch(err.requestOptions));
     } else {
-      log(err.response!.data);
+      return handler.next(err);
     }
   }
 
@@ -48,6 +39,7 @@ class AuthInterceptor extends Interceptor {
       _tokenStorage.save(Token(tokenString as String));
     } catch (e) {
       log(e.toString());
+      _tokenStorage.delete();
     }
   }
 }

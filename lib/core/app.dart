@@ -4,12 +4,9 @@ import 'package:moreway/core/navigation/navigation.dart';
 
 class App extends StatelessWidget {
 
-  final AppRouter _appRouter;
+  final AppRouter _appRouter = AppRouter();
 
-  const App(
-    this._appRouter,
-    {Key? key,}
-  ) : super(key: key);
+  App({super.key});
 
   @override
   Widget build(BuildContext context) {
