@@ -1,6 +1,5 @@
-
 class Place {
-  final int id;
+  final String id;
   final double distance;
   final String name;
   final double lat;
@@ -8,6 +7,7 @@ class Place {
   final double rating;
   final String image;
   final String location;
+
   Place({
     required this.id,
     required this.distance,

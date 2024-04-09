@@ -10,10 +10,12 @@ import 'package:moreway/module/auth/domain/dependency/i_token_storage.dart';
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  /*
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
+  */
   await configureDependencies();
   setupApiClient(getIt<ITokenStorage>(), getIt<Dio>());
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(

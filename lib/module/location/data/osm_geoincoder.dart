@@ -22,7 +22,17 @@ class OSMGeoincoderService implements IGeoincoderService {
         "format": "json",
         "accept-language": "ru"
       });
-      return response.data["address"]["town"];
+      final data = response.data;
+      if (data is Map<String, dynamic>) {
+        final address = data['address'];
+        if (address is Map<String, dynamic>) {
+          final city = address['city'] ?? address['town'] ?? address['village'];
+          if (city is String) {
+            return city;
+          }
+        }
+      }
+      return "Вы где?";
     } catch (e) {
       log(e.toString());
       rethrow;

@@ -9,7 +9,7 @@ part 'place_model.g.dart';
 
 @JsonSerializable()
 class PlaceModel {
-  final int id;
+  final String id;
   final String name;
   final double lat;
   final double lon;
@@ -19,7 +19,7 @@ class PlaceModel {
   final String image;
 
   final double distance;
-  
+
   @JsonKey(name: "locality", fromJson: _localityFromJson)
   final String locality;
 
@@ -34,7 +34,6 @@ class PlaceModel {
     required this.locality,
   });
 
-
   static String _imageFromJson(Map<String, dynamic> json) {
     return json["path"] as String;
   }
@@ -43,7 +42,8 @@ class PlaceModel {
     return json["name"] as String;
   }
 
-  factory PlaceModel.fromJson(Map<String, dynamic> json) => _$PlaceModelFromJson(json);
+  factory PlaceModel.fromJson(Map<String, dynamic> json) =>
+      _$PlaceModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$PlaceModelToJson(this);
 
@@ -52,16 +52,15 @@ class PlaceModel {
     return 'PlaceModel(id: $id, name: $name, lat: $lat, lon: $lon, rating: $rating, image: $image, distance: $distance, locality: $locality)';
   }
 
-  Place toPlace(){
+  Place toPlace() {
     return Place(
-      id: id, 
-      distance: distance, 
-      name: name, 
-      lat: lat, 
-      lon: lon, 
-      rating: rating, 
-      image: image, 
-      location: locality
-    );
+        id: id,
+        distance: distance,
+        name: name,
+        lat: lat,
+        lon: lon,
+        rating: rating,
+        image: image,
+        location: locality);
   }
 }

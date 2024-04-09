@@ -7,7 +7,7 @@ part of 'place_model.dart';
 // **************************************************************************
 
 PlaceModel _$PlaceModelFromJson(Map<String, dynamic> json) => PlaceModel(
-      id: json['id'] as int,
+      id: json['id'] as String,
       name: json['name'] as String,
       lat: (json['lat'] as num).toDouble(),
       lon: (json['lon'] as num).toDouble(),
