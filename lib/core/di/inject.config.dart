@@ -41,15 +41,16 @@ import '../../module/location/presentation/state/bloc/location_bloc.dart'
     as _i27;
 import '../../module/place/data/place_repository_api.dart' as _i26;
 import '../../module/place/domain/dependency/i_place_repository.dart' as _i25;
-import '../../module/place/domain/usecase/get_places.dart' as _i31;
-import '../../module/place/presentation/state/bloc/places_bloc.dart' as _i33;
+import '../../module/place/domain/usecase/get_filters.dart' as _i31;
+import '../../module/place/domain/usecase/get_places.dart' as _i32;
+import '../../module/place/presentation/state/bloc/places_bloc.dart' as _i34;
 import '../../module/welcome/data/launch_checker.dart' as _i24;
 import '../../module/welcome/domain/dependency/i_launch_checker.dart' as _i23;
 import '../../module/welcome/domain/usecase/check_first_launch.dart' as _i30;
 import '../../module/welcome/domain/usecase/set_status_first_launch.dart'
     as _i28;
-import '../../module/welcome/presentation/bloc/launch_bloc.dart' as _i32;
-import 'inject.dart' as _i34;
+import '../../module/welcome/presentation/bloc/launch_bloc.dart' as _i33;
+import 'inject.dart' as _i35;
 
 extension GetItInjectableX on _i1.GetIt {
 // initializes the registration of main-scope dependencies inside of GetIt
@@ -109,8 +110,10 @@ extension GetItInjectableX on _i1.GetIt {
           gh<_i3.Dio>(),
           gh<_i22.GetCurrentPositionUseCase>(),
         ));
-    gh.singleton<_i27.LocationBloc>(
-        () => _i27.LocationBloc(gh<_i21.GetCurrentCityUseCase>()));
+    gh.singleton<_i27.LocationBloc>(() => _i27.LocationBloc(
+          gh<_i21.GetCurrentCityUseCase>(),
+          gh<_i22.GetCurrentPositionUseCase>(),
+        ));
     gh.singleton<_i28.SetStatusFirstLaunchUseCase>(
         () => _i28.SetStatusFirstLaunchUseCase(gh<_i23.ILaunchChecker>()));
     gh.lazySingleton<_i29.AuthBloc>(() => _i29.AuthBloc(
@@ -121,17 +124,21 @@ extension GetItInjectableX on _i1.GetIt {
         ));
     gh.singleton<_i30.CheckFirstLaunchUseCase>(
         () => _i30.CheckFirstLaunchUseCase(gh<_i23.ILaunchChecker>()));
-    gh.singleton<_i31.GetPlacesUseCase>(
-        () => _i31.GetPlacesUseCase(gh<_i25.IPlaceRepository>()));
-    gh.singleton<_i32.LaunchBloc>(() => _i32.LaunchBloc(
+    gh.singleton<_i31.GetFiltersUsecase>(
+        () => _i31.GetFiltersUsecase(gh<_i25.IPlaceRepository>()));
+    gh.singleton<_i32.GetPlacesUseCase>(
+        () => _i32.GetPlacesUseCase(gh<_i25.IPlaceRepository>()));
+    gh.singleton<_i33.LaunchBloc>(() => _i33.LaunchBloc(
           gh<_i30.CheckFirstLaunchUseCase>(),
           gh<_i28.SetStatusFirstLaunchUseCase>(),
           gh<_i15.SendRequestLocationPermissionUseCase>(),
         ));
-    gh.factory<_i33.PlacesBloc>(
-        () => _i33.PlacesBloc(gh<_i31.GetPlacesUseCase>()));
+    gh.factory<_i34.PlacesBloc>(() => _i34.PlacesBloc(
+          gh<_i32.GetPlacesUseCase>(),
+          gh<_i31.GetFiltersUsecase>(),
+        ));
     return this;
   }
 }
 
-class _$RegisterModule extends _i34.RegisterModule {}
+class _$RegisterModule extends _i35.RegisterModule {}

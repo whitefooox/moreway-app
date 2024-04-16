@@ -1,5 +1,5 @@
 class Place {
-  final String id;
+  final int id;
   final double distance;
   final String name;
   final double lat;
@@ -18,4 +18,16 @@ class Place {
     required this.image,
     required this.location,
   });
+
+  factory Place.createFake() {
+    return Place(
+        id: 1,
+        distance: 10,
+        name: "name",
+        lat: 10,
+        lon: 10,
+        rating: 5,
+        image: "https://more-way.ru/storage/places/moscow_square.png",
+        location: "Location");
+  }
 }

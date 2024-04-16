@@ -6,4 +6,5 @@ class Api {
   static const refreshToken = "/auth/refresh-token";
 
   static const places = "/places";
+  static const getPlaceFilters = "/places/filters";
 }

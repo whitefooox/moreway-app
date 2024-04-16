@@ -10,6 +10,7 @@ import 'package:moreway/module/auth/presentation/page/auth/signup.dart';
 import 'package:moreway/module/auth/presentation/page/password/reset_password.dart';
 import 'package:moreway/module/auth/presentation/page/password/verify_code.dart';
 import 'package:moreway/module/location/presentation/state/bloc/location_bloc.dart';
+import 'package:moreway/module/map/presentation/page/map_page.dart';
 import 'package:moreway/module/place/presentation/state/bloc/places_bloc.dart';
 import 'package:moreway/module/welcome/presentation/bloc/launch_bloc.dart';
 import 'package:moreway/module/welcome/presentation/page/welcome.dart';
@@ -84,8 +85,8 @@ class AppRouter {
                               BlocProvider<PlacesBloc>(
                                 create: (_) => getIt<PlacesBloc>(),
                               ),
-                              BlocProvider(
-                                create: (_) => getIt<LocationBloc>(),
+                              BlocProvider.value(
+                                value: getIt<LocationBloc>(),
                               ),
                             ],
                             child: const HomePage(),
@@ -100,10 +101,9 @@ class AppRouter {
                 ]),
                 StatefulShellBranch(routes: [
                   GoRoute(
-                    path: '/map',
-                    builder: (context, state) =>
-                        const Scaffold(body: Center(child: Text("map"))),
-                  ),
+                      path: '/map',
+                      builder: (context, state) => BlocProvider.value(
+                          value: getIt<LocationBloc>(), child: MapPage())),
                 ]),
                 StatefulShellBranch(routes: [
                   GoRoute(

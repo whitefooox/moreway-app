@@ -1,6 +1,6 @@
 import 'package:moreway/module/location/domain/entity/position.dart';
-import 'package:moreway/module/place/data/mapping/place_filters_model.dart';
-import 'package:moreway/module/place/domain/entity/place_filters.dart';
+import 'package:moreway/module/place/data/mapping/selected_place_filters_model.dart';
+import 'package:moreway/module/place/domain/entity/selected_place_filters.dart';
 
 class PlaceQueryParametersBuilder {
   final Map<String, dynamic> _parameters = {};
@@ -22,9 +22,10 @@ class PlaceQueryParametersBuilder {
     return this;
   }
 
-  PlaceQueryParametersBuilder setFilters(PlaceFilters? filters) {
+  PlaceQueryParametersBuilder setFilters(SelectedPlaceFilters? filters) {
     if (filters != null) {
-      _parameters.addAll(PlaceFiltersModel.fromDomain(filters).toJson());
+      _parameters
+          .addAll(SelectedPlaceFiltersModel.fromDomain(filters).toJson());
     }
     return this;
   }

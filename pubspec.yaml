@@ -29,6 +29,8 @@ dependencies:
       url: https://github.com/followthemoney1/modal_bottom_sheet.git
       ref: main
       path: modal_bottom_sheet
+  flutter_map: ^6.1.0
+  latlong2: ^0.9.1
 
 dev_dependencies:
   flutter_launcher_icons: "^0.13.1"
