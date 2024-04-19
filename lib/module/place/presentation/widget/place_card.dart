@@ -24,6 +24,9 @@ class PlaceCard extends StatelessWidget {
                 height: 90,
                 fit: BoxFit.cover,
               ),
+              // child: Container(
+              //   height: 90,
+              // ),
             ),
             const SizedBox(
               height: 5,

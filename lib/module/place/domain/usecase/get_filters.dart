@@ -1,14 +1,14 @@
 import 'package:injectable/injectable.dart';
-import 'package:moreway/module/place/domain/dependency/i_place_repository.dart';
+import 'package:moreway/module/place/domain/dependency/i_filter_repository.dart';
 import 'package:moreway/module/place/domain/entity/place_filter_options.dart';
 
 @Singleton()
 class GetFiltersUsecase {
-  final IPlaceRepository _placeRepository;
+  final IFilterRepository _filterRepository;
 
-  GetFiltersUsecase(this._placeRepository);
+  GetFiltersUsecase(this._filterRepository);
 
   Future<PlaceFilterOptions> execute() {
-    return _placeRepository.getFilters();
+    return _filterRepository.getAll();
   }
 }

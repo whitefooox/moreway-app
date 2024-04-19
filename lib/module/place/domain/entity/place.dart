@@ -1,5 +1,5 @@
 class Place {
-  final int id;
+  final String id;
   final double distance;
   final String name;
   final double lat;
@@ -21,7 +21,7 @@ class Place {
 
   factory Place.createFake() {
     return Place(
-        id: 1,
+        id: "1",
         distance: 10,
         name: "name",
         lat: 10,

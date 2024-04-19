@@ -11,7 +11,8 @@ import 'package:moreway/module/auth/presentation/page/password/reset_password.da
 import 'package:moreway/module/auth/presentation/page/password/verify_code.dart';
 import 'package:moreway/module/location/presentation/state/bloc/location_bloc.dart';
 import 'package:moreway/module/map/presentation/page/map_page.dart';
-import 'package:moreway/module/place/presentation/state/bloc/places_bloc.dart';
+import 'package:moreway/module/place/presentation/page/place_view_page.dart';
+import 'package:moreway/module/place/presentation/state/places/places_bloc.dart';
 import 'package:moreway/module/welcome/presentation/bloc/launch_bloc.dart';
 import 'package:moreway/module/welcome/presentation/page/welcome.dart';
 import 'package:moreway/core/navigation/root_page.dart';
@@ -22,6 +23,7 @@ class AppRouter {
   late final AuthBloc _authBloc;
   late final LaunchBloc _launchBloc;
   late GoRouter router;
+  final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
   AppRouter() {
     _authBloc = getIt<AuthBloc>();
@@ -33,6 +35,7 @@ class AppRouter {
     router = GoRouter(
         //debugLogDiagnostics: true,
         initialLocation: "/home",
+        navigatorKey: _rootNavigatorKey,
         routes: [
           GoRoute(
             path: WelcomePage.path,
@@ -74,6 +77,7 @@ class AppRouter {
             },
           ),
           StatefulShellRoute.indexedStack(
+              //parentNavigatorKey: _rootNavigatorKey,
               builder: (context, state, navigationShell) =>
                   RootPage(navigationShell: navigationShell),
               branches: [
@@ -90,7 +94,14 @@ class AppRouter {
                               ),
                             ],
                             child: const HomePage(),
-                          )),
+                          ),
+                      routes: [
+                        GoRoute(
+                          path: "place/:id",
+                          parentNavigatorKey: _rootNavigatorKey,
+                          builder: (context, state) => PlaceViewPage(),
+                        )
+                      ]),
                 ]),
                 StatefulShellBranch(routes: [
                   GoRoute(

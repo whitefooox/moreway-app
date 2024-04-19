@@ -5,23 +5,30 @@ import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'inject.config.dart';
 
-final getIt = GetIt.instance;  
-  
-@InjectableInit(  
-  initializerName: 'init', 
-  preferRelativeImports: true, 
+abstract class Env {
+  static const dev = 'dev';
+  static const prod = 'prod';
+}
+
+final getIt = GetIt.instance;
+
+@InjectableInit(
+  initializerName: 'init',
+  preferRelativeImports: true,
   asExtension: true,
-)  
-Future<void> configureDependencies() async => await getIt.init();
+)
+Future<void> configureDependencies(String env) async =>
+    await getIt.init(environment: env);
 
 @module
 abstract class RegisterModule {
-  @singleton 
+  @singleton
   Dio get dio => Dio();
 
-  @singleton  
+  @singleton
   FlutterSecureStorage get secureStorage => const FlutterSecureStorage();
 
   @preResolve
-  Future<SharedPreferences> get sharedPreferences => SharedPreferences.getInstance();
+  Future<SharedPreferences> get sharedPreferences =>
+      SharedPreferences.getInstance();
 }

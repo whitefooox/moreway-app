@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:moreway/core/theme/colors.dart';
 import 'package:moreway/module/place/domain/entity/place_filter_options.dart';
 import 'package:moreway/module/place/domain/entity/selected_place_filters.dart';
+import 'package:moreway/module/test/test.dart';
 
 class LocationFilter extends StatefulWidget {
   final PlaceFilterOptions filtersOptions;
@@ -112,6 +113,7 @@ class _LocationFilterState extends State<LocationFilter> {
           width: 200.0,
           child: RangeSlider(
             activeColor: AppColor.black,
+            divisions: 10,
             labels: RangeLabels(
               _selectedPlaceFilters.distance[0].toStringAsFixed(0),
               _selectedPlaceFilters.distance[1].toStringAsFixed(0),

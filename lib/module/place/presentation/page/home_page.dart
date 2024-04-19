@@ -3,12 +3,13 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:moreway/core/api/loading_status.dart';
 import 'package:moreway/core/theme/colors.dart';
 import 'package:moreway/module/location/presentation/state/bloc/location_bloc.dart';
 import 'package:moreway/module/place/domain/entity/place.dart';
-import 'package:moreway/module/place/presentation/state/bloc/places_bloc.dart';
+import 'package:moreway/module/place/presentation/state/places/places_bloc.dart';
 import 'package:moreway/module/place/presentation/widget/location_filter.dart';
 import 'package:moreway/module/place/presentation/widget/location_widget.dart';
 import 'package:moreway/module/place/presentation/widget/place_card.dart';
@@ -65,76 +66,11 @@ class _HomePageState extends State<HomePage> {
       },
     );
   }
-  // builder: (context) {
-  //   return StatefulBuilder(
-  //     builder: (context, setState) {
-  //       double selectedRating = 0.0;
 
-  //       return BlocBuilder<PlacesBloc, PlacesState>(
-  //         bloc: _placesBloc,
-  //         builder: (context, state) => Container(
-  //           padding: const EdgeInsets.all(16.0),
-  //           child: Column(
-  //             mainAxisSize: MainAxisSize.min,
-  //             children: [
-  //               if (state.filterOptions == null)
-  //                 const Icon(Icons.error)
-  //               else
-  //                 Column(
-  //                   children: [
-  //                     Row(
-  //                       mainAxisSize: MainAxisSize.max,
-  //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                       children: [
-  //                         Text(
-  //                           "Рейтинг",
-  //                           style: TextStyle(fontSize: 14),
-  //                         ),
-  //                         RangeSlider(
-  //                             max: state.filterOptions!.rangeRating[1],
-  //                             min: state.filterOptions!.rangeRating[0],
-  //                             divisions: state.filterOptions!.rangeRating[1]
-  //                                 .toInt(),
-  //                             activeColor: AppColor.black,
-  //                             //inactiveColor: Colors.red,
-  //                             values: RangeValues(
-  //                                 state.filters!.rangeRating[0],
-  //                                 state.filters!.rangeRating[1]),
-  //                             onChanged: (values) {}),
-  //                       ],
-  //                     ),
-  //                     Row(
-  //                       mainAxisSize: MainAxisSize.max,
-  //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                       children: [
-  //                         Text(
-  //                           "Расстояние",
-  //                           style: TextStyle(fontSize: 14),
-  //                         ),
-  //                         RangeSlider(
-  //                             max: state.filterOptions!.rangeDistance[1]
-  //                                 .toDouble(),
-  //                             min: state.filterOptions!.rangeDistance[0]
-  //                                 .toDouble(),
-  //                             divisions: state
-  //                                 .filterOptions!.rangeDistance[1]
-  //                                 .toInt(),
-  //                             activeColor: AppColor.black,
-  //                             //inactiveColor: Colors.red,
-  //                             values: RangeValues(
-  //                                 state.filters!.distance[0].toDouble(),
-  //                                 state.filters!.distance[1].toDouble()),
-  //                             onChanged: (values) {}),
-  //                       ],
-  //                     )
-  //                   ],
-  //                 ),
-  //             ],
-  //           ),
-  //         ),
-  //       );
-  //     },
-  //   );
+  void _onClickPlace(String id) {
+    context.go("/home/place/$id");
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
@@ -206,7 +142,9 @@ class _HomePageState extends State<HomePage> {
                       (context, index) {
                         final place = state.places![index];
                         //return buildPlaceCard(place);
-                        return PlaceCard(place: place);
+                        return InkWell(
+                            onTap: () => _onClickPlace(place.id),
+                            child: PlaceCard(place: place));
                       },
                       childCount: state.places!.length,
                     ),
