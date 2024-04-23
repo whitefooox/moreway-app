@@ -1,5 +1,5 @@
-import 'package:moreway/module/location/domain/entity/position.dart';
+import 'package:moreway/module/location/domain/entity/position_point.dart';
 
 abstract class IGeoincoderService {
-  Future<String> getCity(Position position);
+  Future<String> getCity(PositionPoint position);
 }

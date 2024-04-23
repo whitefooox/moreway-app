@@ -1,12 +1,17 @@
-import 'package:moreway/module/location/domain/entity/position.dart';
+import 'package:moreway/module/location/data/mapper/position_model.dart';
 import 'package:moreway/module/place/data/mapping/selected_place_filters_model.dart';
 import 'package:moreway/module/place/domain/entity/selected_place_filters.dart';
 
 class PlaceQueryParametersBuilder {
   final Map<String, dynamic> _parameters = {};
 
-  PlaceQueryParametersBuilder setPosition(Position position) {
+  PlaceQueryParametersBuilder setPosition(PositionModel position) {
     _parameters.addAll(position.toJson());
+    return this;
+  }
+
+  PlaceQueryParametersBuilder setPlaceId(String id) {
+    _parameters['placeId'] = id;
     return this;
   }
 

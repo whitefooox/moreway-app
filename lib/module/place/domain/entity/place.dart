@@ -27,7 +27,7 @@ class Place {
         lat: 10,
         lon: 10,
         rating: 5,
-        image: "https://more-way.ru/storage/places/moscow_square.png",
+        image: "https://bellard.org/bpg/2.png",
         location: "Location");
   }
 }

@@ -7,7 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:moreway/core/api/loading_status.dart';
 import 'package:moreway/core/theme/colors.dart';
-import 'package:moreway/module/location/presentation/state/bloc/location_bloc.dart';
+import 'package:moreway/module/location/presentation/state/location/location_bloc.dart';
 import 'package:moreway/module/place/domain/entity/place.dart';
 import 'package:moreway/module/place/presentation/state/places/places_bloc.dart';
 import 'package:moreway/module/place/presentation/widget/location_filter.dart';
@@ -135,8 +135,8 @@ class _HomePageState extends State<HomePage> {
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
-                      mainAxisSpacing: 10.0,
-                      crossAxisSpacing: 10.0,
+                      mainAxisSpacing: 5.0,
+                      crossAxisSpacing: 5.0,
                     ),
                     delegate: SliverChildBuilderDelegate(
                       (context, index) {

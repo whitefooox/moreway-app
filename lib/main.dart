@@ -14,7 +14,7 @@ void main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
-  await configureDependencies(Env.dev);
+  await configureDependencies(Env.prod);
   setupApiClient(getIt<ITokenStorage>(), getIt<Dio>());
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       systemStatusBarContrastEnforced: true,

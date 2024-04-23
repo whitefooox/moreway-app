@@ -1,10 +1,6 @@
 part of 'location_bloc.dart';
 
-enum LocationStatus {
-  noPermission,
-  success,
-  initial
-}
+enum LocationStatus { noPermission, success, initial }
 
 class LocationState {
   final Position? currentPosition;
@@ -16,7 +12,6 @@ class LocationState {
     this.city,
     this.locationStatus = LocationStatus.initial,
   });
-
 
   LocationState copyWith({
     Position? currentPosition,

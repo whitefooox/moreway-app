@@ -24,7 +24,7 @@ import '../../module/auth/domain/usecase/check_authorization_usecase.dart'
 import '../../module/auth/domain/usecase/signin_usecase.dart' as _i23;
 import '../../module/auth/domain/usecase/signout_usecase.dart' as _i24;
 import '../../module/auth/domain/usecase/signup_usecase.dart' as _i25;
-import '../../module/auth/presentation/bloc/auth_bloc.dart' as _i37;
+import '../../module/auth/presentation/bloc/auth_bloc.dart' as _i41;
 import '../../module/location/data/geolocator_service.dart' as _i16;
 import '../../module/location/data/osm_geoincoder.dart' as _i12;
 import '../../module/location/data/permission_service.dart' as _i14;
@@ -36,26 +36,31 @@ import '../../module/location/domain/dependency/i_location_service.dart'
     as _i15;
 import '../../module/location/domain/usecase/get_current_city.dart' as _i27;
 import '../../module/location/domain/usecase/get_current_location.dart' as _i28;
+import '../../module/location/domain/usecase/get_location_stream.dart' as _i30;
 import '../../module/location/domain/usecase/send_request_location_permission.dart'
     as _i21;
-import '../../module/location/presentation/state/bloc/location_bloc.dart'
-    as _i34;
+import '../../module/location/presentation/state/location/location_bloc.dart'
+    as _i36;
+import '../../module/location/presentation/state/location_v2/location_v2_bloc.dart'
+    as _i37;
 import '../../module/place/data/filter_repository_api.dart' as _i9;
 import '../../module/place/data/mock/filter_repository_mock.dart' as _i10;
 import '../../module/place/data/mock/place_repository_mock.dart' as _i18;
-import '../../module/place/data/place_repository_api.dart' as _i33;
+import '../../module/place/data/place_repository_api.dart' as _i35;
 import '../../module/place/domain/dependency/i_filter_repository.dart' as _i8;
 import '../../module/place/domain/dependency/i_place_repository.dart' as _i17;
 import '../../module/place/domain/usecase/get_filters.dart' as _i29;
-import '../../module/place/domain/usecase/get_places.dart' as _i30;
-import '../../module/place/presentation/state/places/places_bloc.dart' as _i35;
-import '../../module/welcome/data/launch_checker.dart' as _i32;
-import '../../module/welcome/domain/dependency/i_launch_checker.dart' as _i31;
-import '../../module/welcome/domain/usecase/check_first_launch.dart' as _i38;
+import '../../module/place/domain/usecase/get_place.dart' as _i31;
+import '../../module/place/domain/usecase/get_places.dart' as _i32;
+import '../../module/place/presentation/state/place/place_bloc.dart' as _i38;
+import '../../module/place/presentation/state/places/places_bloc.dart' as _i39;
+import '../../module/welcome/data/launch_checker.dart' as _i34;
+import '../../module/welcome/domain/dependency/i_launch_checker.dart' as _i33;
+import '../../module/welcome/domain/usecase/check_first_launch.dart' as _i42;
 import '../../module/welcome/domain/usecase/set_status_first_launch.dart'
-    as _i36;
-import '../../module/welcome/presentation/bloc/launch_bloc.dart' as _i39;
-import 'inject.dart' as _i40;
+    as _i40;
+import '../../module/welcome/presentation/bloc/launch_bloc.dart' as _i43;
+import 'inject.dart' as _i44;
 
 const String _dev = 'dev';
 const String _prod = 'prod';
@@ -133,42 +138,59 @@ extension GetItInjectableX on _i1.GetIt {
             ));
     gh.singleton<_i29.GetFiltersUsecase>(
         () => _i29.GetFiltersUsecase(gh<_i8.IFilterRepository>()));
-    gh.singleton<_i30.GetPlacesUseCase>(
-        () => _i30.GetPlacesUseCase(gh<_i17.IPlaceRepository>()));
-    gh.singleton<_i31.ILaunchChecker>(
-        () => _i32.LaunchChecker(gh<_i22.SharedPreferences>()));
+    gh.singleton<_i30.GetLocationStreamUsecase>(
+        () => _i30.GetLocationStreamUsecase(
+              gh<_i15.ILocationService>(),
+              gh<_i13.ILocationPermissionService>(),
+            ));
     gh.singleton<_i17.IPlaceRepository>(
-      () => _i33.PlaceRepositoryAPI(
+      () => _i35.PlaceRepositoryAPI(
         gh<_i3.Dio>(),
         gh<_i28.GetCurrentPositionUseCase>(),
       ),
       registerFor: {_prod},
     );
-    gh.singleton<_i34.LocationBloc>(() => _i34.LocationBloc(
+    gh.singleton<_i31.GetPlaceUsecase>(
+      () => _i31.GetPlaceUsecase(gh<_i17.IPlaceRepository>()),
+      registerFor: {
+        _dev,
+        _prod,
+      },
+    );
+    gh.singleton<_i32.GetPlacesUseCase>(
+        () => _i32.GetPlacesUseCase(gh<_i17.IPlaceRepository>()));
+    gh.singleton<_i33.ILaunchChecker>(
+        () => _i34.LaunchChecker(gh<_i22.SharedPreferences>()));
+
+    gh.singleton<_i36.LocationBloc>(() => _i36.LocationBloc(
           gh<_i27.GetCurrentCityUseCase>(),
           gh<_i28.GetCurrentPositionUseCase>(),
         ));
-    gh.factory<_i35.PlacesBloc>(() => _i35.PlacesBloc(
-          gh<_i30.GetPlacesUseCase>(),
+    gh.singleton<_i37.LocationV2Bloc>(
+        () => _i37.LocationV2Bloc(gh<_i30.GetLocationStreamUsecase>()));
+    gh.factory<_i38.PlaceBloc>(
+        () => _i38.PlaceBloc(gh<_i31.GetPlaceUsecase>()));
+    gh.factory<_i39.PlacesBloc>(() => _i39.PlacesBloc(
+          gh<_i32.GetPlacesUseCase>(),
           gh<_i29.GetFiltersUsecase>(),
         ));
-    gh.singleton<_i36.SetStatusFirstLaunchUseCase>(
-        () => _i36.SetStatusFirstLaunchUseCase(gh<_i31.ILaunchChecker>()));
-    gh.lazySingleton<_i37.AuthBloc>(() => _i37.AuthBloc(
+    gh.singleton<_i40.SetStatusFirstLaunchUseCase>(
+        () => _i40.SetStatusFirstLaunchUseCase(gh<_i33.ILaunchChecker>()));
+    gh.lazySingleton<_i41.AuthBloc>(() => _i41.AuthBloc(
           gh<_i23.SignInUseCase>(),
           gh<_i25.SignUpUseCase>(),
           gh<_i26.CheckAuthorizationUseCase>(),
           gh<_i24.SignOutUseCase>(),
         ));
-    gh.singleton<_i38.CheckFirstLaunchUseCase>(
-        () => _i38.CheckFirstLaunchUseCase(gh<_i31.ILaunchChecker>()));
-    gh.singleton<_i39.LaunchBloc>(() => _i39.LaunchBloc(
-          gh<_i38.CheckFirstLaunchUseCase>(),
-          gh<_i36.SetStatusFirstLaunchUseCase>(),
+    gh.singleton<_i42.CheckFirstLaunchUseCase>(
+        () => _i42.CheckFirstLaunchUseCase(gh<_i33.ILaunchChecker>()));
+    gh.singleton<_i43.LaunchBloc>(() => _i43.LaunchBloc(
+          gh<_i42.CheckFirstLaunchUseCase>(),
+          gh<_i40.SetStatusFirstLaunchUseCase>(),
           gh<_i21.SendRequestLocationPermissionUseCase>(),
         ));
     return this;
   }
 }
 
-class _$RegisterModule extends _i40.RegisterModule {}
+class _$RegisterModule extends _i44.RegisterModule {}

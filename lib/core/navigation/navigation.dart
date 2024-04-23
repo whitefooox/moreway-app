@@ -9,9 +9,11 @@ import 'package:moreway/module/auth/presentation/page/auth/signin.dart';
 import 'package:moreway/module/auth/presentation/page/auth/signup.dart';
 import 'package:moreway/module/auth/presentation/page/password/reset_password.dart';
 import 'package:moreway/module/auth/presentation/page/password/verify_code.dart';
-import 'package:moreway/module/location/presentation/state/bloc/location_bloc.dart';
-import 'package:moreway/module/map/presentation/page/map_page.dart';
+import 'package:moreway/module/location/presentation/state/location/location_bloc.dart';
+import 'package:moreway/module/location/presentation/page/map_page.dart';
+import 'package:moreway/module/location/presentation/state/location_v2/location_v2_bloc.dart';
 import 'package:moreway/module/place/presentation/page/place_view_page.dart';
+import 'package:moreway/module/place/presentation/state/place/place_bloc.dart';
 import 'package:moreway/module/place/presentation/state/places/places_bloc.dart';
 import 'package:moreway/module/welcome/presentation/bloc/launch_bloc.dart';
 import 'package:moreway/module/welcome/presentation/page/welcome.dart';
@@ -87,10 +89,12 @@ class AppRouter {
                       builder: (context, state) => MultiBlocProvider(
                             providers: [
                               BlocProvider<PlacesBloc>(
-                                create: (_) => getIt<PlacesBloc>(),
+                                create: (_) => getIt<PlacesBloc>()
+                                  ..add(LoadPlacesAndFiltersEvent()),
                               ),
                               BlocProvider.value(
-                                value: getIt<LocationBloc>(),
+                                value: getIt<LocationBloc>()
+                                  ..add(GetCurrentLocationEvent()),
                               ),
                             ],
                             child: const HomePage(),
@@ -99,7 +103,14 @@ class AppRouter {
                         GoRoute(
                           path: "place/:id",
                           parentNavigatorKey: _rootNavigatorKey,
-                          builder: (context, state) => PlaceViewPage(),
+                          builder: (context, state) {
+                            final placeId = state.pathParameters['id'];
+                            return BlocProvider(
+                              create: (_) => getIt<PlaceBloc>()
+                                ..add(PlaceLoadEvent(id: placeId!)),
+                              child: PlaceViewPage(),
+                            );
+                          },
                         )
                       ]),
                 ]),
@@ -114,7 +125,9 @@ class AppRouter {
                   GoRoute(
                       path: '/map',
                       builder: (context, state) => BlocProvider.value(
-                          value: getIt<LocationBloc>(), child: MapPage())),
+                          value: getIt<LocationV2Bloc>()
+                            ..add(LocationV2EventLoad()),
+                          child: MapPage())),
                 ]),
                 StatefulShellBranch(routes: [
                   GoRoute(

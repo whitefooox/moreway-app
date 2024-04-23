@@ -5,15 +5,15 @@ import 'package:moreway/module/location/domain/entity/position.dart';
 import 'package:moreway/module/location/domain/exception/no_location_permission.dart';
 
 @Singleton()
-class GetCurrentPositionUseCase {
-  final ILocationPermissionService _permissionService;
+class GetLocationStreamUsecase {
   final ILocationService _locationService;
+  final ILocationPermissionService _permissionService;
 
-  GetCurrentPositionUseCase(this._permissionService, this._locationService);
+  GetLocationStreamUsecase(this._locationService, this._permissionService);
 
-  Future<Position> execute() async {
+  Future<Stream<Position>> execute() async {
     final isGranted = await _permissionService.isPermissionGranted();
     if (!isGranted) return Future.error(NoLocationPermissionException());
-    return _locationService.getCurrentPosition();
+    return _locationService.getLocationStream();
   }
 }

@@ -24,7 +24,7 @@ class PlacesBloc extends Bloc<PlacesEvent, PlacesState> {
     on<SearchPlacesEvent>(_search);
     on<LoadPlacesAndFiltersEvent>(_loadPlacesAndFilters);
     on<UpdateFiltersEvent>(_updateFilters);
-    super.add(LoadPlacesAndFiltersEvent());
+    //super.add(LoadPlacesAndFiltersEvent());
   }
 
   void _load(LoadPlacesEvent event, Emitter<PlacesState> emit) async {
@@ -39,7 +39,6 @@ class PlacesBloc extends Bloc<PlacesEvent, PlacesState> {
           cursor: placePage.cursor,
           isAllLoaded: placePage.cursor == null));
     } catch (e) {
-      log(e.toString());
       emit(state.copyWith(loadingStatus: LoadingStatus.failure));
     }
   }
@@ -57,9 +56,7 @@ class PlacesBloc extends Bloc<PlacesEvent, PlacesState> {
           places: placePage.places,
           cursor: placePage.cursor,
           isAllLoaded: placePage.cursor == null));
-      log(state.places.toString());
     } catch (e) {
-      log(e.toString());
       emit(state.copyWith(loadingStatus: LoadingStatus.failure));
     }
   }
@@ -70,7 +67,6 @@ class PlacesBloc extends Bloc<PlacesEvent, PlacesState> {
     try {
       final placePage = await _getPlacesUseCase.execute();
       final placeFilters = await _getFiltersUsecase.execute();
-      log(placeFilters.localities.toString());
       emit(state.copyWith(
           loadingStatus: LoadingStatus.success,
           places: placePage.places,
@@ -81,14 +77,12 @@ class PlacesBloc extends Bloc<PlacesEvent, PlacesState> {
               rangeRating: placeFilters.rangeRating,
               distance: placeFilters.rangeDistance)));
     } catch (e) {
-      log(e.toString());
       emit(state.copyWith(loadingStatus: LoadingStatus.failure));
     }
   }
 
   void _updateFilters(
       UpdateFiltersEvent event, Emitter<PlacesState> emit) async {
-    log("update filters bloc");
     emit(state.copyWith(filters: event.filters));
     emit(state.resetData());
     try {
@@ -99,9 +93,7 @@ class PlacesBloc extends Bloc<PlacesEvent, PlacesState> {
           places: placePage.places,
           cursor: placePage.cursor,
           isAllLoaded: placePage.cursor == null));
-      log(state.places.toString());
     } catch (e) {
-      log(e.toString());
       emit(state.copyWith(loadingStatus: LoadingStatus.failure));
     }
   }

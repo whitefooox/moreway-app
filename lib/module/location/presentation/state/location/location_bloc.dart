@@ -16,7 +16,7 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
   LocationBloc(this._getCurrentCityUseCase, this._getCurrentPositionUseCase)
       : super(LocationState()) {
     on<GetCurrentLocationEvent>(_getCity);
-    super.add(GetCurrentLocationEvent());
+    //super.add(GetCurrentLocationEvent());
   }
 
   void _getCity(

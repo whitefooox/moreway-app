@@ -8,7 +8,7 @@ class PlaceState {
 
   PlaceState({
     this.placeId,
-    this.loadingStatus = LoadingStatus.loading,
+    this.loadingStatus = LoadingStatus.initial,
     this.place,
   });
 

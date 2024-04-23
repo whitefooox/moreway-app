@@ -9,7 +9,7 @@ class GeolocatorPermissionService implements ILocationPermissionService {
   Future<bool> isPermissionGranted() async {
     final status = await Geolocator.checkPermission();
     final isGranted = status == LocationPermission.always ||
-      status == LocationPermission.whileInUse;
+        status == LocationPermission.whileInUse;
     return isGranted;
   }
 
@@ -20,7 +20,7 @@ class GeolocatorPermissionService implements ILocationPermissionService {
     if (status == LocationPermission.deniedForever) {
       result = LocationPermissionStatus.deniedForever;
     } else if (status == LocationPermission.denied ||
-      status == LocationPermission.unableToDetermine) {
+        status == LocationPermission.unableToDetermine) {
       result = LocationPermissionStatus.denied;
     }
     return result;
