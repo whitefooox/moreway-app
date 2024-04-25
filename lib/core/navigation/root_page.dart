@@ -19,7 +19,7 @@ class RootPage extends StatelessWidget {
               left: screenSize.width * 0.035,
               right: screenSize.width * 0.035,
               child: SizedBox(
-                height: 70,
+                height: 60,
                 child: ClipRRect(
                   borderRadius: const BorderRadius.all(Radius.circular(15)),
                   child: BottomNavigationBar(

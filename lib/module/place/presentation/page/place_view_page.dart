@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,7 +24,7 @@ class _PlaceViewPageState extends State<PlaceViewPage>
   @override
   void initState() {
     super.initState();
-    tabController = TabController(length: 2, vsync: this);
+    tabController = TabController(length: 3, vsync: this);
   }
 
   @override
@@ -33,16 +34,20 @@ class _PlaceViewPageState extends State<PlaceViewPage>
   }
 
   Widget _buildPlaceName(String name) {
-    return Flexible(
-      child: Text(
-        name,
-        maxLines: 2,
-        style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            overflow: TextOverflow.ellipsis,
-            fontFamily: "roboto"),
-      ),
+    return Row(
+      children: [
+        Flexible(
+          child: Text(
+            name,
+            maxLines: 2,
+            style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                overflow: TextOverflow.ellipsis,
+                fontFamily: "roboto"),
+          ),
+        ),
+      ],
     );
   }
 
@@ -101,8 +106,6 @@ class _PlaceViewPageState extends State<PlaceViewPage>
             child: ImagesCarousel(images: place.images)),
         Positioned(
             bottom: 0,
-            width: screenSize.width,
-            height: screenSize.height - screenSize.width * 0.9,
             child: Container(
               decoration: const BoxDecoration(
                   color: Colors.white,
@@ -118,9 +121,7 @@ class _PlaceViewPageState extends State<PlaceViewPage>
                 child: Padding(
                   padding: const EdgeInsets.only(left: 10, right: 10),
                   child: Column(
-                    mainAxisSize: MainAxisSize.max,
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    //mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       _buildPlaceName(place.name),
                       const SizedBox(
@@ -137,24 +138,43 @@ class _PlaceViewPageState extends State<PlaceViewPage>
                       TabBar(
                         indicatorColor: AppColor.pink,
                         labelColor: AppColor.gray,
-                        tabs: [
-                          const Padding(
-                            padding: EdgeInsets.all(8.0),
+                        tabs: const [
+                          Padding(
+                            padding: EdgeInsets.only(top: 8, bottom: 8),
                             child: Text("Описание"),
                           ),
-                          const Padding(
-                            padding: EdgeInsets.all(8.0),
+                          Padding(
+                            padding: EdgeInsets.only(top: 8, bottom: 8),
                             child: Text("Отзывы"),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 8, bottom: 8),
+                            child: Text("На карте"),
                           )
                         ],
                         controller: tabController,
                       ),
+                      const SizedBox(
+                        height: 10,
+                      ),
                       Expanded(
-                        child: Container(
-                          color: Colors.red,
-                          width: double.infinity,
-                          height: double.infinity,
-                        ),
+                        child: TabBarView(controller: tabController, children: [
+                          SingleChildScrollView(
+                            child: Text(
+                              place.description,
+                              textAlign: TextAlign.justify,
+                            ),
+                          ),
+                          Center(
+                            child: Text("Здесь скоро будут отзывы..."),
+                          ),
+                          Center(
+                            child: Text("Карта..."),
+                          )
+                        ]),
+                      ),
+                      SizedBox(
+                        height: 10,
                       )
                     ],
                   ),

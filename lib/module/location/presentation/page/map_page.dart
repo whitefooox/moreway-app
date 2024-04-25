@@ -29,7 +29,7 @@ class _MapPageState extends State<MapPage> {
         point: point,
         child: Transform.rotate(
           angle: position.heading,
-          child: CircleAvatar(
+          child: const CircleAvatar(
             radius: 15,
             backgroundColor: AppColor.pink,
             child: Icon(
@@ -41,9 +41,27 @@ class _MapPageState extends State<MapPage> {
         ));
   }
 
+  Widget _buildMap(Position position) {
+    return FlutterMap(
+        options: MapOptions(
+            initialCenter:
+                LatLng(position.point.latitude, position.point.longitude),
+            initialZoom: 16,
+            minZoom: 8,
+            maxZoom: 16,
+            interactionOptions: InteractionOptions(flags: InteractiveFlag.all)),
+        children: [
+          TileLayer(
+            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+          ),
+          MarkerLayer(markers: [_buildCurrentPositionMarker(position)])
+        ]);
+  }
+
   @override
   Widget build(BuildContext context) {
     final locationBloc = BlocProvider.of<LocationV2Bloc>(context);
+    final screenSize = MediaQuery.of(context).size;
 
     return Scaffold(
       body: BlocBuilder<LocationV2Bloc, LocationV2State>(
@@ -53,46 +71,40 @@ class _MapPageState extends State<MapPage> {
             return CircularProgressIndicator();
           }
           if (state is LocationV2Loaded) {
-            return FlutterMap(
-                options: MapOptions(
-                    initialCenter: LatLng(state.location.point.latitude,
-                        state.location.point.longitude),
-                    initialZoom: 16,
-                    minZoom: 8,
-                    maxZoom: 16,
-                    interactionOptions:
-                        InteractionOptions(flags: InteractiveFlag.all)),
-                children: [
-                  TileLayer(
-                    urlTemplate:
-                        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                  ),
-                  MarkerLayer(
-                      markers: [_buildCurrentPositionMarker(state.location)])
-                ]);
+            return Stack(
+              children: [
+                _buildMap(state.location),
+                Positioned(
+                    bottom: screenSize.width * 0.035 + 60 + 10,
+                    right: screenSize.width * 0.035,
+                    left: screenSize.width * 0.035,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        ElevatedButton.icon(
+                            onPressed: () {},
+                            icon: Icon(Icons.check),
+                            label: Text("Прошел"),
+                            style: ElevatedButton.styleFrom(
+                                minimumSize: Size(100, 40)))
+                        // SizedBox(
+                        //     height: 40,
+                        //     width: 140,
+                        //     child: ElevatedButton(
+                        //         onPressed: () {},
+                        //         child: Row(
+                        //           mainAxisAlignment:
+                        //               MainAxisAlignment.spaceBetween,
+                        //           children: [Text("Прошел"), Icon(Icons.check)],
+                        //         ))),
+                      ],
+                    ))
+              ],
+            );
           } else {
             return Text("Все сломалось");
           }
         },
-        // builder: (context, state) => FlutterMap(
-        //     options: MapOptions(
-        //         initialCenter: LatLng(state.currentPosition!.latitude,
-        //             state.currentPosition!.longitude),
-        //         initialZoom: 16,
-        //         minZoom: 8,
-        //         maxZoom: 16,
-        //         interactionOptions:
-        //             InteractionOptions(flags: InteractiveFlag.all)),
-        //     children: [
-        //       TileLayer(
-        //         urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-        //       ),
-        //       MarkerLayer(markers: [
-        //         _buildCurrentPositionMarker(LatLng(
-        //             state.currentPosition!.latitude,
-        //             state.currentPosition!.longitude))
-        //       ])
-        //     ]),
       ),
     );
   }

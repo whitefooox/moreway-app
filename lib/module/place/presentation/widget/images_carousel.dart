@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:moreway/core/theme/colors.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class ImagesCarousel extends StatefulWidget {
@@ -29,6 +30,11 @@ class _ImagesCarouselState extends State<ImagesCarousel> {
                   .map((e) => Image.network(
                         e,
                         fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Center(
+                            child: Icon(Icons.not_interested),
+                          );
+                        },
                       ))
                   .toList(),
               options: CarouselOptions(
@@ -47,8 +53,7 @@ class _ImagesCarouselState extends State<ImagesCarousel> {
               child: AnimatedSmoothIndicator(
                 activeIndex: currentImageIndex,
                 count: widget.images.length,
-                effect: const JumpingDotEffect(
-                    verticalOffset: 10,
+                effect: const ExpandingDotsEffect(
                     dotColor: AppColor.white,
                     activeDotColor: AppColor.pink,
                     dotHeight: 10,
