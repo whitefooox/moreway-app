@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,14 +11,32 @@ import 'package:moreway/core/di/inject.dart';
 import 'package:moreway/module/auth/domain/dependency/i_token_storage.dart';
 
 void main() async {
-  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  await runZonedGuarded(() async {
+    WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+    FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+    await setupApp();
+    runApp(App());
+    FlutterNativeSplash.remove();
+  }, (error, stack) {
+    log(error.toString());
+  });
+}
+
+Future<void> setupApp() async {
+  await configureDependencies(Env.prod);
+  setupApiClient(getIt<ITokenStorage>(), getIt<Dio>());
+  setupOrientation();
+  setupSystemUI();
+}
+
+void setupOrientation() {
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
-  await configureDependencies(Env.prod);
-  setupApiClient(getIt<ITokenStorage>(), getIt<Dio>());
+}
+
+void setupSystemUI() {
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       systemStatusBarContrastEnforced: true,
       systemNavigationBarColor: Colors.transparent,
@@ -24,6 +45,4 @@ void main() async {
       statusBarIconBrightness: Brightness.dark));
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
       overlays: [SystemUiOverlay.top]);
-  runApp(App());
-  FlutterNativeSplash.remove();
 }
