@@ -1,4 +1,3 @@
-import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
@@ -26,8 +25,4 @@ class LocationV2Bloc extends Bloc<LocationV2Event, LocationV2State> {
     }
   }
 
-  @override
-  Future<void> close() {
-    return super.close();
-  }
 }

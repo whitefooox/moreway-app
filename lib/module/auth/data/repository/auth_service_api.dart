@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:moreway/core/api/api.dart';
+import 'package:moreway/core/api/api_client.dart';
 import 'package:moreway/module/auth/data/mapping/signin_data_model.dart';
 import 'package:moreway/module/auth/data/mapping/signup_data_model.dart';
 import 'package:moreway/module/auth/domain/dependency/i_auth_service.dart';
@@ -9,9 +10,9 @@ import 'package:moreway/module/auth/domain/entity/token.dart';
 import 'package:moreway/module/auth/domain/exception/auth_exception.dart';
 
 class AuthServiceAPI implements IAuthService {
-  final Dio _dio;
+  final ApiClient _client;
 
-  AuthServiceAPI(this._dio);
+  AuthServiceAPI(this._client);
 
   @override
   Future<Token> signIn(SignInData data) async {
@@ -19,7 +20,7 @@ class AuthServiceAPI implements IAuthService {
         SignInDataModel(email: data.email, password: data.password);
     try {
       final response =
-          await _dio.post(Api.loginUrl, data: signInDataModel.toJson());
+          await _client.dio.post(Api.loginUrl, data: signInDataModel.toJson());
       final tokenString = response.data["data"]["accessToken"];
       return Token(tokenString as String);
     } on DioException catch (e) {
@@ -30,7 +31,7 @@ class AuthServiceAPI implements IAuthService {
   @override
   Future<void> signOut() async {
     try {
-      await _dio.post(Api.logoutUrl);
+      await _client.dio.post(Api.logoutUrl);
     } on DioException catch (e) {
       throw _handleException(e);
     }
@@ -41,7 +42,7 @@ class AuthServiceAPI implements IAuthService {
     final signUpDataModel = SignUpDataModel(
         name: data.name, email: data.email, password: data.password);
     try {
-      await _dio.post(Api.registerUrl, data: signUpDataModel.toJson());
+      await _client.dio.post(Api.registerUrl, data: signUpDataModel.toJson());
       final signInData = SignInData(email: data.email, password: data.password);
       return await signIn(signInData);
     } on DioException catch (e) {

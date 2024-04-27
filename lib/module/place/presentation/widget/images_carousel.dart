@@ -1,13 +1,12 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:moreway/core/theme/colors.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class ImagesCarousel extends StatefulWidget {
   final List<String> images;
 
-  ImagesCarousel({super.key, required this.images});
+  const ImagesCarousel({super.key, required this.images});
 
   @override
   State<ImagesCarousel> createState() => _ImagesCarouselState();
@@ -31,7 +30,7 @@ class _ImagesCarouselState extends State<ImagesCarousel> {
                         e,
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) {
-                          return Center(
+                          return const Center(
                             child: Icon(Icons.not_interested),
                           );
                         },

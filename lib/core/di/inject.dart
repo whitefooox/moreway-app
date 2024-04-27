@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
+import 'package:moreway/core/api/api_client.dart';
 import 'package:moreway/module/auth/data/repository/auth_service_api.dart';
 import 'package:moreway/module/auth/data/repository/token_secure_storage.dart';
 import 'package:moreway/module/auth/domain/dependency/i_auth_service.dart';
@@ -39,7 +40,7 @@ class DIContainer {
   static GetIt get getIt => GetIt.instance;
 
   Future<void> inject() async {
-    getIt.registerLazySingleton<Dio>(() => Dio());
+    getIt.registerFactory<Dio>(() => Dio());
     getIt.registerSingleton<FlutterSecureStorage>(const FlutterSecureStorage());
     getIt.registerSingletonAsync<SharedPreferences>(
         () => SharedPreferences.getInstance());
@@ -51,11 +52,12 @@ class DIContainer {
   }
 
   void _injectAuth() {
+    getIt.registerLazySingleton<ITokenStorage>(
+        () => TokenSecureStorage(getIt()));
+    getIt.registerLazySingleton<ApiClient>(() => ApiClient(getIt(), getIt()));
     getIt.registerLazySingleton<IAuthService>(() => AuthServiceAPI(getIt()));
     // getIt.registerLazySingleton<IAuthService>(() => AuthServiceMock(),
     //     instanceName: "AuthServiceMock");
-    getIt.registerLazySingleton<ITokenStorage>(
-        () => TokenSecureStorage(getIt()));
     getIt.registerLazySingleton<AuthInteractor>(
         () => AuthInteractor(getIt(), getIt()));
     getIt.registerLazySingleton<AuthBloc>(() => AuthBloc(getIt()));
@@ -64,7 +66,7 @@ class DIContainer {
   void _injectLocation() {
     getIt.registerSingleton<ILocationService>(GeolocatorService());
     getIt.registerLazySingleton<IGeoincoderService>(
-        () => OSMGeoincoderService());
+        () => OSMGeoincoderService(getIt()));
     getIt.registerSingleton<ILocationPermissionService>(
         GeolocatorPermissionService());
     getIt.registerLazySingleton<GetCurrentCityUseCase>(

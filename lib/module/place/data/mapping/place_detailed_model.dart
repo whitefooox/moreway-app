@@ -1,5 +1,4 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'dart:developer';
 
 import 'package:json_annotation/json_annotation.dart';
 import 'package:moreway/module/place/domain/entity/place_detailed.dart';

@@ -1,12 +1,10 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:moreway/core/api/loading_status.dart';
-import 'package:moreway/core/theme/colors.dart';
 import 'package:moreway/module/location/presentation/state/location/location_bloc.dart';
 import 'package:moreway/module/place/domain/entity/place.dart';
 import 'package:moreway/module/place/presentation/state/places/places_bloc.dart';
@@ -26,7 +24,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final _scrollController = ScrollController();
   final TextEditingController _searchController = TextEditingController();
-  final FocusNode _focusNode = FocusNode();
   Timer? _debounce;
   late final PlacesBloc _placesBloc;
 
@@ -74,7 +71,6 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-    final theme = Theme.of(context);
 
     return Padding(
       padding: EdgeInsets.only(

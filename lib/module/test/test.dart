@@ -6,10 +6,14 @@ class CustomSlider extends StatefulWidget {
   final double max;
   final Function(double) onChanged;
 
-  CustomSlider({required this.min, required this.max, required this.onChanged});
+  const CustomSlider(
+      {super.key,
+      required this.min,
+      required this.max,
+      required this.onChanged});
 
   @override
-  _CustomSliderState createState() => _CustomSliderState();
+  State<CustomSlider> createState() => _CustomSliderState();
 }
 
 class _CustomSliderState extends State<CustomSlider> {
@@ -58,7 +62,7 @@ class CustomTrackShape extends RoundedRectSliderTrackShape {
 class CustomThumbShape extends SliderComponentShape {
   @override
   Size getPreferredSize(bool isEnabled, bool isDiscrete) {
-    return Size(20, 30);
+    return const Size(20, 30);
   }
 
   @override

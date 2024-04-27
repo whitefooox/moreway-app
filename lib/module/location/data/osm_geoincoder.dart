@@ -6,9 +6,9 @@ import 'package:moreway/module/location/domain/dependency/i_geoincoder_service.d
 import 'package:moreway/module/location/domain/entity/position_point.dart';
 
 class OSMGeoincoderService implements IGeoincoderService {
-  final Dio _dio = Dio();
+  final Dio _dio;
 
-  OSMGeoincoderService();
+  OSMGeoincoderService(this._dio);
 
   @override
   Future<String> getCity(PositionPoint position) async {

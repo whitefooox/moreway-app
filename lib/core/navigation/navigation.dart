@@ -34,42 +34,53 @@ class AppRouter {
     initRouter();
   }
 
+  GoRoute _buildWelcomePage() {
+    return GoRoute(
+      path: "/welcome",
+      name: "welcome",
+      builder: (context, state) {
+        return BlocProvider<LaunchBloc>.value(
+          value: getIt<LaunchBloc>(),
+          child: const WelcomePage(),
+        );
+      },
+    );
+  }
+
+  GoRoute _buildSigninPage({List<GoRoute> routes = const []}) {
+    return GoRoute(
+        path: "/signin",
+        builder: (context, state) {
+          return BlocProvider<AuthBloc>.value(
+            value: _authBloc,
+            child: const SignInPage(),
+          );
+        },
+        routes: routes);
+  }
+
   void initRouter() {
     router = GoRouter(
         //debugLogDiagnostics: true,
         initialLocation: "/home",
         navigatorKey: _rootNavigatorKey,
         routes: [
-          GoRoute(
-            path: WelcomePage.path,
-            name: WelcomePage.name,
-            builder: (context, state) {
-              return WelcomePage.create();
-            },
-          ),
-          GoRoute(
-              path: "/signin",
-              builder: (context, state) {
-                return BlocProvider<AuthBloc>.value(
-                  value: _authBloc,
-                  child: const SignInPage(),
-                );
-              },
-              routes: [
-                GoRoute(
-                    path: "reset-password",
-                    builder: (context, state) {
-                      return EmailForResetPasswordPage();
-                    },
-                    routes: [
-                      GoRoute(
-                          path: "verify-code",
-                          builder: (context, state) {
-                            return const VerifyCodePage();
-                          },
-                          routes: const []),
-                    ]),
-              ]),
+          _buildWelcomePage(),
+          _buildSigninPage(routes: [
+            GoRoute(
+                path: "reset-password",
+                builder: (context, state) {
+                  return EmailForResetPasswordPage();
+                },
+                routes: [
+                  GoRoute(
+                      path: "verify-code",
+                      builder: (context, state) {
+                        return const VerifyCodePage();
+                      },
+                      routes: const []),
+                ]),
+          ]),
           GoRoute(
             path: "/signup",
             builder: (context, state) {
@@ -109,7 +120,7 @@ class AppRouter {
                             return BlocProvider(
                               create: (_) => getIt<PlaceBloc>()
                                 ..add(PlaceLoadEvent(id: placeId!)),
-                              child: PlaceViewPage(),
+                              child: const PlaceViewPage(),
                             );
                           },
                         )
@@ -128,7 +139,7 @@ class AppRouter {
                       builder: (context, state) => BlocProvider.value(
                           value: getIt<LocationV2Bloc>()
                             ..add(LocationV2EventLoad()),
-                          child: MapPage())),
+                          child: const MapPage())),
                 ]),
                 StatefulShellBranch(routes: [
                   GoRoute(
@@ -165,7 +176,7 @@ class AppRouter {
   String? firstLaunchMiddleware(BuildContext context, GoRouterState state) {
     final isFirstLaunch = _launchBloc.state.isFirstLaunch;
     if (isFirstLaunch) {
-      return state.namedLocation(WelcomePage.name);
+      return state.namedLocation("welcome");
     }
     return null;
   }

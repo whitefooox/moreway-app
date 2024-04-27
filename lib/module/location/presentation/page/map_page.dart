@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:moreway/core/di/inject.dart';
 import 'package:moreway/core/theme/colors.dart';
 import 'package:moreway/module/location/domain/entity/position.dart';
-import 'package:moreway/module/location/presentation/state/location/location_bloc.dart';
 import 'package:moreway/module/location/presentation/state/location_v2/location_v2_bloc.dart';
 
 class MapPage extends StatefulWidget {
-  MapPage({super.key});
+  const MapPage({super.key});
 
   @override
   State<MapPage> createState() => _MapPageState();
@@ -49,7 +47,7 @@ class _MapPageState extends State<MapPage> {
             initialZoom: 16,
             minZoom: 8,
             maxZoom: 16,
-            interactionOptions: InteractionOptions(flags: InteractiveFlag.all)),
+            interactionOptions: const InteractionOptions(flags: InteractiveFlag.all)),
         children: [
           TileLayer(
             urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -68,7 +66,7 @@ class _MapPageState extends State<MapPage> {
         bloc: locationBloc,
         builder: (context, state) {
           if (state is LocationV2Loading) {
-            return CircularProgressIndicator();
+            return const CircularProgressIndicator();
           }
           if (state is LocationV2Loaded) {
             return Stack(
@@ -83,10 +81,10 @@ class _MapPageState extends State<MapPage> {
                       children: [
                         ElevatedButton.icon(
                             onPressed: () {},
-                            icon: Icon(Icons.check),
-                            label: Text("Прошел"),
+                            icon: const Icon(Icons.check),
+                            label: const Text("Прошел"),
                             style: ElevatedButton.styleFrom(
-                                minimumSize: Size(100, 40)))
+                                minimumSize: const Size(100, 40)))
                         // SizedBox(
                         //     height: 40,
                         //     width: 140,
@@ -102,7 +100,7 @@ class _MapPageState extends State<MapPage> {
               ],
             );
           } else {
-            return Text("Все сломалось");
+            return const Text("Все сломалось");
           }
         },
       ),

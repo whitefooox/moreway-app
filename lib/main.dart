@@ -1,15 +1,11 @@
 import 'dart:async';
 import 'dart:developer';
 
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-import 'package:get_it/get_it.dart';
-import 'package:moreway/core/api/api_client.dart';
 import 'package:moreway/core/app.dart';
 import 'package:moreway/core/di/inject.dart';
-import 'package:moreway/module/auth/domain/dependency/i_token_storage.dart';
 
 void main() async {
   await runZonedGuarded(() async {
@@ -24,10 +20,8 @@ void main() async {
 }
 
 Future<void> setupApp() async {
-  final getIt = GetIt.instance;
   await DIContainer().inject();
-  //await configureDependencies(Env.prod);
-  setupApiClient(getIt<ITokenStorage>(), getIt<Dio>());
+  //setupApiClient(getIt<ITokenStorage>(), getIt<Dio>());
   setupOrientation();
   setupSystemUI();
 }

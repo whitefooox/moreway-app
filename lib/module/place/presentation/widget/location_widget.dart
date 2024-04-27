@@ -7,7 +7,7 @@ class LocationWidget extends StatefulWidget {
   const LocationWidget({Key? key, this.city}) : super(key: key);
 
   @override
-  _LocationWidgetState createState() => _LocationWidgetState();
+  State<LocationWidget> createState() => _LocationWidgetState();
 }
 
 class _LocationWidgetState extends State<LocationWidget>

@@ -1,6 +1,1 @@
-enum PlaceSortType {
-  Best,
-  New,
-  Popular,
-  Nearest
-}
+enum PlaceSortType { best, neew, popular, nearest }

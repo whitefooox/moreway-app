@@ -1,10 +1,7 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:moreway/core/theme/colors.dart';
 import 'package:moreway/module/place/domain/entity/place_filter_options.dart';
 import 'package:moreway/module/place/domain/entity/selected_place_filters.dart';
-import 'package:moreway/module/test/test.dart';
 
 class LocationFilter extends StatefulWidget {
   final PlaceFilterOptions filtersOptions;
@@ -33,7 +30,6 @@ class _LocationFilterState extends State<LocationFilter> {
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -75,7 +71,7 @@ class _LocationFilterState extends State<LocationFilter> {
           'Рейтинг',
           style: TextStyle(fontSize: 16.0),
         ),
-        Container(
+        SizedBox(
           width: 200.0,
           child: RangeSlider(
             activeColor: AppColor.black,
@@ -109,7 +105,7 @@ class _LocationFilterState extends State<LocationFilter> {
           'Расстояние',
           style: TextStyle(fontSize: 16.0),
         ),
-        Container(
+        SizedBox(
           width: 200.0,
           child: RangeSlider(
             activeColor: AppColor.black,

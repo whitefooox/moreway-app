@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:go_router/go_router.dart';
@@ -11,7 +9,7 @@ import 'package:moreway/module/place/presentation/state/place/place_bloc.dart';
 import 'package:moreway/module/place/presentation/widget/images_carousel.dart';
 
 class PlaceViewPage extends StatefulWidget {
-  PlaceViewPage({super.key});
+  const PlaceViewPage({super.key});
 
   @override
   State<PlaceViewPage> createState() => _PlaceViewPageState();
@@ -165,15 +163,15 @@ class _PlaceViewPageState extends State<PlaceViewPage>
                               textAlign: TextAlign.justify,
                             ),
                           ),
-                          Center(
+                          const Center(
                             child: Text("Здесь скоро будут отзывы..."),
                           ),
-                          Center(
+                          const Center(
                             child: Text("Карта..."),
                           )
                         ]),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       )
                     ],
@@ -230,7 +228,7 @@ class _PlaceViewPageState extends State<PlaceViewPage>
                 backgroundColor: AppColor.white,
                 child: Icon(Icons.arrow_back))),
       ),
-      body: Container(
+      body: SizedBox(
         width: screenSize.width,
         height: screenSize.height,
         child: BlocBuilder<PlaceBloc, PlaceState>(

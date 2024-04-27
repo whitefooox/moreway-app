@@ -30,6 +30,6 @@ final appThemeData = ThemeData(
     ),
     textSelectionTheme:
         const TextSelectionThemeData(cursorColor: AppColor.black),
-    chipTheme: ChipThemeData(iconTheme: IconThemeData(color: AppColor.pink))
+    chipTheme: const ChipThemeData(iconTheme: IconThemeData(color: AppColor.pink))
     // textTheme: TextTheme()
     );
