@@ -18,4 +18,16 @@ class Place {
     required this.image,
     required this.location,
   });
+
+  factory Place.createFake() {
+    return Place(
+        id: "1",
+        distance: 10,
+        name: "name",
+        lat: 10,
+        lon: 10,
+        rating: 5,
+        image: "https://bellard.org/bpg/2.png",
+        location: "Location");
+  }
 }

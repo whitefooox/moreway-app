@@ -6,8 +6,12 @@ class AppSearchBar extends StatelessWidget {
   final void Function()? onClickFilter;
   final void Function(String)? onChanged;
 
-  const AppSearchBar(
-      {super.key, this.controller, this.onClickFilter, this.onChanged});
+  const AppSearchBar({
+    super.key,
+    this.controller,
+    this.onClickFilter,
+    this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {

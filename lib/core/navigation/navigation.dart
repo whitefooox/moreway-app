@@ -9,8 +9,12 @@ import 'package:moreway/module/auth/presentation/page/auth/signin.dart';
 import 'package:moreway/module/auth/presentation/page/auth/signup.dart';
 import 'package:moreway/module/auth/presentation/page/password/reset_password.dart';
 import 'package:moreway/module/auth/presentation/page/password/verify_code.dart';
-import 'package:moreway/module/location/presentation/state/bloc/location_bloc.dart';
-import 'package:moreway/module/place/presentation/state/bloc/places_bloc.dart';
+import 'package:moreway/module/location/presentation/state/location/location_bloc.dart';
+import 'package:moreway/module/location/presentation/page/map_page.dart';
+import 'package:moreway/module/location/presentation/state/location_v2/location_v2_bloc.dart';
+import 'package:moreway/module/place/presentation/page/place_view_page.dart';
+import 'package:moreway/module/place/presentation/state/place/place_bloc.dart';
+import 'package:moreway/module/place/presentation/state/places/places_bloc.dart';
 import 'package:moreway/module/welcome/presentation/bloc/launch_bloc.dart';
 import 'package:moreway/module/welcome/presentation/page/welcome.dart';
 import 'package:moreway/core/navigation/root_page.dart';
@@ -21,6 +25,7 @@ class AppRouter {
   late final AuthBloc _authBloc;
   late final LaunchBloc _launchBloc;
   late GoRouter router;
+  final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
   AppRouter() {
     _authBloc = getIt<AuthBloc>();
@@ -32,6 +37,7 @@ class AppRouter {
     router = GoRouter(
         //debugLogDiagnostics: true,
         initialLocation: "/home",
+        navigatorKey: _rootNavigatorKey,
         routes: [
           GoRoute(
             path: WelcomePage.path,
@@ -73,6 +79,7 @@ class AppRouter {
             },
           ),
           StatefulShellRoute.indexedStack(
+              //parentNavigatorKey: _rootNavigatorKey,
               builder: (context, state, navigationShell) =>
                   RootPage(navigationShell: navigationShell),
               branches: [
@@ -82,14 +89,30 @@ class AppRouter {
                       builder: (context, state) => MultiBlocProvider(
                             providers: [
                               BlocProvider<PlacesBloc>(
-                                create: (_) => getIt<PlacesBloc>(),
+                                create: (_) => getIt<PlacesBloc>()
+                                  ..add(LoadPlacesAndFiltersEvent()),
                               ),
-                              BlocProvider(
-                                create: (_) => getIt<LocationBloc>(),
+                              BlocProvider.value(
+                                value: getIt<LocationBloc>()
+                                  ..add(GetCurrentLocationEvent()),
                               ),
                             ],
                             child: const HomePage(),
-                          )),
+                          ),
+                      routes: [
+                        GoRoute(
+                          path: "place/:id",
+                          parentNavigatorKey: _rootNavigatorKey,
+                          builder: (context, state) {
+                            final placeId = state.pathParameters['id'];
+                            return BlocProvider(
+                              create: (_) => getIt<PlaceBloc>()
+                                ..add(PlaceLoadEvent(id: placeId!)),
+                              child: PlaceViewPage(),
+                            );
+                          },
+                        )
+                      ]),
                 ]),
                 StatefulShellBranch(routes: [
                   GoRoute(
@@ -100,10 +123,11 @@ class AppRouter {
                 ]),
                 StatefulShellBranch(routes: [
                   GoRoute(
-                    path: '/map',
-                    builder: (context, state) =>
-                        const Scaffold(body: Center(child: Text("map"))),
-                  ),
+                      path: '/map',
+                      builder: (context, state) => BlocProvider.value(
+                          value: getIt<LocationV2Bloc>()
+                            ..add(LocationV2EventLoad()),
+                          child: MapPage())),
                 ]),
                 StatefulShellBranch(routes: [
                   GoRoute(

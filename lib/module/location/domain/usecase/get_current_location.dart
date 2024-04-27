@@ -13,7 +13,7 @@ class GetCurrentPositionUseCase {
 
   Future<Position> execute() async {
     final isGranted = await _permissionService.isPermissionGranted();
-    if(!isGranted) return Future.error(NoLocationPermissionException());
+    if (!isGranted) return Future.error(NoLocationPermissionException());
     return _locationService.getCurrentPosition();
   }
 }

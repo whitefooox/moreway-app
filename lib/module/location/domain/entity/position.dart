@@ -1,22 +1,12 @@
-import 'package:json_annotation/json_annotation.dart';
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:moreway/module/location/domain/entity/position_point.dart';
 
-part 'position.g.dart';
-
-@JsonSerializable()
 class Position {
-
-  @JsonKey(name: "lat")
-  final double latitude;
-
-  @JsonKey(name: "lon")
-  final double longitude;
+  final PositionPoint point;
+  final double heading;
 
   Position({
-    required this.latitude,
-    required this.longitude,
+    required this.point,
+    required this.heading,
   });
-
-  factory Position.fromJson(Map<String, dynamic> json) => _$PositionFromJson(json);
-
-  Map<String, dynamic> toJson() => _$PositionToJson(this);
 }

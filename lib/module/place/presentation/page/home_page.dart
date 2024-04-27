@@ -3,10 +3,14 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:moreway/core/api/loading_status.dart';
-import 'package:moreway/module/location/presentation/state/bloc/location_bloc.dart';
+import 'package:moreway/core/theme/colors.dart';
+import 'package:moreway/module/location/presentation/state/location/location_bloc.dart';
 import 'package:moreway/module/place/domain/entity/place.dart';
-import 'package:moreway/module/place/presentation/state/bloc/places_bloc.dart';
+import 'package:moreway/module/place/presentation/state/places/places_bloc.dart';
+import 'package:moreway/module/place/presentation/widget/location_filter.dart';
 import 'package:moreway/module/place/presentation/widget/location_widget.dart';
 import 'package:moreway/module/place/presentation/widget/place_card.dart';
 import 'package:moreway/module/place/presentation/widget/search_bar.dart';
@@ -46,6 +50,27 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  void _onClickFilter() {
+    showMaterialModalBottomSheet(
+      useRootNavigator: true,
+      context: context,
+      builder: (BuildContext context) {
+        return LocationFilter(
+          filtersOptions: _placesBloc.state.filterOptions!,
+          onSubmit: (filters) {
+            _placesBloc.add(UpdateFiltersEvent(filters: filters));
+            Navigator.maybePop(context);
+          },
+          selectedPlaceFilters: _placesBloc.state.filters!,
+        );
+      },
+    );
+  }
+
+  void _onClickPlace(String id) {
+    context.go("/home/place/$id");
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
@@ -68,7 +93,6 @@ class _HomePageState extends State<HomePage> {
               city: state.city,
             );
           }),
-          //actions: [buildAvatar()],
         ),
         body: CustomScrollView(
           controller: _scrollController,
@@ -77,6 +101,7 @@ class _HomePageState extends State<HomePage> {
               expandedHeight: 45,
               flexibleSpace: AppSearchBar(
                 controller: _searchController,
+                onClickFilter: _onClickFilter,
               ),
               pinned: true,
               floating: true,
@@ -105,21 +130,23 @@ class _HomePageState extends State<HomePage> {
             BlocBuilder<PlacesBloc, PlacesState>(
               bloc: _placesBloc,
               builder: (context, state) {
-                if (state.places.isNotEmpty) {
+                if (state.places != null) {
                   return SliverGrid(
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
-                      mainAxisSpacing: 10.0,
-                      crossAxisSpacing: 10.0,
+                      mainAxisSpacing: 5.0,
+                      crossAxisSpacing: 5.0,
                     ),
                     delegate: SliverChildBuilderDelegate(
                       (context, index) {
-                        final place = state.places[index];
+                        final place = state.places![index];
                         //return buildPlaceCard(place);
-                        return PlaceCard(place: place);
+                        return InkWell(
+                            onTap: () => _onClickPlace(place.id),
+                            child: PlaceCard(place: place));
                       },
-                      childCount: state.places.length,
+                      childCount: state.places!.length,
                     ),
                   );
                 } else {
@@ -148,17 +175,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                         delegate: SliverChildBuilderDelegate(
                           (context, index) {
-                            final place = Place(
-                                id: "0",
-                                distance: 0,
-                                name: "name",
-                                lat: 0,
-                                lon: 0,
-                                rating: 0,
-                                image:
-                                    "https://more-way.ru/storage/places/moscow_square.png",
-                                location: "location");
-                            //return buildPlaceCard(place);
+                            final place = Place.createFake();
                             return PlaceCard(place: place);
                           },
                           childCount: 8,
@@ -167,59 +184,6 @@ class _HomePageState extends State<HomePage> {
                     );
                   }
                 }
-                //if (state.loadingStatus == LoadingStatus.loading) {
-                //   return Skeletonizer.sliver(
-                //     enabled: true,
-                //     child: SliverGrid(
-                //       gridDelegate:
-                //           const SliverGridDelegateWithFixedCrossAxisCount(
-                //         crossAxisCount: 2,
-                //         mainAxisSpacing: 10.0,
-                //         crossAxisSpacing: 10.0,
-                //       ),
-                //       delegate: SliverChildBuilderDelegate(
-                //         (context, index) {
-                //           final place = Place(
-                //               id: "0",
-                //               distance: 0,
-                //               name: "name",
-                //               lat: 0,
-                //               lon: 0,
-                //               rating: 0,
-                //               image:
-                //                   "https://more-way.ru/storage/places/moscow_square.png",
-                //               location: "location");
-                //           //return buildPlaceCard(place);
-                //           return PlaceCard(place: place);
-                //         },
-                //         childCount: 8,
-                //       ),
-                //     ),
-                //   );
-                // } else if (state.loadingStatus == LoadingStatus.success) {
-                //   return SliverGrid(
-                //     gridDelegate:
-                //         const SliverGridDelegateWithFixedCrossAxisCount(
-                //       crossAxisCount: 2,
-                //       mainAxisSpacing: 10.0,
-                //       crossAxisSpacing: 10.0,
-                //     ),
-                //     delegate: SliverChildBuilderDelegate(
-                //       (context, index) {
-                //         final place = state.places[index];
-                //         //return buildPlaceCard(place);
-                //         return PlaceCard(place: place);
-                //       },
-                //       childCount: state.places.length,
-                //     ),
-                //   );
-                // } else {
-                //   return const SliverFillRemaining(
-                //     child: Center(
-                //       child: Text('Не удалось загрузить достопримечательности'),
-                //     ),
-                //   );
-                // }
               },
             ),
           ],

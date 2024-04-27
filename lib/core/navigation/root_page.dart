@@ -4,10 +4,7 @@ import 'package:go_router/go_router.dart';
 class RootPage extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
 
-  const RootPage({
-    super.key,
-    required this.navigationShell
-  });
+  const RootPage({super.key, required this.navigationShell});
 
   @override
   Widget build(BuildContext context) {
@@ -15,26 +12,29 @@ class RootPage extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
-        body: 
-        Stack(
-          children: [
-            navigationShell,
-            Positioned(
-              bottom: screenSize.width * 0.05,
-              left: screenSize.width * 0.05,
-              right: screenSize.width * 0.05,
+        body: Stack(children: [
+          navigationShell,
+          Positioned(
+              bottom: screenSize.width * 0.035,
+              left: screenSize.width * 0.035,
+              right: screenSize.width * 0.035,
               child: SizedBox(
-                height: 70,
+                height: 60,
                 child: ClipRRect(
-                  borderRadius: const BorderRadius.all( Radius.circular(15)),
+                  borderRadius: const BorderRadius.all(Radius.circular(15)),
                   child: BottomNavigationBar(
                     currentIndex: navigationShell.currentIndex,
                     items: const [
-                      BottomNavigationBarItem(icon: Icon(Icons.home), label: "home"),
-                      BottomNavigationBarItem(icon: Icon(Icons.route), label: "route"),
-                      BottomNavigationBarItem(icon: Icon(Icons.place), label: "place"),
-                      BottomNavigationBarItem(icon: Icon(Icons.chat_rounded), label: "chat"),
-                      BottomNavigationBarItem(icon: Icon(Icons.account_circle), label: "account")
+                      BottomNavigationBarItem(
+                          icon: Icon(Icons.home), label: "home"),
+                      BottomNavigationBarItem(
+                          icon: Icon(Icons.route), label: "route"),
+                      BottomNavigationBarItem(
+                          icon: Icon(Icons.place), label: "place"),
+                      BottomNavigationBarItem(
+                          icon: Icon(Icons.chat_rounded), label: "chat"),
+                      BottomNavigationBarItem(
+                          icon: Icon(Icons.account_circle), label: "account")
                     ],
                     onTap: (index) => navigationShell.goBranch(
                       index,
@@ -42,12 +42,9 @@ class RootPage extends StatelessWidget {
                     ),
                   ),
                 ),
-              )
-            )
-          ]
-        ),
+              ))
+        ]),
       ),
     );
   }
-
 }

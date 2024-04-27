@@ -9,7 +9,7 @@ part 'place_model.g.dart';
 
 @JsonSerializable()
 class PlaceModel {
-  final String id;
+  final int id;
   final String name;
   final double lat;
   final double lon;
@@ -54,7 +54,7 @@ class PlaceModel {
 
   Place toPlace() {
     return Place(
-        id: id,
+        id: id.toString(),
         distance: distance,
         name: name,
         lat: lat,

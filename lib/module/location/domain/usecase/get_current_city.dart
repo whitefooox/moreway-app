@@ -11,13 +11,12 @@ class GetCurrentCityUseCase {
   final ILocationService _locationService;
 
   GetCurrentCityUseCase(this._geoincoderService,
-                        this._locationPermissionService,
-                        this._locationService);
-  
+      this._locationPermissionService, this._locationService);
+
   Future<String> execute() async {
     final isGranted = await _locationPermissionService.isPermissionGranted();
-    if(!isGranted) return Future.error(NoLocationPermissionException());
+    if (!isGranted) return Future.error(NoLocationPermissionException());
     final position = await _locationService.getCurrentPosition();
-    return _geoincoderService.getCity(position);
+    return _geoincoderService.getCity(position.point);
   }
 }

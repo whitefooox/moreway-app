@@ -1,8 +1,8 @@
 import 'package:injectable/injectable.dart';
 import 'package:moreway/module/place/domain/dependency/i_place_repository.dart';
-import 'package:moreway/module/place/domain/entity/place_filters.dart';
 import 'package:moreway/module/place/domain/entity/place_page.dart';
 import 'package:moreway/module/place/domain/entity/place_sort_type.dart';
+import 'package:moreway/module/place/domain/entity/selected_place_filters.dart';
 
 @Singleton()
 class GetPlacesUseCase {
@@ -11,7 +11,9 @@ class GetPlacesUseCase {
   GetPlacesUseCase(this._placeRepository);
 
   Future<PlacePage> execute(
-      {String? cursor, PlaceSortType? sortType, PlaceFilters? filters}) {
-    return _placeRepository.get(cursor: cursor, filters: filters);
+      {String? cursor,
+      PlaceSortType? sortType,
+      SelectedPlaceFilters? filters}) {
+    return _placeRepository.getPlaces(cursor: cursor, filters: filters);
   }
 }
