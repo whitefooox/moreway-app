@@ -1,7 +1,6 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:moreway/core/di/inject.dart';
 import 'package:moreway/module/auth/presentation/bloc/auth_bloc.dart';
@@ -26,6 +25,8 @@ class AppRouter {
   late final LaunchBloc _launchBloc;
   late GoRouter router;
   final _rootNavigatorKey = GlobalKey<NavigatorState>();
+
+  GetIt get getIt => DIContainer.getIt;
 
   AppRouter() {
     _authBloc = getIt<AuthBloc>();

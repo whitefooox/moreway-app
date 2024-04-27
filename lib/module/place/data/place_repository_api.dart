@@ -1,9 +1,7 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
-import 'package:injectable/injectable.dart';
 import 'package:moreway/core/api/api.dart';
-import 'package:moreway/core/di/inject.dart';
 import 'package:moreway/module/location/data/mapper/position_model.dart';
 import 'package:moreway/module/location/domain/usecase/get_current_location.dart';
 import 'package:moreway/module/place/data/mapping/place_detailed_model.dart';
@@ -14,7 +12,6 @@ import 'package:moreway/module/place/domain/entity/place_detailed.dart';
 import 'package:moreway/module/place/domain/entity/place_page.dart';
 import 'package:moreway/module/place/domain/entity/selected_place_filters.dart';
 
-@Singleton(as: IPlaceRepository, env: [Env.prod])
 class PlaceRepositoryAPI implements IPlaceRepository {
   final Dio _dio;
   final int limit = 8;

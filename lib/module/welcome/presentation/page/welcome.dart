@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
-import 'package:moreway/core/di/inject.dart';
 import 'package:moreway/core/theme/colors.dart';
 import 'package:moreway/module/welcome/presentation/bloc/launch_bloc.dart';
 
@@ -13,7 +13,7 @@ class WelcomePage extends StatelessWidget {
 
   static Widget create() {
     return BlocProvider<LaunchBloc>.value(
-      value: getIt<LaunchBloc>(),
+      value: GetIt.instance.get<LaunchBloc>(),
       child: const WelcomePage(),
     );
   }
@@ -119,7 +119,7 @@ class WelcomePage extends StatelessWidget {
     final screenSize = MediaQuery.of(context).size;
     return BlocListener<LaunchBloc, LaunchState>(
       listener: (context, state) {
-        if(state.isFirstLaunch == false){
+        if (state.isFirstLaunch == false) {
           context.go("/home");
         }
       },
@@ -142,16 +142,16 @@ class WelcomePage extends StatelessWidget {
                 height: screenSize.height * 0.43,
                 width: screenSize.width,
                 child: Container(
-                  decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                          begin: Alignment.bottomCenter,
-                          end: Alignment.topCenter,
-                          colors: [Colors.black, Colors.transparent])),
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                        left: screenSize.width * 0.06,
-                        right: screenSize.width * 0.06),
-                    child: Container(
+                    decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                            begin: Alignment.bottomCenter,
+                            end: Alignment.topCenter,
+                            colors: [Colors.black, Colors.transparent])),
+                    child: Padding(
+                        padding: EdgeInsets.only(
+                            left: screenSize.width * 0.06,
+                            right: screenSize.width * 0.06),
+                        child: Container(
                             decoration: const BoxDecoration(
                                 color: AppColor.white,
                                 borderRadius: BorderRadius.vertical(
@@ -186,7 +186,7 @@ class WelcomePage extends StatelessWidget {
                                     ],
                                   ),
                                 ))))),
-                  ),
+              ),
             ],
           ),
         ),

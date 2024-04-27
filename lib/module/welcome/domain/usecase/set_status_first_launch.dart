@@ -1,7 +1,5 @@
-import 'package:injectable/injectable.dart';
 import 'package:moreway/module/welcome/domain/dependency/i_launch_checker.dart';
 
-@Singleton()
 class SetStatusFirstLaunchUseCase {
   final ILaunchChecker _launchChecker;
 

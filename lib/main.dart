@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:get_it/get_it.dart';
 import 'package:moreway/core/api/api_client.dart';
 import 'package:moreway/core/app.dart';
 import 'package:moreway/core/di/inject.dart';
@@ -23,7 +24,9 @@ void main() async {
 }
 
 Future<void> setupApp() async {
-  await configureDependencies(Env.prod);
+  final getIt = GetIt.instance;
+  await DIContainer().inject();
+  //await configureDependencies(Env.prod);
   setupApiClient(getIt<ITokenStorage>(), getIt<Dio>());
   setupOrientation();
   setupSystemUI();

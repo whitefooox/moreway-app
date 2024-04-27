@@ -1,11 +1,8 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:injectable/injectable.dart';
 import 'package:moreway/module/auth/domain/dependency/i_token_storage.dart';
 import 'package:moreway/module/auth/domain/entity/token.dart';
 
-@Singleton(as: ITokenStorage)
 class TokenSecureStorage implements ITokenStorage {
-
   final FlutterSecureStorage _secureStorage;
   final key = "token";
 

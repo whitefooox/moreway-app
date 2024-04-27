@@ -1,13 +1,10 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
-import 'package:injectable/injectable.dart';
 import 'package:moreway/core/api/geoincoder_api.dart';
 import 'package:moreway/module/location/domain/dependency/i_geoincoder_service.dart';
-import 'package:moreway/module/location/data/mapper/position_model.dart';
 import 'package:moreway/module/location/domain/entity/position_point.dart';
 
-@Singleton(as: IGeoincoderService)
 class OSMGeoincoderService implements IGeoincoderService {
   final Dio _dio = Dio();
 

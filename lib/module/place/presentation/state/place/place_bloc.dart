@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
-import 'package:injectable/injectable.dart';
 import 'package:meta/meta.dart';
 import 'package:moreway/core/api/loading_status.dart';
 import 'package:moreway/module/place/domain/entity/place_detailed.dart';
@@ -10,7 +9,6 @@ import 'package:moreway/module/place/domain/usecase/get_place.dart';
 part 'place_event.dart';
 part 'place_state.dart';
 
-@Injectable()
 class PlaceBloc extends Bloc<PlaceEvent, PlaceState> {
   final GetPlaceUsecase _getPlaceUsecase;
 

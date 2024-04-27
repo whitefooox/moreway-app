@@ -1,12 +1,9 @@
-import 'package:injectable/injectable.dart';
-import 'package:moreway/core/di/inject.dart';
 import 'package:moreway/module/place/domain/dependency/i_place_repository.dart';
 import 'package:moreway/module/place/domain/entity/place.dart';
 import 'package:moreway/module/place/domain/entity/place_detailed.dart';
 import 'package:moreway/module/place/domain/entity/place_page.dart';
 import 'package:moreway/module/place/domain/entity/selected_place_filters.dart';
 
-@Singleton(as: IPlaceRepository, env: [Env.dev])
 class PlaceRepositoryMock implements IPlaceRepository {
   PlaceRepositoryMock();
 
