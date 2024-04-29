@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:moreway/core/theme/colors.dart';
 import 'package:moreway/module/place/domain/entity/place_filter_options.dart';
@@ -25,7 +27,13 @@ class _LocationFilterState extends State<LocationFilter> {
   @override
   void initState() {
     super.initState();
-    _selectedPlaceFilters = widget.selectedPlaceFilters.copyWith();
+    _selectedPlaceFilters = widget.selectedPlaceFilters.copyWithNull(
+        rangeRating: () =>
+            widget.selectedPlaceFilters.rangeRating ??
+            widget.filtersOptions.rangeRating,
+        distance: () =>
+            widget.selectedPlaceFilters.distance ??
+            widget.filtersOptions.rangeDistance);
   }
 
   @override
@@ -77,18 +85,19 @@ class _LocationFilterState extends State<LocationFilter> {
             activeColor: AppColor.black,
             divisions: 5,
             labels: RangeLabels(
-              _selectedPlaceFilters.rangeRating[0].toStringAsFixed(0),
-              _selectedPlaceFilters.rangeRating[1].toStringAsFixed(0),
+              _selectedPlaceFilters.rangeRating![0].toStringAsFixed(0),
+              _selectedPlaceFilters.rangeRating![1].toStringAsFixed(0),
             ),
             min: widget.filtersOptions.rangeRating[0],
             max: widget.filtersOptions.rangeRating[1],
             values: RangeValues(
-              _selectedPlaceFilters.rangeRating[0],
-              _selectedPlaceFilters.rangeRating[1],
+              _selectedPlaceFilters.rangeRating![0],
+              _selectedPlaceFilters.rangeRating![1],
             ),
             onChanged: (values) {
               setState(() {
-                _selectedPlaceFilters.rangeRating = [values.start, values.end];
+                _selectedPlaceFilters = _selectedPlaceFilters.copyWithNull(
+                    rangeRating: () => [values.start, values.end]);
               });
             },
           ),
@@ -111,21 +120,20 @@ class _LocationFilterState extends State<LocationFilter> {
             activeColor: AppColor.black,
             divisions: 10,
             labels: RangeLabels(
-              _selectedPlaceFilters.distance[0].toStringAsFixed(0),
-              _selectedPlaceFilters.distance[1].toStringAsFixed(0),
+              _selectedPlaceFilters.distance![0].toStringAsFixed(0),
+              _selectedPlaceFilters.distance![1].toStringAsFixed(0),
             ),
             min: widget.filtersOptions.rangeDistance[0].toDouble(),
             max: widget.filtersOptions.rangeDistance[1].toDouble(),
             values: RangeValues(
-              _selectedPlaceFilters.distance[0].toDouble(),
-              _selectedPlaceFilters.distance[1].toDouble(),
+              _selectedPlaceFilters.distance![0].toDouble(),
+              _selectedPlaceFilters.distance![1].toDouble(),
             ),
             onChanged: (values) {
               setState(() {
-                _selectedPlaceFilters.distance = [
-                  values.start.toInt(),
-                  values.end.toInt()
-                ];
+                _selectedPlaceFilters = _selectedPlaceFilters.copyWithNull(
+                  distance: () => [values.start.toInt(), values.end.toInt()],
+                );
               });
             },
           ),
@@ -146,7 +154,9 @@ class _LocationFilterState extends State<LocationFilter> {
             value: _selectedPlaceFilters.locality,
             onChanged: (value) {
               setState(() {
-                _selectedPlaceFilters.locality = value;
+                _selectedPlaceFilters = _selectedPlaceFilters.copyWithNull(
+                  locality: () => value,
+                );
               });
             },
             items: [
@@ -179,7 +189,9 @@ class _LocationFilterState extends State<LocationFilter> {
             value: _selectedPlaceFilters.type,
             onChanged: (value) {
               setState(() {
-                _selectedPlaceFilters.type = value;
+                _selectedPlaceFilters = _selectedPlaceFilters.copyWithNull(
+                  type: () => value,
+                );
               });
             },
             items: [

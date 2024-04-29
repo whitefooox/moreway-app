@@ -1,15 +1,15 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 class SelectedPlaceFilters {
-  String? search;
-  List<double> rangeRating;
-  List<int> distance;
-  String? type;
-  String? locality;
+  final String? search;
+  final List<double>? rangeRating;
+  final List<int>? distance;
+  final String? type;
+  final String? locality;
 
-  SelectedPlaceFilters({
+  const SelectedPlaceFilters({
     this.search,
-    required this.rangeRating,
-    required this.distance,
+    this.rangeRating,
+    this.distance,
     this.type,
     this.locality,
   });
@@ -19,19 +19,18 @@ class SelectedPlaceFilters {
     return 'SelectedPlaceFilters(search: $search, rangeRating: $rangeRating, distance: $distance, type: $type, locality: $locality)';
   }
 
-  SelectedPlaceFilters copyWith({
-    String? search,
-    List<double>? rangeRating,
-    List<int>? distance,
-    String? type,
-    String? locality,
+  SelectedPlaceFilters copyWithNull({
+    String? Function()? search,
+    List<double>? Function()? rangeRating,
+    List<int>? Function()? distance,
+    String? Function()? type,
+    String? Function()? locality,
   }) {
     return SelectedPlaceFilters(
-      search: search ?? this.search,
-      rangeRating: rangeRating ?? this.rangeRating,
-      distance: distance ?? this.distance,
-      type: type ?? this.type,
-      locality: locality ?? this.locality,
-    );
+        search: search != null ? search() : this.search,
+        rangeRating: rangeRating != null ? rangeRating() : this.rangeRating,
+        distance: distance != null ? distance() : this.distance,
+        type: type != null ? type() : this.type,
+        locality: locality != null ? locality() : this.locality);
   }
 }

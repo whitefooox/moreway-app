@@ -7,6 +7,10 @@ class LoadPlacesAndFiltersEvent extends PlacesEvent {}
 
 class LoadPlacesEvent extends PlacesEvent {}
 
+class LoadMorePlacesEvent extends PlacesEvent {}
+
+class LoadFiltersEvent extends PlacesEvent {}
+
 class SearchPlacesEvent extends PlacesEvent {
   final String? query;
 

@@ -7,7 +7,7 @@ class PlacesState {
   final String? errorMessage;
   final List<Place>? places;
   final String? cursor;
-  final SelectedPlaceFilters? filters;
+  final SelectedPlaceFilters filters;
   final PlaceFilterOptions? filterOptions;
 
   PlacesState(
@@ -16,7 +16,7 @@ class PlacesState {
       this.places,
       this.cursor,
       this.isAllLoaded = false,
-      this.filters,
+      this.filters = const SelectedPlaceFilters(),
       this.filterOptions});
 
   PlacesState resetData() {

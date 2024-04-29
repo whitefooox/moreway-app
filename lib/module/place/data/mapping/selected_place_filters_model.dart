@@ -3,11 +3,13 @@ import 'package:moreway/module/place/domain/entity/selected_place_filters.dart';
 
 part 'selected_place_filters_model.g.dart';
 
-String _rangeToString(List<double> range) {
+String? _rangeToString(List<double>? range) {
+  if (range == null) return null;
   return "${range[0]}-${range[1]}";
 }
 
-String _rangeToString2(List<int> range) {
+String? _rangeToString2(List<int>? range) {
+  if (range == null) return null;
   return "${range[0]}-${range[1]}";
 }
 
@@ -16,10 +18,10 @@ class SelectedPlaceFiltersModel {
   final String? search;
 
   @JsonKey(name: "rating", toJson: _rangeToString)
-  final List<double> rangeRating;
+  final List<double>? rangeRating;
 
   @JsonKey(name: "distance", toJson: _rangeToString2)
-  final List<int> distance;
+  final List<int>? distance;
 
   final String? type;
 
