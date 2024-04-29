@@ -1,7 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:moreway/core/api/loading_status.dart';
-import 'package:moreway/module/place/data/mapping/selected_place_filters_model.dart';
 import 'package:moreway/module/place/domain/entity/place.dart';
 import 'package:moreway/module/place/domain/entity/place_filter_options.dart';
 import 'package:moreway/module/place/domain/entity/selected_place_filters.dart';
@@ -25,13 +24,13 @@ class PlacesBloc extends Bloc<PlacesEvent, PlacesState> {
   }
 
   void _load(LoadPlacesEvent event, Emitter<PlacesState> emit) async {
-    emit(state.copyWith(loadingStatus: LoadingStatus.loading));
+    emit(state.resetData());
     try {
       final placePage = await _getPlacesUseCase.execute(
           cursor: state.cursor, filters: state.filters);
       emit(state.copyWith(
           loadingStatus: LoadingStatus.success,
-          places: placePage.places,
+          places: () => placePage.places,
           cursor: placePage.cursor,
           isAllLoaded: placePage.cursor == null));
     } catch (e) {
@@ -47,7 +46,7 @@ class PlacesBloc extends Bloc<PlacesEvent, PlacesState> {
           cursor: state.cursor, filters: state.filters);
       emit(state.copyWith(
           loadingStatus: LoadingStatus.success,
-          places: state.places! + placePage.places,
+          places: () => state.places! + placePage.places,
           cursor: placePage.cursor,
           isAllLoaded: placePage.cursor == null));
     } catch (e) {
@@ -70,7 +69,7 @@ class PlacesBloc extends Bloc<PlacesEvent, PlacesState> {
       final placeFilters = await _getFiltersUsecase.execute();
       emit(state.copyWith(
           loadingStatus: LoadingStatus.success,
-          places: placePage.places,
+          places: () => placePage.places,
           cursor: placePage.cursor,
           isAllLoaded: placePage.cursor == null,
           filterOptions: placeFilters));

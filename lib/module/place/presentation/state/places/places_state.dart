@@ -23,7 +23,7 @@ class PlacesState {
     return copyWith(
       loadingStatus: LoadingStatus.loading,
       isAllLoaded: false,
-      places: null,
+      places: () => null,
       errorMessage: null,
       cursor: null,
     );
@@ -33,7 +33,7 @@ class PlacesState {
     LoadingStatus? loadingStatus,
     bool? isAllLoaded,
     String? errorMessage,
-    List<Place>? places,
+    List<Place>? Function()? places,
     String? cursor,
     SelectedPlaceFilters? filters,
     PlaceFilterOptions? filterOptions,
@@ -42,7 +42,7 @@ class PlacesState {
       loadingStatus: loadingStatus ?? this.loadingStatus,
       isAllLoaded: isAllLoaded ?? this.isAllLoaded,
       errorMessage: errorMessage ?? this.errorMessage,
-      places: places ?? this.places,
+      places: places != null ? places() : this.places,
       cursor: cursor ?? this.cursor,
       filters: filters ?? this.filters,
       filterOptions: filterOptions ?? this.filterOptions,
