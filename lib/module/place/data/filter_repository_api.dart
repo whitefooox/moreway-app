@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:moreway/core/api/api.dart';
 import 'package:moreway/core/api/api_client.dart';
-import 'package:moreway/module/place/data/mapping/place_filter_options_model.dart';
+import 'package:moreway/module/place/data/mapping/filter/place_filter_options_model.dart';
 import 'package:moreway/module/place/domain/dependency/i_filter_repository.dart';
 import 'package:moreway/module/place/domain/entity/place_filter_options.dart';
 

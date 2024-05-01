@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:moreway/module/place/data/mapping/place_model.dart';
+import 'package:moreway/module/place/data/mapping/place/place_model.dart';
 import 'package:moreway/module/place/domain/entity/place_page.dart';
 
 part 'place_page_model.g.dart';

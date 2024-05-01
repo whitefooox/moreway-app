@@ -1,4 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:go_router/go_router.dart';
@@ -22,7 +25,7 @@ class _PlaceViewPageState extends State<PlaceViewPage>
   @override
   void initState() {
     super.initState();
-    tabController = TabController(length: 3, vsync: this);
+    tabController = TabController(length: 2, vsync: this);
   }
 
   @override
@@ -94,95 +97,6 @@ class _PlaceViewPageState extends State<PlaceViewPage>
     );
   }
 
-  Widget _buildPlaceView(BuildContext context, PlaceDetailed place) {
-    final screenSize = MediaQuery.of(context).size;
-    return Stack(
-      children: [
-        SizedBox(
-            width: screenSize.width,
-            height: screenSize.width,
-            child: ImagesCarousel(images: place.images)),
-        Positioned(
-            bottom: 0,
-            child: Container(
-              decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius:
-                      BorderRadius.vertical(top: Radius.circular(35))),
-              width: screenSize.width,
-              height: screenSize.height - screenSize.width * 0.9,
-              child: Padding(
-                padding: EdgeInsets.only(
-                    left: screenSize.width * 0.035,
-                    right: screenSize.width * 0.035,
-                    top: screenSize.width * 0.05),
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 10, right: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildPlaceName(place.name),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      _buildLocation(place.location),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      _buildRating(place.rating),
-                      const SizedBox(
-                        height: 30,
-                      ),
-                      TabBar(
-                        indicatorColor: AppColor.pink,
-                        labelColor: AppColor.gray,
-                        tabs: const [
-                          Padding(
-                            padding: EdgeInsets.only(top: 8, bottom: 8),
-                            child: Text("Описание"),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(top: 8, bottom: 8),
-                            child: Text("Отзывы"),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(top: 8, bottom: 8),
-                            child: Text("На карте"),
-                          )
-                        ],
-                        controller: tabController,
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Expanded(
-                        child: TabBarView(controller: tabController, children: [
-                          SingleChildScrollView(
-                            child: Text(
-                              place.description,
-                              textAlign: TextAlign.justify,
-                            ),
-                          ),
-                          const Center(
-                            child: Text("Здесь скоро будут отзывы..."),
-                          ),
-                          const Center(
-                            child: Text("Карта..."),
-                          )
-                        ]),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            ))
-      ],
-    );
-  }
-
   Widget _buildError() {
     return const Center(
       child: Column(
@@ -217,33 +131,118 @@ class _PlaceViewPageState extends State<PlaceViewPage>
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        leading: IconButton(
-            onPressed: () {
-              context.pop();
-            },
-            icon: const CircleAvatar(
-                backgroundColor: AppColor.white,
-                child: Icon(Icons.arrow_back))),
-      ),
-      body: SizedBox(
-        width: screenSize.width,
-        height: screenSize.height,
-        child: BlocBuilder<PlaceBloc, PlaceState>(
-          builder: (context, state) {
-            switch (state.loadingStatus) {
-              case LoadingStatus.success:
-                return _buildPlaceView(context, state.place!);
-              case LoadingStatus.failure:
-                return _buildError();
-              default:
-                return _buildLoading();
-            }
-          },
-        ),
-      ),
-    );
+        body: BlocBuilder<PlaceBloc, PlaceState>(builder: (context, state) {
+      switch (state.loadingStatus) {
+        case LoadingStatus.success:
+          return NestedScrollView(
+            headerSliverBuilder: (context, innerBoxIsScrolled) => [
+              SliverAppBar(
+                pinned: true,
+                stretch: true,
+                elevation: 0.0,
+                expandedHeight: screenSize.width,
+                flexibleSpace: FlexibleSpaceBar(
+                  background: ImagesCarousel(images: state.place!.images),
+                  stretchModes: const [
+                    StretchMode.blurBackground,
+                    StretchMode.zoomBackground,
+                  ],
+                ),
+                bottom: PreferredSize(
+                  preferredSize: Size.fromHeight(0),
+                  child: Container(
+                    alignment: Alignment.center,
+                    height: screenSize.width * 0.1,
+                    width: screenSize.width,
+                    decoration: BoxDecoration(
+                        borderRadius:
+                            BorderRadius.vertical(top: Radius.circular(15)),
+                        color: AppColor.white),
+                    child: Container(
+                      width: 40,
+                      height: 5,
+                      decoration: BoxDecoration(
+                        color: AppColor.gray,
+                        borderRadius: BorderRadius.circular(100.0),
+                      ),
+                    ),
+                  ),
+                ),
+                leading: IconButton(
+                    onPressed: () {
+                      context.pop();
+                    },
+                    icon: const CircleAvatar(
+                        backgroundColor: AppColor.white,
+                        child: Icon(Icons.arrow_back))),
+              ),
+              SliverToBoxAdapter(
+                  child: Padding(
+                padding: EdgeInsets.only(
+                    left: screenSize.width * 0.035,
+                    right: screenSize.width * 0.035),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 10,
+                    ),
+                    _buildPlaceName(state.place!.name),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    _buildLocation(state.place!.location),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    _buildRating(state.place!.rating),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    TabBar(
+                      indicatorColor: AppColor.pink,
+                      labelColor: AppColor.gray,
+                      tabs: const [
+                        Padding(
+                          padding: EdgeInsets.only(top: 8, bottom: 8),
+                          child: Text("Описание"),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(top: 8, bottom: 8),
+                          child: Text("Отзывы"),
+                        ),
+                      ],
+                      controller: tabController,
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                  ],
+                ),
+              )),
+            ],
+            body: Padding(
+              padding: EdgeInsets.only(
+                  left: screenSize.width * 0.035,
+                  right: screenSize.width * 0.035),
+              child: TabBarView(controller: tabController, children: [
+                SingleChildScrollView(
+                  physics: NeverScrollableScrollPhysics(),
+                  child: Text(
+                    state.place!.description,
+                    textAlign: TextAlign.justify,
+                  ),
+                ),
+                const Center(
+                  child: Text("Здесь скоро будут отзывы..."),
+                ),
+              ]),
+            ),
+          );
+        case LoadingStatus.failure:
+          return _buildError();
+        default:
+          return _buildLoading();
+      }
+    }));
   }
 }

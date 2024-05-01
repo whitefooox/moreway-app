@@ -42,50 +42,55 @@ class _LocationFilterState extends State<LocationFilter> {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-    return Padding(
-      padding: EdgeInsets.all(screenSize.width * 0.035),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildRatingSlider(),
-          const SizedBox(height: 5),
-          _buildDistanceSlider(),
-          const SizedBox(height: 5),
-          _buildLocalityDropdown(),
-          const SizedBox(height: 5),
-          _buildTypeDropdown(),
-          SizedBox(height: screenSize.width * 0.035),
-          Row(
-            children: [
-              Expanded(
-                flex: 1,
-                child: ElevatedButton.icon(
-                  icon: const Icon(Icons.done),
-                  onPressed: () {
-                    widget.onSubmit(_selectedPlaceFilters);
-                  },
-                  label: const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 14),
-                    child: Text('Применить'),
-                  ),
-                ),
-              ),
-              SizedBox(
-                width: screenSize.width * 0.035,
-              ),
-              Expanded(
+    return Container(
+      decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(15))),
+      child: Padding(
+        padding: EdgeInsets.all(screenSize.width * 0.035),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildRatingSlider(),
+            const SizedBox(height: 5),
+            _buildDistanceSlider(),
+            const SizedBox(height: 5),
+            _buildLocalityDropdown(),
+            const SizedBox(height: 5),
+            _buildTypeDropdown(),
+            SizedBox(height: screenSize.width * 0.035),
+            Row(
+              children: [
+                Expanded(
                   flex: 1,
                   child: ElevatedButton.icon(
-                      icon: const Icon(Icons.clear),
-                      onPressed: () {},
-                      label: const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 14),
-                        child: Text("Сбросить"),
-                      )))
-            ],
-          ),
-        ],
+                    icon: const Icon(Icons.done),
+                    onPressed: () {
+                      widget.onSubmit(_selectedPlaceFilters);
+                    },
+                    label: const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 14),
+                      child: Text('Применить'),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: screenSize.width * 0.035,
+                ),
+                Expanded(
+                    flex: 1,
+                    child: ElevatedButton.icon(
+                        icon: const Icon(Icons.clear),
+                        onPressed: () {},
+                        label: const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 14),
+                          child: Text("Сбросить"),
+                        )))
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -48,7 +48,7 @@ class _ImagesCarouselState extends State<ImagesCarousel> {
                 },
               )),
           Positioned(
-              bottom: constraints.maxHeight * 0.1 + 10,
+              bottom: 10 + constraints.maxHeight * 0.1,
               child: AnimatedSmoothIndicator(
                 activeIndex: currentImageIndex,
                 count: widget.images.length,
