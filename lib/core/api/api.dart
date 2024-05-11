@@ -8,4 +8,5 @@ class Api {
   static const places = "/places";
   static getPlace(String id) => "/places/$id";
   static const getPlaceFilters = "/places/filters";
+  static const authMe = "/auth/me";
 }

@@ -1,8 +1,9 @@
+import 'package:moreway/core/api/paginated_page.dart';
+import 'package:moreway/module/place/domain/entity/place.dart';
 import 'package:moreway/module/place/domain/entity/place_detailed.dart';
-import 'package:moreway/module/place/domain/entity/place_page.dart';
 import 'package:moreway/module/place/domain/entity/selected_place_filters.dart';
 
 abstract class IPlaceRepository {
-  Future<PlacePage> getPlaces({String? cursor, SelectedPlaceFilters? filters});
+  Future<PaginatedPage<Place>> getPlaces({String? cursor, SelectedPlaceFilters? filters});
   Future<PlaceDetailed> getPlaceById(String id);
 }

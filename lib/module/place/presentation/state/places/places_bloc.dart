@@ -30,7 +30,7 @@ class PlacesBloc extends Bloc<PlacesEvent, PlacesState> {
           cursor: state.cursor, filters: state.filters);
       emit(state.copyWith(
           loadingStatus: LoadingStatus.success,
-          places: () => placePage.places,
+          places: () => placePage.items,
           cursor: placePage.cursor,
           isAllLoaded: placePage.cursor == null));
     } catch (e) {
@@ -46,7 +46,7 @@ class PlacesBloc extends Bloc<PlacesEvent, PlacesState> {
           cursor: state.cursor, filters: state.filters);
       emit(state.copyWith(
           loadingStatus: LoadingStatus.success,
-          places: () => state.places! + placePage.places,
+          places: () => state.places! + placePage.items,
           cursor: placePage.cursor,
           isAllLoaded: placePage.cursor == null));
     } catch (e) {
@@ -69,7 +69,7 @@ class PlacesBloc extends Bloc<PlacesEvent, PlacesState> {
       final placeFilters = await _getFiltersUsecase.execute();
       emit(state.copyWith(
           loadingStatus: LoadingStatus.success,
-          places: () => placePage.places,
+          places: () => placePage.items,
           cursor: placePage.cursor,
           isAllLoaded: placePage.cursor == null,
           filterOptions: placeFilters));

@@ -5,14 +5,16 @@ import 'package:meta/meta.dart';
 import 'package:moreway/core/api/loading_status.dart';
 import 'package:moreway/module/place/domain/entity/place_detailed.dart';
 import 'package:moreway/module/place/domain/usecase/get_place.dart';
+import 'package:moreway/module/user/presentation/state/bloc/user_bloc.dart';
 
 part 'place_event.dart';
 part 'place_state.dart';
 
 class PlaceBloc extends Bloc<PlaceEvent, PlaceState> {
   final GetPlaceUsecase _getPlaceUsecase;
+  final UserBloc _userBloc;
 
-  PlaceBloc(this._getPlaceUsecase) : super(PlaceState()) {
+  PlaceBloc(this._getPlaceUsecase, this._userBloc) : super(PlaceState()) {
     on<PlaceLoadEvent>(_load);
   }
 

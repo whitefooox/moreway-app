@@ -225,13 +225,10 @@ class _PlaceViewPageState extends State<PlaceViewPage>
                   left: screenSize.width * 0.035,
                   right: screenSize.width * 0.035),
               child: TabBarView(controller: tabController, children: [
-                SingleChildScrollView(
-                  physics: NeverScrollableScrollPhysics(),
-                  child: Text(
+                Text(
                     state.place!.description,
                     textAlign: TextAlign.justify,
                   ),
-                ),
                 const Center(
                   child: Text("Здесь скоро будут отзывы..."),
                 ),

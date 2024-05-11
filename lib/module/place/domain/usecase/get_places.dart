@@ -1,5 +1,6 @@
+import 'package:moreway/core/api/paginated_page.dart';
 import 'package:moreway/module/place/domain/dependency/i_place_repository.dart';
-import 'package:moreway/module/place/domain/entity/place_page.dart';
+import 'package:moreway/module/place/domain/entity/place.dart';
 import 'package:moreway/module/place/domain/entity/place_sort_type.dart';
 import 'package:moreway/module/place/domain/entity/selected_place_filters.dart';
 
@@ -8,7 +9,7 @@ class GetPlacesUseCase {
 
   GetPlacesUseCase(this._placeRepository);
 
-  Future<PlacePage> execute(
+  Future<PaginatedPage<Place>> execute(
       {String? cursor,
       PlaceSortType? sortType,
       SelectedPlaceFilters? filters}) {

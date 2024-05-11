@@ -2,14 +2,15 @@ import 'dart:developer';
 
 import 'package:moreway/core/api/api.dart';
 import 'package:moreway/core/api/api_client.dart';
+import 'package:moreway/core/api/paginated_page.dart';
 import 'package:moreway/module/location/data/mapper/position_model.dart';
 import 'package:moreway/module/location/domain/usecase/get_current_location.dart';
 import 'package:moreway/module/place/data/mapping/place/place_detailed_model.dart';
 import 'package:moreway/module/place/data/mapping/place/place_page_model.dart';
 import 'package:moreway/module/place/data/place_query_parameters_builder.dart';
 import 'package:moreway/module/place/domain/dependency/i_place_repository.dart';
+import 'package:moreway/module/place/domain/entity/place.dart';
 import 'package:moreway/module/place/domain/entity/place_detailed.dart';
-import 'package:moreway/module/place/domain/entity/place_page.dart';
 import 'package:moreway/module/place/domain/entity/selected_place_filters.dart';
 
 class PlaceRepositoryAPI implements IPlaceRepository {
@@ -20,7 +21,7 @@ class PlaceRepositoryAPI implements IPlaceRepository {
   PlaceRepositoryAPI(this._client, this._getCurrentPositionUseCase);
 
   @override
-  Future<PlacePage> getPlaces(
+  Future<PaginatedPage<Place>> getPlaces(
       {String? cursor, SelectedPlaceFilters? filters}) async {
     log(filters.toString());
     try {

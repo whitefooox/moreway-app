@@ -29,6 +29,10 @@ import 'package:moreway/module/place/domain/usecase/get_place.dart';
 import 'package:moreway/module/place/domain/usecase/get_places.dart';
 import 'package:moreway/module/place/presentation/state/place/place_bloc.dart';
 import 'package:moreway/module/place/presentation/state/places/places_bloc.dart';
+import 'package:moreway/module/user/data/user_repository_api.dart';
+import 'package:moreway/module/user/domain/dependency/i_user_repository.dart';
+import 'package:moreway/module/user/domain/interactor/user_interactor.dart';
+import 'package:moreway/module/user/presentation/state/bloc/user_bloc.dart';
 import 'package:moreway/module/welcome/data/launch_checker.dart';
 import 'package:moreway/module/welcome/domain/dependency/i_launch_checker.dart';
 import 'package:moreway/module/welcome/domain/usecase/check_first_launch.dart';
@@ -45,6 +49,7 @@ class DIContainer {
     getIt.registerSingletonAsync<SharedPreferences>(
         () => SharedPreferences.getInstance());
     _injectAuth();
+    _injectUser();
     _injectLocation();
     _injectPlace();
     _injectLaunch();
@@ -94,7 +99,7 @@ class DIContainer {
     getIt.registerLazySingleton<GetPlacesUseCase>(
         () => GetPlacesUseCase(getIt()));
     getIt.registerFactory<PlacesBloc>(() => PlacesBloc(getIt(), getIt()));
-    getIt.registerFactory<PlaceBloc>(() => PlaceBloc(getIt()));
+    getIt.registerFactory<PlaceBloc>(() => PlaceBloc(getIt(), getIt()));
   }
 
   void _injectLaunch() {
@@ -104,5 +109,12 @@ class DIContainer {
     getIt.registerLazySingleton<SetStatusFirstLaunchUseCase>(
         () => SetStatusFirstLaunchUseCase(getIt()));
     getIt.registerLazySingleton(() => LaunchBloc(getIt(), getIt(), getIt()));
+  }
+
+  //dependency: api
+  void _injectUser(){
+    getIt.registerLazySingleton<IUserRepository>(() => UserRepositoryAPI(getIt()));
+    getIt.registerLazySingleton<UserInteractor>(() => UserInteractor(getIt()));
+    getIt.registerLazySingleton<UserBloc>(() => UserBloc(getIt()));
   }
 }

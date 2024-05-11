@@ -14,6 +14,7 @@ import 'package:moreway/module/location/presentation/state/location_v2/location_
 import 'package:moreway/module/place/presentation/page/place_view_page.dart';
 import 'package:moreway/module/place/presentation/state/place/place_bloc.dart';
 import 'package:moreway/module/place/presentation/state/places/places_bloc.dart';
+import 'package:moreway/module/user/presentation/state/bloc/user_bloc.dart';
 import 'package:moreway/module/welcome/presentation/bloc/launch_bloc.dart';
 import 'package:moreway/module/welcome/presentation/page/welcome.dart';
 import 'package:moreway/core/navigation/root_page.dart';
@@ -28,9 +29,14 @@ class AppRouter {
 
   GetIt get getIt => DIContainer.getIt;
 
-  AppRouter() {
+  void setupState(){
     _authBloc = getIt<AuthBloc>();
     _launchBloc = getIt<LaunchBloc>()..add(CheckFirstLaunchEvent());
+    getIt<UserBloc>().add(LoadUserEvent());
+  }
+
+  AppRouter() {
+    setupState();
     initRouter();
   }
 

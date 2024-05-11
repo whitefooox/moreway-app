@@ -1,6 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:moreway/core/api/paginated_page.dart';
 import 'package:moreway/module/place/data/mapping/place/place_model.dart';
-import 'package:moreway/module/place/domain/entity/place_page.dart';
+import 'package:moreway/module/place/domain/entity/place.dart';
 
 part 'place_page_model.g.dart';
 
@@ -26,9 +27,10 @@ class PlacePageModel {
 
   Map<String, dynamic> toJson() => _$PlacePageModelToJson(this);
 
-  PlacePage toPlacePage() {
-    return PlacePage(
-        places: places.map((placeModel) => placeModel.toPlace()).toList(),
-        cursor: cursor);
+  PaginatedPage<Place> toPlacePage() {
+    return PaginatedPage<Place>(
+      items: places.map((placeModel) => placeModel.toPlace()).toList(), 
+      cursor: cursor
+    );
   }
 }
