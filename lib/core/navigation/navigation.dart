@@ -15,6 +15,7 @@ import 'package:moreway/module/place/presentation/page/place_view_page.dart';
 import 'package:moreway/module/place/presentation/state/place/place_bloc.dart';
 import 'package:moreway/module/place/presentation/state/places/places_bloc.dart';
 import 'package:moreway/module/user/presentation/state/bloc/user_bloc.dart';
+import 'package:moreway/module/user/presentation/view/page/profile_page.dart';
 import 'package:moreway/module/welcome/presentation/bloc/launch_bloc.dart';
 import 'package:moreway/module/welcome/presentation/page/welcome.dart';
 import 'package:moreway/core/navigation/root_page.dart';
@@ -29,10 +30,9 @@ class AppRouter {
 
   GetIt get getIt => DIContainer.getIt;
 
-  void setupState(){
-    _authBloc = getIt<AuthBloc>();
+  void setupState() {
+    _authBloc = getIt<AuthBloc>()..add(AuthCheckAuthorizationEvent());
     _launchBloc = getIt<LaunchBloc>()..add(CheckFirstLaunchEvent());
-    getIt<UserBloc>().add(LoadUserEvent());
   }
 
   AppRouter() {
@@ -67,104 +67,121 @@ class AppRouter {
 
   void initRouter() {
     router = GoRouter(
-        //debugLogDiagnostics: true,
-        initialLocation: "/home",
-        navigatorKey: _rootNavigatorKey,
-        routes: [
-          _buildWelcomePage(),
-          _buildSigninPage(routes: [
-            GoRoute(
-                path: "reset-password",
-                builder: (context, state) {
-                  return EmailForResetPasswordPage();
-                },
-                routes: [
-                  GoRoute(
-                      path: "verify-code",
-                      builder: (context, state) {
-                        return const VerifyCodePage();
-                      },
-                      routes: const []),
-                ]),
-          ]),
-          GoRoute(
-            path: "/signup",
-            builder: (context, state) {
-              return BlocProvider<AuthBloc>.value(
-                value: _authBloc,
-                child: const SignUpPage(),
-              );
+      //debugLogDiagnostics: true,
+      initialLocation: "/home",
+      navigatorKey: _rootNavigatorKey,
+      routes: [
+        GoRoute(
+          path: "/loading",
+          builder: (context, state) => BlocListener<AuthBloc, AuthState>(
+            bloc: _authBloc,
+            listener: (context, state) {
+              if(state.status != AuthStatus.loading){
+                context.go("/home");
+              }
             },
+            child: Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
           ),
-          StatefulShellRoute.indexedStack(
-              //parentNavigatorKey: _rootNavigatorKey,
-              builder: (context, state, navigationShell) =>
-                  RootPage(navigationShell: navigationShell),
-              branches: [
-                StatefulShellBranch(routes: [
-                  GoRoute(
-                      path: '/home',
-                      builder: (context, state) => MultiBlocProvider(
-                            providers: [
-                              BlocProvider<PlacesBloc>(
-                                create: (_) => getIt<PlacesBloc>()
-                                  ..add(LoadPlacesAndFiltersEvent()),
-                              ),
-                              BlocProvider.value(
-                                value: getIt<LocationBloc>()
-                                  ..add(GetCurrentLocationEvent()),
-                              ),
-                            ],
-                            child: const HomePage(),
-                          ),
-                      routes: [
-                        GoRoute(
-                          path: "place/:id",
-                          parentNavigatorKey: _rootNavigatorKey,
-                          builder: (context, state) {
-                            final placeId = state.pathParameters['id'];
-                            return BlocProvider(
-                              create: (_) => getIt<PlaceBloc>()
-                                ..add(PlaceLoadEvent(id: placeId!)),
-                              child: const PlaceViewPage(),
-                            );
-                          },
-                        )
-                      ]),
-                ]),
-                StatefulShellBranch(routes: [
-                  GoRoute(
-                    path: '/route',
-                    builder: (context, state) =>
-                        const Scaffold(body: Center(child: Text("route"))),
-                  ),
-                ]),
-                StatefulShellBranch(routes: [
-                  GoRoute(
-                      path: '/map',
-                      builder: (context, state) => BlocProvider.value(
-                          value: getIt<LocationV2Bloc>()
-                            ..add(LocationV2EventLoad()),
-                          child: const MapPage())),
-                ]),
-                StatefulShellBranch(routes: [
-                  GoRoute(
-                    path: '/chat',
-                    builder: (context, state) =>
-                        const Scaffold(body: Center(child: Text("chat"))),
-                  ),
-                ]),
-                StatefulShellBranch(routes: [
-                  GoRoute(
-                      path: '/profile',
-                      builder: (context, state) => BlocProvider<AuthBloc>.value(
-                            value: _authBloc,
-                            child: const TestSettingsPage(),
-                          )),
-                ]),
+        ),
+        _buildWelcomePage(),
+        _buildSigninPage(routes: [
+          GoRoute(
+              path: "reset-password",
+              builder: (context, state) {
+                return EmailForResetPasswordPage();
+              },
+              routes: [
+                GoRoute(
+                    path: "verify-code",
+                    builder: (context, state) {
+                      return const VerifyCodePage();
+                    },
+                    routes: const []),
               ]),
-        ],
-        redirect: redirect);
+        ]),
+        GoRoute(
+          path: "/signup",
+          builder: (context, state) {
+            return BlocProvider<AuthBloc>.value(
+              value: _authBloc,
+              child: const SignUpPage(),
+            );
+          },
+        ),
+        StatefulShellRoute.indexedStack(
+            //parentNavigatorKey: _rootNavigatorKey,
+            builder: (context, state, navigationShell) =>
+                RootPage(navigationShell: navigationShell),
+            branches: [
+              StatefulShellBranch(routes: [
+                GoRoute(
+                    path: '/home',
+                    builder: (context, state) => MultiBlocProvider(
+                          providers: [
+                            BlocProvider<PlacesBloc>(
+                              create: (_) => getIt<PlacesBloc>()
+                                ..add(LoadPlacesAndFiltersEvent()),
+                            ),
+                            BlocProvider.value(
+                              value: getIt<LocationBloc>()
+                                ..add(GetCurrentLocationEvent()),
+                            ),
+                          ],
+                          child: const HomePage(),
+                        ),
+                    routes: [
+                      GoRoute(
+                        path: "place/:id",
+                        parentNavigatorKey: _rootNavigatorKey,
+                        builder: (context, state) {
+                          final placeId = state.pathParameters['id'];
+                          return BlocProvider(
+                            create: (_) => getIt<PlaceBloc>()
+                              ..add(PlaceLoadEvent(id: placeId!)),
+                            child: const PlaceViewPage(),
+                          );
+                        },
+                      )
+                    ]),
+              ]),
+              StatefulShellBranch(routes: [
+                GoRoute(
+                  path: '/route',
+                  builder: (context, state) =>
+                      const Scaffold(body: Center(child: Text("route"))),
+                ),
+              ]),
+              StatefulShellBranch(routes: [
+                GoRoute(
+                    path: '/map',
+                    builder: (context, state) => BlocProvider.value(
+                        value: getIt<LocationV2Bloc>()
+                          ..add(LocationV2EventLoad()),
+                        child: const MapPage())),
+              ]),
+              StatefulShellBranch(routes: [
+                GoRoute(
+                  path: '/chat',
+                  builder: (context, state) =>
+                      const Scaffold(body: Center(child: Text("chat"))),
+                ),
+              ]),
+              StatefulShellBranch(routes: [
+                GoRoute(
+                    path: '/profile',
+                    builder: (context, state) => BlocProvider<AuthBloc>.value(
+                          value: _authBloc,
+                          child: ProfilePage(),
+                        )),
+              ]),
+            ]),
+      ],
+      redirect: redirect,
+    );
   }
 
   String? redirect(BuildContext context, GoRouterState state) {
@@ -189,8 +206,12 @@ class AppRouter {
 
   String? authorizationMiddleware(BuildContext context, GoRouterState state) {
     final isAuthorized = _authBloc.state.status == AuthStatus.authorized;
+    final isLoading = _authBloc.state.status == AuthStatus.loading;
     final isAuthenticating = state.matchedLocation.contains("/signin") ||
         state.matchedLocation.contains("/signup");
+    if (isLoading) {
+      return "/loading";
+    }
     if (!isAuthorized && !isAuthenticating) {
       return '/signin';
     }

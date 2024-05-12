@@ -11,19 +11,27 @@ enum AuthStatus {
 class AuthState {
   final AuthStatus status;
   final String? errorMessage;
+  final UserProfile? user;
 
   AuthState({
     this.status = AuthStatus.unauthorized,
-    this.errorMessage
+    this.errorMessage,
+    this.user
   });
 
   AuthState copyWith({
     AuthStatus? status,
-    String? errorMessage
+    String? errorMessage,
+    UserProfile? user
   }) {
     return AuthState(
       status: status ?? this.status,
-      errorMessage: errorMessage ?? this.errorMessage
+      errorMessage: errorMessage ?? this.errorMessage,
+      user: user ?? this.user
     );
+  }
+
+  AuthState logoutState(){
+    return AuthState();
   }
 }

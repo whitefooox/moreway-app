@@ -12,9 +12,8 @@ part 'place_state.dart';
 
 class PlaceBloc extends Bloc<PlaceEvent, PlaceState> {
   final GetPlaceUsecase _getPlaceUsecase;
-  final UserBloc _userBloc;
 
-  PlaceBloc(this._getPlaceUsecase, this._userBloc) : super(PlaceState()) {
+  PlaceBloc(this._getPlaceUsecase) : super(PlaceState()) {
     on<PlaceLoadEvent>(_load);
   }
 

@@ -1,9 +1,11 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 part of 'places_bloc.dart';
 
+enum PlacesStatus {initial, success, failure}
+
 class PlacesState {
-  final LoadingStatus loadingStatus;
-  final bool isAllLoaded;
+  final PlacesStatus status;
+  final bool hasReachedMax;
   final String? errorMessage;
   final List<Place>? places;
   final String? cursor;
@@ -11,18 +13,18 @@ class PlacesState {
   final PlaceFilterOptions? filterOptions;
 
   PlacesState(
-      {this.loadingStatus = LoadingStatus.loading,
+      {this.status = PlacesStatus.initial,
       this.errorMessage,
       this.places,
       this.cursor,
-      this.isAllLoaded = false,
+      this.hasReachedMax = false,
       this.filters = const SelectedPlaceFilters(),
       this.filterOptions});
 
   PlacesState resetData() {
     return copyWith(
-      loadingStatus: LoadingStatus.loading,
-      isAllLoaded: false,
+      status: PlacesStatus.initial,
+      hasReachedMax: false,
       places: () => null,
       errorMessage: null,
       cursor: null,
@@ -30,8 +32,8 @@ class PlacesState {
   }
 
   PlacesState copyWith({
-    LoadingStatus? loadingStatus,
-    bool? isAllLoaded,
+    PlacesStatus? status,
+    bool? hasReachedMax,
     String? errorMessage,
     List<Place>? Function()? places,
     String? cursor,
@@ -39,8 +41,8 @@ class PlacesState {
     PlaceFilterOptions? filterOptions,
   }) {
     return PlacesState(
-      loadingStatus: loadingStatus ?? this.loadingStatus,
-      isAllLoaded: isAllLoaded ?? this.isAllLoaded,
+      status: status ?? this.status,
+      hasReachedMax: hasReachedMax ?? this.hasReachedMax,
       errorMessage: errorMessage ?? this.errorMessage,
       places: places != null ? places() : this.places,
       cursor: cursor ?? this.cursor,

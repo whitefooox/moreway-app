@@ -10,10 +10,10 @@ import 'package:moreway/core/di/inject.dart';
 void main() async {
   await runZonedGuarded(() async {
     WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-    FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+    //FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
     await setupApp();
     runApp(App());
-    FlutterNativeSplash.remove();
+    //FlutterNativeSplash.remove();
   }, (error, stack) {
     log(error.toString());
   });

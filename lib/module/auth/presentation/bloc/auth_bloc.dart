@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:moreway/module/auth/domain/entity/signin_data.dart';
 import 'package:moreway/module/auth/domain/entity/signup_data.dart';
+import 'package:moreway/module/auth/domain/entity/user_profile.dart';
 import 'package:moreway/module/auth/domain/exception/auth_exception.dart';
 import 'package:moreway/module/auth/domain/usecase/auth_interactor.dart';
 
@@ -18,13 +19,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthSignInEvent>(_signIn);
     on<AuthSignUpEvent>(_signUp);
     on<AuthSignOutEvent>(_signOut);
-    super.add(AuthCheckAuthorizationEvent());
   }
 
   void _signOut(AuthSignOutEvent event, Emitter<AuthState> emit) async {
     try {
       await _authInteractor.signOut();
-      emit(state.copyWith(status: AuthStatus.unauthorized));
+      emit(state.logoutState());
     } catch (e) {
       log(e.toString());
     }
@@ -32,18 +32,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   void _checkAuthorization(
       AuthCheckAuthorizationEvent event, Emitter<AuthState> emit) async {
-    final isAuthorized = await _authInteractor.checkAuthorization();
+    emit(state.copyWith(status: AuthStatus.loading));
+    final user = await _authInteractor.getAuthorizedUserProfile();
     emit(state.copyWith(
         status:
-            isAuthorized ? AuthStatus.authorized : AuthStatus.unauthorized));
+            user != null ? AuthStatus.authorized : AuthStatus.unauthorized, user: user));
   }
 
   void _signIn(AuthSignInEvent event, Emitter<AuthState> emit) async {
     emit(state.copyWith(status: AuthStatus.loading));
     try {
-      await _authInteractor
+      final user = await _authInteractor
           .signIn(SignInData(email: event.email, password: event.password));
-      emit(state.copyWith(status: AuthStatus.authorized));
+      emit(state.copyWith(status: AuthStatus.authorized, user: user));
     } on AuthException catch (e) {
       emit(state.copyWith(status: AuthStatus.failure, errorMessage: e.message));
     }
@@ -52,9 +53,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   void _signUp(AuthSignUpEvent event, Emitter<AuthState> emit) async {
     emit(state.copyWith(status: AuthStatus.loading));
     try {
-      await _authInteractor.signUp(SignUpData(
+      final user = await _authInteractor.signUp(SignUpData(
           name: event.name, email: event.email, password: event.password));
-      emit(state.copyWith(status: AuthStatus.authorized));
+      emit(state.copyWith(status: AuthStatus.authorized, user: user));
     } on AuthException catch (e) {
       emit(state.copyWith(status: AuthStatus.failure, errorMessage: e.message));
     } catch (e) {

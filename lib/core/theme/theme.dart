@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:moreway/core/theme/colors.dart';
 
+const kPagePadding = EdgeInsets.only(left: 10, right: 10);
+
 final appThemeData = ThemeData(
     fontFamily: "Poppins",
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
@@ -34,6 +36,7 @@ final appThemeData = ThemeData(
         backgroundColor: AppColor.white,
         selectedColor: AppColor.pink.withOpacity(0.2),
         side: BorderSide.none),
-    bottomSheetTheme: BottomSheetThemeData(backgroundColor: Colors.transparent)
+    bottomSheetTheme: BottomSheetThemeData(backgroundColor: Colors.transparent),
+    appBarTheme: AppBarTheme()
     // textTheme: TextTheme()
     );

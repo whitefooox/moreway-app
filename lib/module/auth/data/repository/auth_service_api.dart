@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:moreway/core/api/api.dart';
 import 'package:moreway/core/api/api_client.dart';
@@ -7,7 +9,9 @@ import 'package:moreway/module/auth/domain/dependency/i_auth_service.dart';
 import 'package:moreway/module/auth/domain/entity/signin_data.dart';
 import 'package:moreway/module/auth/domain/entity/signup_data.dart';
 import 'package:moreway/module/auth/domain/entity/token.dart';
+import 'package:moreway/module/auth/domain/entity/user_profile.dart';
 import 'package:moreway/module/auth/domain/exception/auth_exception.dart';
+import 'package:moreway/module/user/data/mapping/user_me_model.dart';
 
 class AuthServiceAPI implements IAuthService {
   final ApiClient _client;
@@ -68,4 +72,18 @@ class AuthServiceAPI implements IAuthService {
         return const AuthException(message: "Что-то сломалось :(");
     }
   }
+
+  @override
+  Future<UserProfile> getProfileData() async {
+    try {
+      final response = await _client.dio.get(Api.authMe);
+      final json = response.data['data'];
+      final model = UserMeModel.fromJson(json);
+      return model.toUserProfile();
+    } catch (e) {
+      log("[auth  api] $e");
+      rethrow;
+    }
+  }
+
 }

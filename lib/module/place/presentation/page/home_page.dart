@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:moreway/core/api/loading_status.dart';
 import 'package:moreway/core/theme/colors.dart';
 import 'package:moreway/module/location/presentation/state/location/location_bloc.dart';
 import 'package:moreway/module/place/presentation/state/places/places_bloc.dart';
@@ -30,16 +29,18 @@ class _HomePageState extends State<HomePage> {
   Timer? _debounce;
   late final PlacesBloc _placesBloc;
 
+  void _onScroll() {
+    if (_scrollController.position.maxScrollExtent ==
+        _scrollController.offset) {
+      _placesBloc.add(LoadMorePlacesEvent());
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     _placesBloc = BlocProvider.of<PlacesBloc>(context);
-    _scrollController.addListener(() {
-      if (_scrollController.position.maxScrollExtent ==
-          _scrollController.offset) {
-        _placesBloc.add(LoadMorePlacesEvent());
-      }
-    });
+    _scrollController.addListener(_onScroll);
     _searchController.addListener(() {
       log(_searchController.text);
       final query =
@@ -49,6 +50,13 @@ class _HomePageState extends State<HomePage> {
         _placesBloc.add(SearchPlacesEvent(query));
       });
     });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
   }
 
   void _onClickFilter() {
@@ -175,7 +183,7 @@ class _HomePageState extends State<HomePage> {
                       );
                     }
                   } else {
-                    if (state.loadingStatus == LoadingStatus.failure) {
+                    if (state.status == PlacesStatus.failure) {
                       return const SliverFillRemaining(
                         child: Center(
                           child: Text('Что-то сломалось'),

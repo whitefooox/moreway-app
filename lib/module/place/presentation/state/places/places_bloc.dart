@@ -29,28 +29,28 @@ class PlacesBloc extends Bloc<PlacesEvent, PlacesState> {
       final placePage = await _getPlacesUseCase.execute(
           cursor: state.cursor, filters: state.filters);
       emit(state.copyWith(
-          loadingStatus: LoadingStatus.success,
+          status: PlacesStatus.success,
           places: () => placePage.items,
           cursor: placePage.cursor,
-          isAllLoaded: placePage.cursor == null));
+          hasReachedMax: placePage.cursor == null));
     } catch (e) {
-      emit(state.copyWith(loadingStatus: LoadingStatus.failure));
+      emit(state.copyWith(status: PlacesStatus.failure));
     }
   }
 
   void _loadMore(LoadMorePlacesEvent event, Emitter<PlacesState> emit) async {
-    if (state.isAllLoaded) return;
-    emit(state.copyWith(loadingStatus: LoadingStatus.loading));
+    if (state.hasReachedMax) return;
+    emit(state.copyWith(status: PlacesStatus.initial));
     try {
       final placePage = await _getPlacesUseCase.execute(
           cursor: state.cursor, filters: state.filters);
       emit(state.copyWith(
-          loadingStatus: LoadingStatus.success,
+          status: PlacesStatus.success,
           places: () => state.places! + placePage.items,
           cursor: placePage.cursor,
-          isAllLoaded: placePage.cursor == null));
+          hasReachedMax: placePage.cursor == null));
     } catch (e) {
-      emit(state.copyWith(loadingStatus: LoadingStatus.failure));
+      emit(state.copyWith(status: PlacesStatus.failure));
     }
   }
 
@@ -63,18 +63,18 @@ class PlacesBloc extends Bloc<PlacesEvent, PlacesState> {
 
   void _loadPlacesAndFilters(
       LoadPlacesAndFiltersEvent event, Emitter<PlacesState> emit) async {
-    emit(state.copyWith(loadingStatus: LoadingStatus.loading));
+    emit(state.copyWith(status: PlacesStatus.initial));
     try {
       final placePage = await _getPlacesUseCase.execute();
       final placeFilters = await _getFiltersUsecase.execute();
       emit(state.copyWith(
-          loadingStatus: LoadingStatus.success,
+          status: PlacesStatus.success,
           places: () => placePage.items,
           cursor: placePage.cursor,
-          isAllLoaded: placePage.cursor == null,
+          hasReachedMax: placePage.cursor == null,
           filterOptions: placeFilters));
     } catch (e) {
-      emit(state.copyWith(loadingStatus: LoadingStatus.failure));
+      emit(state.copyWith(status: PlacesStatus.failure));
     }
   }
 
