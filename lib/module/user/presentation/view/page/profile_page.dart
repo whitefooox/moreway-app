@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moreway/core/theme/colors.dart';
 import 'package:moreway/module/auth/presentation/bloc/auth_bloc.dart';
+import 'package:moreway/module/user/presentation/view/widget/profile_card.dart';
 
 class ProfilePage extends StatelessWidget {
   @override
@@ -32,12 +33,7 @@ class ProfilePage extends StatelessWidget {
                   Expanded(
                       flex: 2,
                       child: Center(
-                        child: Column(
-                          children: [
-                            Image.network(state.user!.avatarUrl),
-                            Text(state.user!.name)
-                          ],
-                        ),
+                        child: ProfileCard(imageUrl: state.user!.avatarUrl, name: state.user!.name)
                       )),
                   Expanded(
                       flex: 3,
