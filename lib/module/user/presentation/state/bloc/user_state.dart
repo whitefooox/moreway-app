@@ -1,20 +1,20 @@
 part of 'user_bloc.dart';
 
 class UserState {
-  final UserInfo? info;
+  final UserPreview? user;
   final LoadingStatus loadingStatus;
 
   UserState({
-    this.info,
+    this.user,
     this.loadingStatus = LoadingStatus.initial,
   });
 
   UserState copyWith({
-    UserInfo? info,
+    UserPreview? user,
     LoadingStatus? loadingStatus,
   }) {
     return UserState(
-      info: info ?? this.info,
+      user: user ?? this.user,
       loadingStatus: loadingStatus ?? this.loadingStatus,
     );
   }

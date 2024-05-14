@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:moreway/core/api/loading_status.dart';
-import 'package:moreway/module/user/domain/entity/user_info.dart';
+import 'package:moreway/module/user/domain/entity/user_preview.dart';
 import 'package:moreway/module/user/domain/interactor/user_interactor.dart';
 
 part 'user_event.dart';
@@ -23,7 +23,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     try {
       final userInfo = await _userInteractor.getCurrentUserInfo();
       log(userInfo.id);
-      emit(state.copyWith(loadingStatus: LoadingStatus.success, info: userInfo));
+      emit(state.copyWith(loadingStatus: LoadingStatus.success, user: userInfo));
     } catch (e) {
       emit(state.copyWith(loadingStatus: LoadingStatus.failure));
       log("fail");

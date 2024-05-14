@@ -10,7 +10,7 @@ import 'package:moreway/core/theme/colors.dart';
 import 'package:moreway/module/place/domain/entity/place_detailed.dart';
 import 'package:moreway/module/place/presentation/state/place/place_bloc.dart';
 import 'package:moreway/module/place/presentation/widget/images_carousel.dart';
-import 'package:moreway/module/place/presentation/widget/review_card.dart';
+import 'package:moreway/module/review/presentation/view/widget/review_card.dart';
 
 class PlaceViewPage extends StatefulWidget {
   const PlaceViewPage({super.key});
@@ -178,6 +178,7 @@ class _PlaceViewPageState extends State<PlaceViewPage>
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           _buildPlaceName(state.place!.name),
+                          SizedBox(width: 10,),
                           _buildRating(state.place!.rating),
                         ],
                       ),
@@ -188,17 +189,8 @@ class _PlaceViewPageState extends State<PlaceViewPage>
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           _buildLocation(state.place!.location),
-                          //_buildRating(state.place!.rating),
                         ],
                       ),
-                      // _buildLocation(state.place!.location),
-                      // const SizedBox(
-                      //   height: 10,
-                      // ),
-                      // _buildRating(state.place!.rating),
-                      // SizedBox(
-                      //   height: 10,
-                      // ),
                       TabBar(
                         indicatorColor: AppColor.pink,
                         labelColor: AppColor.gray,
@@ -234,15 +226,15 @@ class _PlaceViewPageState extends State<PlaceViewPage>
                 Stack(children: [
                   ListView.builder(
                     physics: const AlwaysScrollableScrollPhysics(),
-                    itemCount: 40,
+                    itemCount: state.reviews!.length,
                     itemBuilder: (context, index) => ReviewCard(
                         avatarUrl:
                             "https://i.natgeofe.com/n/548467d8-c5f1-4551-9f58-6817a8d2c45e/NationalGeographic_2572187_square.jpg",
-                        name: "Мокович",
-                        date: DateTime(2024, 12, 1),
-                        rating: 4.3,
+                        name: state.reviews![index].userInfo.name,
+                        date: state.reviews![index].createdAt,
+                        rating: state.reviews![index].rating,
                         text:
-                            '''Ого, братва, этот замок - просто бомба! Такие толстенные стены, наверняка раньше тут жили крутые пацаны. А может, даже сами рыцари тусовались! Эх, жаль в наше время таких тёрок не строят. Ну ничего, мы и в своём районе найдём, где потусоваться. Кстати, кто-нибудь знает, тут рядом есть нормальные забегаловки? После осмотра достопримечательностей ужасно клинит по шавухе!'''),
+                            state.reviews![index].text),
                   ),
                   // Positioned(
                   //   bottom: screenSize.width * 0.035,

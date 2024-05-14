@@ -1,5 +1,5 @@
 import 'package:moreway/module/user/domain/dependency/i_user_repository.dart';
-import 'package:moreway/module/user/domain/entity/user_info.dart';
+import 'package:moreway/module/user/domain/entity/user_preview.dart';
 
 class UserInteractor {
 
@@ -7,7 +7,7 @@ class UserInteractor {
 
   UserInteractor(this._userRepository);
 
-  Future<UserInfo> getCurrentUserInfo(){
+  Future<UserPreview> getCurrentUserInfo(){
     return _userRepository.getUserByToken();
   }
 }

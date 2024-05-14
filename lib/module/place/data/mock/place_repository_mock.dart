@@ -1,4 +1,5 @@
 import 'package:moreway/core/api/paginated_page.dart';
+import 'package:moreway/module/review/domain/entity/review.dart';
 import 'package:moreway/module/place/domain/dependency/i_place_repository.dart';
 import 'package:moreway/module/place/domain/entity/place.dart';
 import 'package:moreway/module/place/domain/entity/place_detailed.dart';
@@ -50,4 +51,12 @@ class PlaceRepositoryMock implements IPlaceRepository {
                         защитой от шума города, огромные каменные валуны, имитирующие горный пейзаж.
                         Посажены живые кустарники и деревья – представители сибирской тайги.''');
   }
+  
+  @override
+  Future<PaginatedPage<Review>> getReviews({String? cursor, required String placeId}) {
+    // TODO: implement getReviews
+    throw UnimplementedError();
+  }
+
+
 }

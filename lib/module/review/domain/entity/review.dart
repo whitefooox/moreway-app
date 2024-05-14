@@ -1,11 +1,11 @@
-import 'package:moreway/module/user/domain/entity/user_info.dart';
+import 'package:moreway/module/user/domain/entity/user_preview.dart';
 
 class Review {
   final String id;
   final String text;
   final double rating;
   final DateTime createdAt;
-  final UserInfo userInfo;
+  final UserPreview userInfo;
 
   Review(
       {required this.id,

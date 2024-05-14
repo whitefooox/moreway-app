@@ -20,7 +20,6 @@ import 'package:moreway/module/welcome/presentation/bloc/launch_bloc.dart';
 import 'package:moreway/module/welcome/presentation/page/welcome.dart';
 import 'package:moreway/core/navigation/root_page.dart';
 import 'package:moreway/module/place/presentation/page/home_page.dart';
-import 'package:moreway/module/test/test_settings_page.dart';
 
 class AppRouter {
   late final AuthBloc _authBloc;

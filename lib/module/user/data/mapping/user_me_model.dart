@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:moreway/module/auth/domain/entity/user_profile.dart';
-import 'package:moreway/module/user/domain/entity/user_info.dart';
+import 'package:moreway/module/user/domain/entity/user_preview.dart';
 
 part 'user_me_model.g.dart';
 

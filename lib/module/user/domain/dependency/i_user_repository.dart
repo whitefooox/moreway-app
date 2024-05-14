@@ -1,5 +1,5 @@
-import 'package:moreway/module/user/domain/entity/user_info.dart';
+import 'package:moreway/module/user/domain/entity/user_preview.dart';
 
 abstract class IUserRepository {
-  Future<UserInfo> getUserByToken();
+  Future<UserPreview> getUserByToken();
 }
