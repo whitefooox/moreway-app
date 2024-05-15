@@ -11,9 +11,10 @@ import 'package:moreway/module/auth/presentation/page/password/verify_code.dart'
 import 'package:moreway/module/location/presentation/state/location/location_bloc.dart';
 import 'package:moreway/module/location/presentation/page/map_page.dart';
 import 'package:moreway/module/location/presentation/state/location_v2/location_v2_bloc.dart';
-import 'package:moreway/module/place/presentation/page/place_view_page.dart';
+import 'package:moreway/module/place/presentation/page/place_detailed_page.dart';
 import 'package:moreway/module/place/presentation/state/place/place_bloc.dart';
 import 'package:moreway/module/place/presentation/state/places/places_bloc.dart';
+import 'package:moreway/module/review/presentation/view/page/create_review_page.dart';
 import 'package:moreway/module/user/presentation/state/bloc/user_bloc.dart';
 import 'package:moreway/module/user/presentation/view/page/profile_page.dart';
 import 'package:moreway/module/welcome/presentation/bloc/launch_bloc.dart';
@@ -141,9 +142,16 @@ class AppRouter {
                           return BlocProvider(
                             create: (_) => getIt<PlaceBloc>()
                               ..add(PlaceLoadEvent(id: placeId!)),
-                            child: const PlaceViewPage(),
+                            child: const PlaceDetailedPage(),
                           );
                         },
+                        routes: [
+                          GoRoute(
+                            parentNavigatorKey: _rootNavigatorKey,
+                            path: "create-review",
+                            builder: (context, state) => CreateReviewPage(),
+                          )
+                        ]
                       )
                     ]),
               ]),
