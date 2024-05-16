@@ -4,6 +4,7 @@ import 'package:moreway/module/place/domain/dependency/i_place_repository.dart';
 import 'package:moreway/module/place/domain/entity/place.dart';
 import 'package:moreway/module/place/domain/entity/place_detailed.dart';
 import 'package:moreway/module/place/domain/entity/selected_place_filters.dart';
+import 'package:moreway/module/review/domain/entity/review_raw.dart';
 
 class PlaceRepositoryMock implements IPlaceRepository {
   PlaceRepositoryMock();
@@ -55,6 +56,12 @@ class PlaceRepositoryMock implements IPlaceRepository {
   @override
   Future<PaginatedPage<Review>> getReviews({String? cursor, required String placeId}) {
     // TODO: implement getReviews
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> createReview(String placeId, ReviewRaw review, String userId) {
+    // TODO: implement createReview
     throw UnimplementedError();
   }
 

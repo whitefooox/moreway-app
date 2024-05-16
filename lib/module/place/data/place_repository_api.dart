@@ -14,6 +14,7 @@ import 'package:moreway/module/place/domain/dependency/i_place_repository.dart';
 import 'package:moreway/module/place/domain/entity/place.dart';
 import 'package:moreway/module/place/domain/entity/place_detailed.dart';
 import 'package:moreway/module/place/domain/entity/selected_place_filters.dart';
+import 'package:moreway/module/review/domain/entity/review_raw.dart';
 
 class PlaceRepositoryAPI implements IPlaceRepository {
   final ApiClient _client;
@@ -70,8 +71,24 @@ class PlaceRepositoryAPI implements IPlaceRepository {
       final response = await _client.dio.get(Api.getPlaceReviews(placeId),
           queryParameters: {"cursor": cursor, "limit": _reviewsLimit.toString()}
             ..removeWhere((key, value) => value == null));
-      final json = response.data; 
+      final json = response.data;
       return ReviewPageModel.fromJson(json).toReviewPage();
+    } catch (e) {
+      log("[place repository api] $e");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> createReview(
+      String placeId, ReviewRaw review, String userId) async {
+    try {
+      final response = await _client.dio.post(Api.createReview(placeId),
+          queryParameters: {
+            "userId": userId,
+            "text": review.text,
+            "rating": review.rating
+          });
     } catch (e) {
       log("[place repository api] $e");
       rethrow;

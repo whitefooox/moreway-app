@@ -7,7 +7,6 @@ import 'package:moreway/core/api/paginated_page.dart';
 import 'package:moreway/module/place/domain/entity/place_detailed.dart';
 import 'package:moreway/module/place/domain/usecase/place_interactor.dart';
 import 'package:moreway/module/review/domain/entity/review.dart';
-import 'package:moreway/module/user/presentation/state/bloc/user_bloc.dart';
 
 part 'place_event.dart';
 part 'place_state.dart';
@@ -38,6 +37,15 @@ class PlaceBloc extends Bloc<PlaceEvent, PlaceState> {
           cursor: reviewPage.cursor));
     } catch (e) {
       emit(state.copyWith(loadingStatus: LoadingStatus.failure));
+    }
+  }
+
+  void _createReview(CreateReviewPlaceEvent event, Emitter<PlaceState> emit) async {
+    emit(state.copyWith(createReviewStatus: LoadingStatus.loading));
+    try {
+      
+    } catch (e) {
+      
     }
   }
 }

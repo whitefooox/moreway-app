@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,6 +12,7 @@ import 'package:moreway/core/theme/colors.dart';
 import 'package:moreway/module/place/domain/entity/place_detailed.dart';
 import 'package:moreway/module/place/presentation/state/place/place_bloc.dart';
 import 'package:moreway/module/place/presentation/widget/images_carousel.dart';
+import 'package:moreway/module/review/presentation/view/widget/create_review_dialog.dart';
 import 'package:moreway/module/review/presentation/view/widget/review_card.dart';
 import 'package:readmore/readmore.dart';
 
@@ -49,7 +52,8 @@ class _PlaceDetailedPageState extends State<PlaceDetailedPage>
     );
   }
 
-  Widget _buildProperties(String location, TextTheme textTheme, double rating, double distance) {
+  Widget _buildProperties(
+      String location, TextTheme textTheme, double rating, double distance) {
     return Row(
       children: [
         const Icon(
@@ -64,10 +68,10 @@ class _PlaceDetailedPageState extends State<PlaceDetailedPage>
           "$location (${distance.toStringAsFixed(1)} км)",
           style: textTheme.titleMedium!.copyWith(color: AppColor.gray),
         ),
-        SizedBox(
+        const SizedBox(
           width: 20,
         ),
-        Icon(
+        const Icon(
           Icons.star,
           color: AppColor.pink,
           size: 24,
@@ -107,9 +111,7 @@ class _PlaceDetailedPageState extends State<PlaceDetailedPage>
 
   Widget _buildLoading() {
     return const Center(
-      child: CircularProgressIndicator(
-        color: AppColor.pink,
-      ),
+      child: CircularProgressIndicator(),
     );
   }
 
@@ -146,10 +148,7 @@ class _PlaceDetailedPageState extends State<PlaceDetailedPage>
       ),
       actions: [
         IconButton(
-            onPressed: () async {
-              //context.push("/home/place/$placeId/create-review");
-              final a = await showDialog<bool>(context: context, builder:(context) => SimpleDialog());
-            },
+            onPressed: () async {},
             icon: const CircleAvatar(
               backgroundColor: AppColor.white,
               child: Icon(Icons.add),
@@ -162,6 +161,10 @@ class _PlaceDetailedPageState extends State<PlaceDetailedPage>
           icon: const CircleAvatar(
               backgroundColor: AppColor.white, child: Icon(Icons.arrow_back))),
     );
+  }
+
+  void _createReviewDialog() async {
+    final review = await showCreateReviewDialog(context);
   }
 
   @override
@@ -204,7 +207,8 @@ class _PlaceDetailedPageState extends State<PlaceDetailedPage>
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          _buildProperties(state.place!.location, textTheme, state.place!.rating, state.place!.distance),
+                          _buildProperties(state.place!.location, textTheme,
+                              state.place!.rating, state.place!.distance),
                         ],
                       ),
                       const SizedBox(
@@ -215,14 +219,14 @@ class _PlaceDetailedPageState extends State<PlaceDetailedPage>
                         labelColor: AppColor.gray,
                         tabs: [
                           Padding(
-                            padding: EdgeInsets.only(top: 8, bottom: 8),
+                            padding: const EdgeInsets.only(top: 8, bottom: 8),
                             child: Text(
                               "Описание",
                               style: textTheme.bodyMedium,
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(top: 8, bottom: 8),
+                            padding: const EdgeInsets.only(top: 8, bottom: 8),
                             child: Text(
                               "Отзывы",
                               style: textTheme.bodyMedium,
@@ -237,89 +241,38 @@ class _PlaceDetailedPageState extends State<PlaceDetailedPage>
               )),
             ],
             body: Padding(
-                padding: EdgeInsets.only(
-                    left: screenSize.width * 0.035,
-                    right: screenSize.width * 0.035),
-                child: Stack(
-                  children: [
-                    TabBarView(controller: tabController, children: [
-                      Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: ReadMoreText(
-                          state.place!.description,
-                          colorClickableText: AppColor.pink,
-                          trimExpandedText: " Скрыть",
-                          trimCollapsedText: "Читать дальше",
-                        ),
-                      ),
-                      ListView.builder(
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          itemCount: state.reviews!.length + 1,
-                          itemBuilder: (context, index) {
-                            if (index == 0) {
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text("Поделитесь своими впечатлениями",
-                                      style: textTheme.bodyLarge!.copyWith(
-                                          fontWeight: FontWeight.bold)),
-                                  const SizedBox(height: 10),
-                                  RatingBar.builder(
-                                    initialRating: 0,
-                                    minRating: 1,
-                                    direction: Axis.horizontal,
-                                    allowHalfRating: true,
-                                    itemCount: 5,
-                                    itemSize: 30,
-                                    itemPadding: const EdgeInsets.symmetric(
-                                        horizontal: 4.0),
-                                    itemBuilder: (context, _) => const Icon(
-                                      Icons.star,
-                                      color: AppColor.pink,
-                                    ),
-                                    onRatingUpdate: (rating) {
-                                      // Handle rating update
-                                    },
-                                  ),
-                                  const SizedBox(height: 10),
-                                  TextField(
-                                    maxLines: 3,
-                                    decoration: InputDecoration(
-                                      hintText: "Напишите свой отзыв...",
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                    ),
-                                    style: textTheme.bodyMedium,
-                                  ),
-                                  const SizedBox(height: 5),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      // Handle review submission
-                                    },
-                                    child: const Text("Отправить"),
-                                  ),
-                                  const SizedBox(height: 20),
-                                ],
-                              );
-                            } else {
-                              return ReviewCard(
-                                  review: state.reviews![index - 1]);
-                            }
-                          }),
-                    ]),
-                    // Positioned(
-                    //     bottom: screenSize.width * 0.035,
-                    //     left: 0,
-                    //     right: 0,
-                    //     child: FractionallySizedBox(
-                    //       widthFactor: 1,
-                    //       child: ElevatedButton(
-                    //           onPressed: () {},
-                    //           child: const Text("Добавить в маршрут")),
-                    //     ))
-                  ],
-                )),
+              padding: EdgeInsets.only(
+                  left: screenSize.width * 0.035,
+                  right: screenSize.width * 0.035),
+              child: TabBarView(controller: tabController, children: [
+                Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: ReadMoreText(
+                    state.place!.description,
+                    colorClickableText: AppColor.pink,
+                    trimExpandedText: " Скрыть",
+                    trimCollapsedText: "Читать дальше",
+                  ),
+                ),
+                ListView.builder(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    itemCount: state.reviews!.length + 1,
+                    itemBuilder: (context, index) {
+                      if (index == 0) {
+                        return ElevatedButton(
+                          onPressed: _createReviewDialog,
+                          child: Text(
+                            "Оставить отзыв",
+                            style: textTheme.bodyMedium!
+                                .copyWith(color: AppColor.white),
+                          ),
+                        );
+                      } else {
+                        return ReviewCard(review: state.reviews![index - 1]);
+                      }
+                    }),
+              ]),
+            ),
           );
         case LoadingStatus.failure:
           return _buildError();

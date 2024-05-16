@@ -10,13 +10,18 @@ class PlaceState {
   final String? cursor;
   final bool hasReachedMax;
 
+  final LoadingStatus createReviewStatus;
+  final String? createReviewError;
+
   PlaceState({
     this.placeId,
     this.loadingStatus = LoadingStatus.initial,
     this.place,
     this.hasReachedMax = false,
     this.cursor,
-    this.reviews
+    this.reviews,
+    this.createReviewStatus = LoadingStatus.initial,
+    this.createReviewError
   });
 
   PlaceState copyWith({
@@ -25,7 +30,9 @@ class PlaceState {
     PlaceDetailed? place,
     bool? hasReachedMax,
     List<Review>? reviews,
-    String? cursor
+    String? cursor,
+    LoadingStatus? createReviewStatus,
+    String? createReviewError
   }) {
     return PlaceState(
       placeId: placeId ?? this.placeId,
@@ -33,7 +40,9 @@ class PlaceState {
       place: place ?? this.place,
       hasReachedMax: hasReachedMax ?? this.hasReachedMax,
       reviews: reviews ?? this.reviews,
-      cursor: cursor ?? this.cursor
+      cursor: cursor ?? this.cursor,
+      createReviewStatus: createReviewStatus ?? this.createReviewStatus,
+      createReviewError: createReviewError ?? this.createReviewError
     );
   }
 }

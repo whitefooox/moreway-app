@@ -7,12 +7,14 @@ import 'package:moreway/module/place/domain/entity/place_filter_options.dart';
 import 'package:moreway/module/place/domain/entity/place_sort_type.dart';
 import 'package:moreway/module/place/domain/entity/selected_place_filters.dart';
 import 'package:moreway/module/review/domain/entity/review.dart';
+import 'package:moreway/module/user/domain/dependency/i_user_repository.dart';
 
 class PlaceInteractor {
   final IPlaceRepository _placeRepository;
   final IFilterRepository _filterRepository;
+  final IUserRepository _userRepository;
 
-  PlaceInteractor(this._placeRepository, this._filterRepository);
+  PlaceInteractor(this._placeRepository, this._filterRepository, this._userRepository);
 
   Future<PaginatedPage<Place>> getPlaces(
       {String? cursor,

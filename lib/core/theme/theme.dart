@@ -4,6 +4,8 @@ import 'package:moreway/core/theme/colors.dart';
 const kPagePadding = EdgeInsets.only(left: 10, right: 10);
 
 final appThemeData = ThemeData(
+    useMaterial3: true,
+    //colorScheme: ColorScheme.fromSeed(seedColor: AppColor.black, secondary: AppColor.pink),
     fontFamily: "Poppins",
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
       type: BottomNavigationBarType.fixed,
@@ -36,7 +38,9 @@ final appThemeData = ThemeData(
         backgroundColor: AppColor.white,
         selectedColor: AppColor.pink.withOpacity(0.2),
         side: BorderSide.none),
-    bottomSheetTheme: BottomSheetThemeData(backgroundColor: Colors.transparent),
-    appBarTheme: AppBarTheme()
+    bottomSheetTheme: const BottomSheetThemeData(backgroundColor: Colors.transparent),
+    appBarTheme: const AppBarTheme(),
+    textButtonTheme: TextButtonThemeData(style: TextButton.styleFrom(foregroundColor: AppColor.black)),
+    progressIndicatorTheme: const ProgressIndicatorThemeData(color: AppColor.pink)
     // textTheme: TextTheme()
     );

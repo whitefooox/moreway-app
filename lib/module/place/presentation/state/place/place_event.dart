@@ -8,3 +8,9 @@ class PlaceLoadEvent extends PlaceEvent {
 
   PlaceLoadEvent({required this.id});
 }
+
+class CreateReviewPlaceEvent extends PlaceEvent {
+  final Review review;
+
+  CreateReviewPlaceEvent({required this.review});
+}
