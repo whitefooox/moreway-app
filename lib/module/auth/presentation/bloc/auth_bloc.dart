@@ -32,19 +32,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   void _checkAuthorization(
       AuthCheckAuthorizationEvent event, Emitter<AuthState> emit) async {
-    emit(state.copyWith(status: AuthStatus.loading));
-    final user = await _authInteractor.getAuthorizedUserProfile();
+    final isAuthorized = await _authInteractor.checkAuthorization();
     emit(state.copyWith(
         status:
-            user != null ? AuthStatus.authorized : AuthStatus.unauthorized, user: user));
+            isAuthorized ? AuthStatus.authorized : AuthStatus.unauthorized));
   }
 
   void _signIn(AuthSignInEvent event, Emitter<AuthState> emit) async {
     emit(state.copyWith(status: AuthStatus.loading));
     try {
-      final user = await _authInteractor
+      await _authInteractor
           .signIn(SignInData(email: event.email, password: event.password));
-      emit(state.copyWith(status: AuthStatus.authorized, user: user));
+      emit(state.copyWith(status: AuthStatus.authorized));
     } on AuthException catch (e) {
       emit(state.copyWith(status: AuthStatus.failure, errorMessage: e.message));
     }
@@ -53,9 +52,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   void _signUp(AuthSignUpEvent event, Emitter<AuthState> emit) async {
     emit(state.copyWith(status: AuthStatus.loading));
     try {
-      final user = await _authInteractor.signUp(SignUpData(
+      await _authInteractor.signUp(SignUpData(
           name: event.name, email: event.email, password: event.password));
-      emit(state.copyWith(status: AuthStatus.authorized, user: user));
+      emit(state.copyWith(status: AuthStatus.authorized));
     } on AuthException catch (e) {
       emit(state.copyWith(status: AuthStatus.failure, errorMessage: e.message));
     } catch (e) {

@@ -1,7 +1,7 @@
 part of 'user_bloc.dart';
 
 class UserState {
-  final UserPreview? user;
+  final UserProfile? user;
   final LoadingStatus loadingStatus;
 
   UserState({
@@ -10,7 +10,7 @@ class UserState {
   });
 
   UserState copyWith({
-    UserPreview? user,
+    UserProfile? user,
     LoadingStatus? loadingStatus,
   }) {
     return UserState(

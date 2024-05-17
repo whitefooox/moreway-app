@@ -27,6 +27,10 @@ import 'package:moreway/module/place/domain/dependency/i_place_repository.dart';
 import 'package:moreway/module/place/domain/usecase/place_interactor.dart';
 import 'package:moreway/module/place/presentation/state/place/place_bloc.dart';
 import 'package:moreway/module/place/presentation/state/places/places_bloc.dart';
+import 'package:moreway/module/user/data/user_repository_api.dart';
+import 'package:moreway/module/user/domain/dependency/i_user_repository.dart';
+import 'package:moreway/module/user/domain/interactor/user_interactor.dart';
+import 'package:moreway/module/user/presentation/state/bloc/user_bloc.dart';
 import 'package:moreway/module/welcome/data/launch_checker.dart';
 import 'package:moreway/module/welcome/domain/dependency/i_launch_checker.dart';
 import 'package:moreway/module/welcome/domain/usecase/check_first_launch.dart';
@@ -43,6 +47,7 @@ class DIContainer {
     getIt.registerSingletonAsync<SharedPreferences>(
         () => SharedPreferences.getInstance());
     _injectAuth();
+    _injectUser();
     _injectLocation();
     _injectPlace();
     _injectLaunch();
@@ -85,7 +90,7 @@ class DIContainer {
         () => FilterRepositoryAPI(getIt()));
     getIt.registerLazySingleton<IPlaceRepository>(
         () => PlaceRepositoryAPI(getIt(), getIt()));
-    getIt.registerLazySingleton<PlaceInteractor>(() => PlaceInteractor(getIt(), getIt()));
+    getIt.registerLazySingleton<PlaceInteractor>(() => PlaceInteractor(getIt(), getIt(), getIt()));
     getIt.registerFactory<PlacesBloc>(() => PlacesBloc(getIt()));
     getIt.registerFactory<PlaceBloc>(() => PlaceBloc(getIt()));
   }
@@ -99,10 +104,10 @@ class DIContainer {
     getIt.registerLazySingleton(() => LaunchBloc(getIt(), getIt(), getIt()));
   }
 
-  // //dependency: api
-  // void _injectUser(){
-  //   getIt.registerLazySingleton<IUserRepository>(() => UserRepositoryAPI(getIt()));
-  //   getIt.registerLazySingleton<UserInteractor>(() => UserInteractor(getIt()));
-  //   getIt.registerLazySingleton<UserBloc>(() => UserBloc(getIt()));
-  // }
+  //dependency: api
+  void _injectUser(){
+    getIt.registerLazySingleton<IUserRepository>(() => UserRepositoryAPI(getIt()));
+    getIt.registerLazySingleton<UserInteractor>(() => UserInteractor(getIt()));
+    getIt.registerLazySingleton<UserBloc>(() => UserBloc(getIt()));
+  }
 }

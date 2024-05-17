@@ -3,22 +3,24 @@ part of 'place_bloc.dart';
 
 class PlaceState {
   final String? placeId;
-  final LoadingStatus loadingStatus;
   final PlaceDetailed? place;
+  final LoadingStatus placeDetailedStatus;
 
   final List<Review>? reviews;
-  final String? cursor;
-  final bool hasReachedMax;
+  final LoadingStatus reviewsStatus;
+  final String? reviewsCursor;
+  final bool reviewsHasReachedMax;
 
   final LoadingStatus createReviewStatus;
   final String? createReviewError;
 
   PlaceState({
     this.placeId,
-    this.loadingStatus = LoadingStatus.initial,
+    this.placeDetailedStatus = LoadingStatus.initial,
+    this.reviewsStatus = LoadingStatus.initial,
     this.place,
-    this.hasReachedMax = false,
-    this.cursor,
+    this.reviewsHasReachedMax = false,
+    this.reviewsCursor,
     this.reviews,
     this.createReviewStatus = LoadingStatus.initial,
     this.createReviewError
@@ -26,23 +28,25 @@ class PlaceState {
 
   PlaceState copyWith({
     String? placeId,
-    LoadingStatus? loadingStatus,
     PlaceDetailed? place,
-    bool? hasReachedMax,
+    LoadingStatus? placeDetailedStatus,
     List<Review>? reviews,
-    String? cursor,
+    LoadingStatus? reviewsStatus,
+    String? reviewsCursor,
+    bool? reviewsHasReachedMax,
     LoadingStatus? createReviewStatus,
-    String? createReviewError
+    String? createReviewError,
   }) {
     return PlaceState(
       placeId: placeId ?? this.placeId,
-      loadingStatus: loadingStatus ?? this.loadingStatus,
       place: place ?? this.place,
-      hasReachedMax: hasReachedMax ?? this.hasReachedMax,
+      placeDetailedStatus: placeDetailedStatus ?? this.placeDetailedStatus,
       reviews: reviews ?? this.reviews,
-      cursor: cursor ?? this.cursor,
+      reviewsStatus: reviewsStatus ?? this.reviewsStatus,
+      reviewsCursor: reviewsCursor ?? this.reviewsCursor,
+      reviewsHasReachedMax: reviewsHasReachedMax ?? this.reviewsHasReachedMax,
       createReviewStatus: createReviewStatus ?? this.createReviewStatus,
-      createReviewError: createReviewError ?? this.createReviewError
+      createReviewError: createReviewError ?? this.createReviewError,
     );
   }
 }

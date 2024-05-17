@@ -38,7 +38,6 @@ class AuthInterceptor extends Interceptor {
       final tokenString = response.data["data"]["accessToken"];
       _tokenStorage.save(Token(tokenString as String));
     } catch (e) {
-      log(e.toString());
       _tokenStorage.delete();
     }
   }

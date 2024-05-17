@@ -10,7 +10,9 @@ class PlaceLoadEvent extends PlaceEvent {
 }
 
 class CreateReviewPlaceEvent extends PlaceEvent {
-  final Review review;
+  final ReviewRaw review;
 
   CreateReviewPlaceEvent({required this.review});
 }
+
+class LoadMoreReviewsPlaceEvent extends PlaceEvent {}

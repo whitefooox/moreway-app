@@ -7,5 +7,4 @@ abstract class IAuthService {
   Future<Token> signIn(SignInData data);
   Future<Token> signUp(SignUpData data);
   Future<void> signOut();
-  Future<UserProfile> getProfileData();
 }

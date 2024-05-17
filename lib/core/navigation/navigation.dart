@@ -25,6 +25,7 @@ import 'package:moreway/module/place/presentation/page/home_page.dart';
 class AppRouter {
   late final AuthBloc _authBloc;
   late final LaunchBloc _launchBloc;
+  late final UserBloc _userBloc;
   late GoRouter router;
   final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -33,6 +34,7 @@ class AppRouter {
   void setupState() {
     _authBloc = getIt<AuthBloc>()..add(AuthCheckAuthorizationEvent());
     _launchBloc = getIt<LaunchBloc>()..add(CheckFirstLaunchEvent());
+    _userBloc = getIt<UserBloc>()..add(LoadUserEvent());
   }
 
   AppRouter() {
@@ -180,8 +182,8 @@ class AppRouter {
               StatefulShellBranch(routes: [
                 GoRoute(
                     path: '/profile',
-                    builder: (context, state) => BlocProvider<AuthBloc>.value(
-                          value: _authBloc,
+                    builder: (context, state) => BlocProvider<UserBloc>.value(
+                          value: _userBloc,
                           child: ProfilePage(),
                         )),
               ]),

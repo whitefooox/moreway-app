@@ -7,6 +7,7 @@ import 'package:moreway/core/api/paginated_page.dart';
 import 'package:moreway/module/place/domain/entity/place_detailed.dart';
 import 'package:moreway/module/place/domain/usecase/place_interactor.dart';
 import 'package:moreway/module/review/domain/entity/review.dart';
+import 'package:moreway/module/review/domain/entity/review_raw.dart';
 
 part 'place_event.dart';
 part 'place_state.dart';
@@ -16,36 +17,56 @@ class PlaceBloc extends Bloc<PlaceEvent, PlaceState> {
 
   PlaceBloc(this._placeInteractor) : super(PlaceState()) {
     on<PlaceLoadEvent>(_load);
+    on<CreateReviewPlaceEvent>(_createReview);
+  }
+
+  Future<void> _loadPlaceDetailed(Emitter<PlaceState> emit) async {
+    emit(state.copyWith(placeDetailedStatus: LoadingStatus.loading));
+    try {
+      final place = await _placeInteractor.getPlaceDetailed(state.placeId!);
+      emit(state.copyWith(
+          placeDetailedStatus: LoadingStatus.success, place: place));
+    } catch (e) {
+      emit(state.copyWith(placeDetailedStatus: LoadingStatus.failure));
+    }
+  }
+
+  Future<void> _loadReviews(Emitter<PlaceState> emit) async {
+    emit(state.copyWith(reviewsStatus: LoadingStatus.loading));
+    try {
+      final reviewsPage =
+          await _placeInteractor.getReviews(placeId: state.placeId!);
+      emit(state.copyWith(
+          reviewsStatus: LoadingStatus.success,
+          reviewsCursor: reviewsPage.cursor,
+          reviews: reviewsPage.items,
+          reviewsHasReachedMax: reviewsPage.cursor == null));
+    } catch (e) {
+      emit(state.copyWith(reviewsStatus: LoadingStatus.failure));
+    }
   }
 
   void _load(PlaceLoadEvent event, Emitter<PlaceState> emit) async {
-    log("[place id]: [${event.id}]");
-    emit(state.copyWith(
-        loadingStatus: LoadingStatus.loading, placeId: event.id));
+    emit(state.copyWith(placeId: event.id));
+    await _loadPlaceDetailed(emit);
+    await _loadReviews(emit);
+  }
+
+  void _createReview(
+      CreateReviewPlaceEvent event, Emitter<PlaceState> emit) async {
+    emit(state.copyWith(createReviewStatus: LoadingStatus.loading));
     try {
-      final results = await Future.wait([
-        _placeInteractor.getPlaceDetailed(event.id),
-        _placeInteractor.getReviews(placeId: event.id)
-      ]);
-      final place = results[0] as PlaceDetailed;
-      final reviewPage = results[1] as PaginatedPage<Review>;
-      emit(state.copyWith(
-          loadingStatus: LoadingStatus.success,
-          place: place,
-          reviews: reviewPage.items,
-          hasReachedMax: reviewPage.cursor == null,
-          cursor: reviewPage.cursor));
+      await _placeInteractor.createReview(
+          placeId: state.placeId!, review: event.review);
+      emit(state.copyWith(createReviewStatus: LoadingStatus.success));
     } catch (e) {
-      emit(state.copyWith(loadingStatus: LoadingStatus.failure));
+      log(e.toString());
+      emit(state.copyWith(createReviewStatus: LoadingStatus.failure));
     }
   }
 
-  void _createReview(CreateReviewPlaceEvent event, Emitter<PlaceState> emit) async {
-    emit(state.copyWith(createReviewStatus: LoadingStatus.loading));
-    try {
-      
-    } catch (e) {
-      
-    }
+  void _loadMoreReviews(
+      LoadMoreReviewsPlaceEvent event, Emitter<PlaceState> emit) async {
+    try {} catch (e) {}
   }
 }

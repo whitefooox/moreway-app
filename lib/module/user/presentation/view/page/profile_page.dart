@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:moreway/core/api/loading_status.dart';
 import 'package:moreway/core/theme/colors.dart';
 import 'package:moreway/module/auth/presentation/bloc/auth_bloc.dart';
+import 'package:moreway/module/user/presentation/state/bloc/user_bloc.dart';
 import 'package:moreway/module/user/presentation/view/widget/profile_card.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -26,31 +28,37 @@ class ProfilePage extends StatelessWidget {
                   )),
             ],
           ),
-          body: BlocBuilder<AuthBloc, AuthState>(
+          body: BlocBuilder<UserBloc, UserState>(
             builder: (context, state) {
-              return Column(
-                children: [
-                  Expanded(
-                      flex: 2,
-                      child: Center(
-                        child: ProfileCard(imageUrl: state.user!.avatarUrl, name: state.user!.name)
-                      )),
-                  Expanded(
-                      flex: 3,
-                      child: Container(
-                        color: Colors.blue,
-                      )),
-                  Expanded(
-                      flex: 1,
-                      child: Container(
-                        color: Colors.green,
-                      )),
-                  SizedBox(
-                    width: screenSize.width,
-                    height: 60 + screenSize.width * 0.035 * 2,
-                  ),
-                ],
-              );
+              if (state.loadingStatus == LoadingStatus.success)
+                return Column(
+                  children: [
+                    Expanded(
+                        flex: 2,
+                        child: Center(
+                            child: ProfileCard(
+                                imageUrl: state.user!.avatarUrl,
+                                name: state.user!.name))),
+                    Expanded(
+                        flex: 3,
+                        child: Container(
+                          color: Colors.blue,
+                        )),
+                    Expanded(
+                        flex: 1,
+                        child: Container(
+                          color: Colors.green,
+                        )),
+                    SizedBox(
+                      width: screenSize.width,
+                      height: 60 + screenSize.width * 0.035 * 2,
+                    ),
+                  ],
+                );
+              else
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
             },
           )),
     );
