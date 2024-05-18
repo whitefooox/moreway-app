@@ -15,6 +15,8 @@ import 'package:moreway/module/place/presentation/page/place_detailed_page.dart'
 import 'package:moreway/module/place/presentation/state/place/place_bloc.dart';
 import 'package:moreway/module/place/presentation/state/places/places_bloc.dart';
 import 'package:moreway/module/review/presentation/view/page/create_review_page.dart';
+import 'package:moreway/module/route/presentation/view/page/route_builder_page.dart';
+import 'package:moreway/module/setting/presentation/page/settings_page.dart';
 import 'package:moreway/module/user/presentation/state/bloc/user_bloc.dart';
 import 'package:moreway/module/user/presentation/view/page/profile_page.dart';
 import 'package:moreway/module/welcome/presentation/bloc/launch_bloc.dart';
@@ -78,7 +80,7 @@ class AppRouter {
           builder: (context, state) => BlocListener<AuthBloc, AuthState>(
             bloc: _authBloc,
             listener: (context, state) {
-              if(state.status != AuthStatus.loading){
+              if (state.status != AuthStatus.loading) {
                 context.go("/home");
               }
             },
@@ -137,31 +139,29 @@ class AppRouter {
                         ),
                     routes: [
                       GoRoute(
-                        path: "place/:id",
-                        parentNavigatorKey: _rootNavigatorKey,
-                        builder: (context, state) {
-                          final placeId = state.pathParameters['id'];
-                          return BlocProvider(
-                            create: (_) => getIt<PlaceBloc>()
-                              ..add(PlaceLoadEvent(id: placeId!)),
-                            child: const PlaceDetailedPage(),
-                          );
-                        },
-                        routes: [
-                          GoRoute(
-                            parentNavigatorKey: _rootNavigatorKey,
-                            path: "create-review",
-                            builder: (context, state) => CreateReviewPage(),
-                          )
-                        ]
-                      )
+                          path: "place/:id",
+                          parentNavigatorKey: _rootNavigatorKey,
+                          builder: (context, state) {
+                            final placeId = state.pathParameters['id'];
+                            return BlocProvider(
+                              create: (_) => getIt<PlaceBloc>()
+                                ..add(PlaceLoadEvent(id: placeId!)),
+                              child: const PlaceDetailedPage(),
+                            );
+                          },
+                          routes: [
+                            GoRoute(
+                              parentNavigatorKey: _rootNavigatorKey,
+                              path: "create-review",
+                              builder: (context, state) => CreateReviewPage(),
+                            )
+                          ])
                     ]),
               ]),
               StatefulShellBranch(routes: [
                 GoRoute(
                   path: '/route',
-                  builder: (context, state) =>
-                      const Scaffold(body: Center(child: Text("route"))),
+                  builder: (context, state) => RouteBuilderPage(),
                 ),
               ]),
               StatefulShellBranch(routes: [
@@ -185,7 +185,17 @@ class AppRouter {
                     builder: (context, state) => BlocProvider<UserBloc>.value(
                           value: _userBloc,
                           child: ProfilePage(),
-                        )),
+                        ),
+                    routes: [
+                      GoRoute(
+                        path: "settings",
+                        parentNavigatorKey: _rootNavigatorKey,
+                        builder: (context, state) => BlocProvider<AuthBloc>.value(
+                          value: _authBloc,
+                          child: SettingsPage(),
+                        ),
+                      )
+                    ]),
               ]),
             ]),
       ],

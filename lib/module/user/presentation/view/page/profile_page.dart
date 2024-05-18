@@ -1,27 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:moreway/core/api/loading_status.dart';
 import 'package:moreway/core/theme/colors.dart';
-import 'package:moreway/module/auth/presentation/bloc/auth_bloc.dart';
 import 'package:moreway/module/user/presentation/state/bloc/user_bloc.dart';
 import 'package:moreway/module/user/presentation/view/widget/profile_card.dart';
 
 class ProfilePage extends StatelessWidget {
+  const ProfilePage({super.key});
+
+  void _goToSettings(BuildContext context){
+    context.go("/profile/settings");
+  }
+  
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-    return Padding(
-      padding: EdgeInsets.only(
-          left: screenSize.width * 0.035,
-          right: screenSize.width * 0.035,
-          top: screenSize.height * 0.01),
-      child: Scaffold(
+    return Scaffold(
           appBar: AppBar(
-            title: Text("Профиль"),
+            title: const Text("Профиль"),
             actions: [
               IconButton(
-                  onPressed: () {},
-                  icon: Icon(
+                  onPressed: () => _goToSettings(context),
+                  icon: const Icon(
                     Icons.settings,
                     color: AppColor.gray,
                     size: 25,
@@ -30,7 +31,7 @@ class ProfilePage extends StatelessWidget {
           ),
           body: BlocBuilder<UserBloc, UserState>(
             builder: (context, state) {
-              if (state.loadingStatus == LoadingStatus.success)
+              if (state.loadingStatus == LoadingStatus.success) {
                 return Column(
                   children: [
                     Expanded(
@@ -55,12 +56,13 @@ class ProfilePage extends StatelessWidget {
                     ),
                   ],
                 );
-              else
-                return Center(
+              } else {
+                return const Center(
                   child: CircularProgressIndicator(),
                 );
+              }
             },
-          )),
+          )
     );
   }
 }
