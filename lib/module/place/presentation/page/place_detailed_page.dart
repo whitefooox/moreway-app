@@ -28,24 +28,27 @@ class _PlaceDetailedPageState extends State<PlaceDetailedPage>
     with TickerProviderStateMixin {
   late final TabController tabController;
   final _scrollController = ScrollController();
+  late final PlaceBloc _placeBloc;
 
   void _onScroll() {
     if (_scrollController.position.maxScrollExtent ==
         _scrollController.offset) {
-      //_placesBloc.add(LoadMorePlacesEvent());
-      log("load more");
+      _placeBloc.add(LoadMoreReviewsPlaceEvent());
     }
   }
 
   @override
   void initState() {
     super.initState();
+    _placeBloc = BlocProvider.of<PlaceBloc>(context);
     tabController = TabController(length: 2, vsync: this);
+    _scrollController.addListener(_onScroll);
   }
 
   @override
   void dispose() {
     tabController.dispose();
+    _scrollController.removeListener(_onScroll);
     super.dispose();
   }
 
@@ -139,7 +142,7 @@ class _PlaceDetailedPageState extends State<PlaceDetailedPage>
 
   Widget _buildReviews(List<Review> reviews, TextTheme textTheme) {
     return ListView.builder(
-        //controller: _scrollController,
+        controller: _scrollController,
         physics: const AlwaysScrollableScrollPhysics(),
         itemCount: reviews.length + 1,
         itemBuilder: (context, index) {
@@ -217,191 +220,106 @@ class _PlaceDetailedPageState extends State<PlaceDetailedPage>
     if (review != null) placeBloc.add(CreateReviewPlaceEvent(review: review));
   }
 
+  Widget _buildScrollBody(PlaceState state, TextTheme textTheme, Size screenSize) {
+    return Padding(
+      padding: EdgeInsets.only(
+                left: screenSize.width * 0.035,
+                right: screenSize.width * 0.035),
+      child: Column(
+        children: [
+          const SizedBox(
+            height: 10,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _buildPlaceName(state.place!.name, textTheme),
+              const SizedBox(
+                width: 10,
+              ),
+              //_buildRating(state.place!.rating),
+            ],
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          _buildProperties(state.place!.location, textTheme, state.place!.rating, state.place!.distance),
+          const SizedBox(
+            height: 10,
+          ),
+          TabBar(
+            indicatorColor: AppColor.pink,
+            labelColor: AppColor.gray,
+            tabs: [
+              Padding(
+                padding: const EdgeInsets.only(top: 8, bottom: 8),
+                child: Text(
+                  "Описание",
+                  style: textTheme.bodyMedium,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 8, bottom: 8),
+                child: Text(
+                  "Отзывы",
+                  style: textTheme.bodyMedium,
+                ),
+              ),
+            ],
+            controller: tabController,
+          ),
+          Expanded(
+            child: 
+              TabBarView(controller: tabController, children: [
+                SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: ReadMoreText(
+                        state.place!.description,
+                        colorClickableText: AppColor.pink,
+                        trimExpandedText: " Скрыть",
+                        trimCollapsedText: "Читать дальше",
+                      ),
+                  ),
+                  
+                ),
+                if (state.reviews != null) ...[
+                  if (state.reviews!.isEmpty) ...[
+                    _buildNoReviews(textTheme)
+                  ] else ...[
+                    _buildReviews(state.reviews!, textTheme)
+                  ]
+                ] else ...[
+                  if (state.reviewsStatus == LoadingStatus.loading) ...[
+                    const Center(child: CircularProgressIndicator())
+                  ] else if (state.reviewsStatus == LoadingStatus.failure) ...[
+                    const Center(child: Text("Произошла ошибка"))
+                  ]
+                ]
+              ]),
+            ),
+          
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     final textTheme = Theme.of(context).textTheme;
     return Scaffold(
-        body: BlocBuilder<PlaceBloc, PlaceState>(builder: (context, state) {
+        body: BlocBuilder<PlaceBloc, PlaceState>(
+          bloc: _placeBloc,
+          builder: (context, state) {
       switch (state.placeDetailedStatus) {
         case LoadingStatus.success:
           return NestedScrollView(
             headerSliverBuilder: (context, innerBoxIsScrolled) => [
               _buildSliverAppBar(
                   screenSize.width, state.place!.images, state.placeId!),
-              // SliverToBoxAdapter(
-              //     child: Padding(
-              //   padding: EdgeInsets.only(
-              //       left: screenSize.width * 0.035,
-              //       right: screenSize.width * 0.035),
-              //   child: Padding(
-              //     padding: const EdgeInsets.all(10),
-              //     child: Column(
-              //       children: [
-              //         const SizedBox(
-              //           height: 10,
-              //         ),
-              //         Row(
-              //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //           children: [
-              //             _buildPlaceName(state.place!.name, textTheme),
-              //             const SizedBox(
-              //               width: 10,
-              //             ),
-              //             //_buildRating(state.place!.rating),
-              //           ],
-              //         ),
-              //         const SizedBox(
-              //           height: 10,
-              //         ),
-              //         _buildProperties(state.place!.location, textTheme,
-              //             state.place!.rating, state.place!.distance),
-              //         const SizedBox(
-              //           height: 10,
-              //         ),
-              //         TabBar(
-              //           indicatorColor: AppColor.pink,
-              //           labelColor: AppColor.gray,
-              //           tabs: [
-              //             Padding(
-              //               padding: const EdgeInsets.only(top: 8, bottom: 8),
-              //               child: Text(
-              //                 "Описание",
-              //                 style: textTheme.bodyMedium,
-              //               ),
-              //             ),
-              //             Padding(
-              //               padding: const EdgeInsets.only(top: 8, bottom: 8),
-              //               child: Text(
-              //                 "Отзывы",
-              //                 style: textTheme.bodyMedium,
-              //               ),
-              //             ),
-              //           ],
-              //           controller: tabController,
-              //         ),
-              //       ],
-              //     ),
-              //   ),
-              // )),
             ],
-            body: Container(
-              //color: Colors.red,
-              child: Column(
-                children: [
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      _buildPlaceName(state.place!.name, textTheme),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      //_buildRating(state.place!.rating),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  _buildProperties(state.place!.location, textTheme,
-                      state.place!.rating, state.place!.distance),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  TabBar(
-                    indicatorColor: AppColor.pink,
-                    labelColor: AppColor.gray,
-                    tabs: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8, bottom: 8),
-                        child: Text(
-                          "Описание",
-                          style: textTheme.bodyMedium,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8, bottom: 8),
-                        child: Text(
-                          "Отзывы",
-                          style: textTheme.bodyMedium,
-                        ),
-                      ),
-                    ],
-                    controller: tabController,
-                  ),
-                  Expanded(
-                    child: Container(
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                            left: screenSize.width * 0.035,
-                            right: screenSize.width * 0.035),
-                        child: TabBarView(controller: tabController, children: [
-                          Padding(
-                            padding: const EdgeInsets.all(10),
-                            child: ReadMoreText(
-                              state.place!.description,
-                              colorClickableText: AppColor.pink,
-                              trimExpandedText: " Скрыть",
-                              trimCollapsedText: "Читать дальше",
-                            ),
-                          ),
-                          if (state.reviews != null) ...[
-                            if (state.reviews!.isEmpty) ...[
-                              _buildNoReviews(textTheme)
-                            ] else ...[
-                              _buildReviews(state.reviews!, textTheme)
-                            ]
-                          ] else ...[
-                            if (state.reviewsStatus ==
-                                LoadingStatus.loading) ...[
-                              const Center(child: CircularProgressIndicator())
-                            ] else if (state.reviewsStatus ==
-                                LoadingStatus.failure) ...[
-                              const Center(child: Text("Произошла ошибка"))
-                            ]
-                          ]
-                        ]),
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-            // body: Container(
-            //   height: 200,
-            //   child: Padding(
-            //     padding: EdgeInsets.only(
-            //         left: screenSize.width * 0.035,
-            //         right: screenSize.width * 0.035),
-            //     child: TabBarView(controller: tabController, children: [
-            //       Padding(
-            //         padding: const EdgeInsets.all(10),
-            //         child: ReadMoreText(
-            //           state.place!.description,
-            //           colorClickableText: AppColor.pink,
-            //           trimExpandedText: " Скрыть",
-            //           trimCollapsedText: "Читать дальше",
-            //         ),
-            //       ),
-            //       Text("data")
-            //       // if (state.reviews != null) ...[
-            //       //   if (state.reviews!.isEmpty) ...[
-            //       //     _buildNoReviews(textTheme)
-            //       //   ] else ...[
-            //       //     _buildReviews(state.reviews!, textTheme)
-            //       //   ]
-            //       // ] else ...[
-            //       //   if (state.reviewsStatus == LoadingStatus.loading) ...[
-            //       //     const Center(child: CircularProgressIndicator())
-            //       //   ] else if (state.reviewsStatus == LoadingStatus.failure) ...[
-            //       //     const Center(child: Text("Произошла ошибка"))
-            //       //   ]
-            //       // ]
-            //     ]),
-            //   ),
-            // ),
+            body: _buildScrollBody(state, textTheme, screenSize)
           );
         case LoadingStatus.failure:
           return _buildError();

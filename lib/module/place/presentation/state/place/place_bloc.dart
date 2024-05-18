@@ -18,6 +18,7 @@ class PlaceBloc extends Bloc<PlaceEvent, PlaceState> {
   PlaceBloc(this._placeInteractor) : super(PlaceState()) {
     on<PlaceLoadEvent>(_load);
     on<CreateReviewPlaceEvent>(_createReview);
+    on<LoadMoreReviewsPlaceEvent>(_loadMoreReviews);
   }
 
   Future<void> _loadPlaceDetailed(Emitter<PlaceState> emit) async {
@@ -67,6 +68,17 @@ class PlaceBloc extends Bloc<PlaceEvent, PlaceState> {
 
   void _loadMoreReviews(
       LoadMoreReviewsPlaceEvent event, Emitter<PlaceState> emit) async {
-    try {} catch (e) {}
+    try {
+      emit(state.copyWith(reviewsStatus: LoadingStatus.loading));
+      final reviewsPage = await _placeInteractor.getReviews(
+          placeId: state.placeId!, cursor: state.reviewsCursor);
+      emit(state.copyWith(
+          reviews: state.reviews! + reviewsPage.items,
+          reviewsStatus: LoadingStatus.success,
+          reviewsCursor: reviewsPage.cursor,
+          reviewsHasReachedMax: reviewsPage.cursor == null));
+    } catch (e) {
+      emit(state.copyWith(reviewsStatus: LoadingStatus.failure));
+    }
   }
 }
