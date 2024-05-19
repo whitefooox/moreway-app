@@ -16,6 +16,7 @@ PlaceModel _$PlaceModelFromJson(Map<String, dynamic> json) => PlaceModel(
       distance: (json['distance'] as num).toDouble(),
       locality: PlaceModel._localityFromJson(
           json['locality'] as Map<String, dynamic>),
+      type: PlaceModel._typeFromJson(json['type'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$PlaceModelToJson(PlaceModel instance) =>
@@ -28,4 +29,5 @@ Map<String, dynamic> _$PlaceModelToJson(PlaceModel instance) =>
       'image': instance.image,
       'distance': instance.distance,
       'locality': instance.locality,
+      'type': instance.type,
     };

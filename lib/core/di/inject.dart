@@ -27,6 +27,10 @@ import 'package:moreway/module/place/domain/dependency/i_place_repository.dart';
 import 'package:moreway/module/place/domain/usecase/place_interactor.dart';
 import 'package:moreway/module/place/presentation/state/place/place_bloc.dart';
 import 'package:moreway/module/place/presentation/state/places/places_bloc.dart';
+import 'package:moreway/module/route/data/route_builder_api.dart';
+import 'package:moreway/module/route/domain/dependency/i_route_builder_repository.dart';
+import 'package:moreway/module/route/domain/interactor/route_builder_interactor.dart';
+import 'package:moreway/module/route/presentation/state/builder/route_builder_bloc.dart';
 import 'package:moreway/module/user/data/user_repository_api.dart';
 import 'package:moreway/module/user/domain/dependency/i_user_repository.dart';
 import 'package:moreway/module/user/domain/interactor/user_interactor.dart';
@@ -48,6 +52,7 @@ class DIContainer {
         () => SharedPreferences.getInstance());
     _injectAuth();
     _injectUser();
+    _injectBuilder();
     _injectLocation();
     _injectPlace();
     _injectLaunch();
@@ -109,5 +114,11 @@ class DIContainer {
     getIt.registerLazySingleton<IUserRepository>(() => UserRepositoryAPI(getIt()));
     getIt.registerLazySingleton<UserInteractor>(() => UserInteractor(getIt()));
     getIt.registerLazySingleton<UserBloc>(() => UserBloc(getIt()));
+  }
+  //user_repository
+  void _injectBuilder(){
+    getIt.registerLazySingleton<IRouteBuilderService>(() => RouteBuilderAPI(getIt()),);
+    getIt.registerLazySingleton<RouteBuilderInteractor>(() => RouteBuilderInteractor(getIt(), getIt()),);
+    getIt.registerLazySingleton<RouteBuilderBloc>(() => RouteBuilderBloc(getIt()));
   }
 }

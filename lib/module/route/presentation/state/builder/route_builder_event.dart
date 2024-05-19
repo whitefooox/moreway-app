@@ -6,9 +6,9 @@ sealed class RouteBuilderEvent {}
 final class LoadRouteBuilderEvent extends RouteBuilderEvent {}
 
 final class AddPlaceRouteBuilderEvent extends RouteBuilderEvent {
-  final Place place;
+  final String placeId;
 
-  AddPlaceRouteBuilderEvent({required this.place});
+  AddPlaceRouteBuilderEvent({required this.placeId});
 }
 
 final class RemovePlaceRouteBuilderEvent extends RouteBuilderEvent {

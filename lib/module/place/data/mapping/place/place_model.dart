@@ -22,6 +22,9 @@ class PlaceModel {
   @JsonKey(name: "locality", fromJson: _localityFromJson)
   final String locality;
 
+  @JsonKey(name: "type", fromJson: _typeFromJson)
+  final String type;
+
   PlaceModel({
     required this.id,
     required this.name,
@@ -31,10 +34,15 @@ class PlaceModel {
     required this.image,
     required this.distance,
     required this.locality,
+    required this.type
   });
 
   static String _imageFromJson(Map<String, dynamic> json) {
     return json["path"] as String;
+  }
+
+  static String _typeFromJson(Map<String, dynamic> json) {
+    return json["name"] as String;
   }
 
   static String _localityFromJson(Map<String, dynamic> json) {

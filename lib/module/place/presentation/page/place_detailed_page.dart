@@ -15,6 +15,7 @@ import 'package:moreway/module/place/presentation/widget/images_carousel.dart';
 import 'package:moreway/module/review/domain/entity/review.dart';
 import 'package:moreway/module/review/presentation/view/widget/create_review_dialog.dart';
 import 'package:moreway/module/review/presentation/view/widget/review_card.dart';
+import 'package:moreway/module/route/presentation/state/builder/route_builder_bloc.dart';
 import 'package:readmore/readmore.dart';
 
 class PlaceDetailedPage extends StatefulWidget {
@@ -29,6 +30,7 @@ class _PlaceDetailedPageState extends State<PlaceDetailedPage>
   late final TabController tabController;
   final _scrollController = ScrollController();
   late final PlaceBloc _placeBloc;
+  late final RouteBuilderBloc _builderBloc;
 
   void _onScroll() {
     if (_scrollController.position.maxScrollExtent ==
@@ -37,10 +39,16 @@ class _PlaceDetailedPageState extends State<PlaceDetailedPage>
     }
   }
 
+  void _addToBuilder() {
+    _builderBloc
+        .add(AddPlaceRouteBuilderEvent(placeId: _placeBloc.state.placeId!));
+  }
+
   @override
   void initState() {
     super.initState();
     _placeBloc = BlocProvider.of<PlaceBloc>(context);
+    _builderBloc = BlocProvider.of<RouteBuilderBloc>(context);
     tabController = TabController(length: 2, vsync: this);
     _scrollController.addListener(_onScroll);
   }
@@ -199,10 +207,22 @@ class _PlaceDetailedPageState extends State<PlaceDetailedPage>
       ),
       actions: [
         IconButton(
-            onPressed: () async {},
-            icon: const CircleAvatar(
+            onPressed: _addToBuilder,
+            icon: CircleAvatar(
               backgroundColor: AppColor.white,
-              child: Icon(Icons.add),
+              child: BlocBuilder<RouteBuilderBloc, RouteBuilderState>(
+                bloc: _builderBloc,
+                builder: (context, state) {
+                  if (state.route!.points
+                      .map((place) => place.id)
+                      .toList()
+                      .contains(_placeBloc.state.placeId!)) {
+                    return const Icon(Icons.check);
+                  } else {
+                    return const Icon(Icons.add);
+                  }
+                },
+              ),
             ))
       ],
       leading: IconButton(
@@ -220,11 +240,11 @@ class _PlaceDetailedPageState extends State<PlaceDetailedPage>
     if (review != null) placeBloc.add(CreateReviewPlaceEvent(review: review));
   }
 
-  Widget _buildScrollBody(PlaceState state, TextTheme textTheme, Size screenSize) {
+  Widget _buildScrollBody(
+      PlaceState state, TextTheme textTheme, Size screenSize) {
     return Padding(
       padding: EdgeInsets.only(
-                left: screenSize.width * 0.035,
-                right: screenSize.width * 0.035),
+          left: screenSize.width * 0.035, right: screenSize.width * 0.035),
       child: Column(
         children: [
           const SizedBox(
@@ -243,7 +263,8 @@ class _PlaceDetailedPageState extends State<PlaceDetailedPage>
           const SizedBox(
             height: 10,
           ),
-          _buildProperties(state.place!.location, textTheme, state.place!.rating, state.place!.distance),
+          _buildProperties(state.place!.location, textTheme,
+              state.place!.rating, state.place!.distance),
           const SizedBox(
             height: 10,
           ),
@@ -269,36 +290,33 @@ class _PlaceDetailedPageState extends State<PlaceDetailedPage>
             controller: tabController,
           ),
           Expanded(
-            child: 
-              TabBarView(controller: tabController, children: [
-                SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: ReadMoreText(
-                        state.place!.description,
-                        colorClickableText: AppColor.pink,
-                        trimExpandedText: " Скрыть",
-                        trimCollapsedText: "Читать дальше",
-                      ),
+            child: TabBarView(controller: tabController, children: [
+              SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: ReadMoreText(
+                    state.place!.description,
+                    colorClickableText: AppColor.pink,
+                    trimExpandedText: " Скрыть",
+                    trimCollapsedText: "Читать дальше",
                   ),
-                  
                 ),
-                if (state.reviews != null) ...[
-                  if (state.reviews!.isEmpty) ...[
-                    _buildNoReviews(textTheme)
-                  ] else ...[
-                    _buildReviews(state.reviews!, textTheme)
-                  ]
+              ),
+              if (state.reviews != null) ...[
+                if (state.reviews!.isEmpty) ...[
+                  _buildNoReviews(textTheme)
                 ] else ...[
-                  if (state.reviewsStatus == LoadingStatus.loading) ...[
-                    const Center(child: CircularProgressIndicator())
-                  ] else if (state.reviewsStatus == LoadingStatus.failure) ...[
-                    const Center(child: Text("Произошла ошибка"))
-                  ]
+                  _buildReviews(state.reviews!, textTheme)
                 ]
-              ]),
-            ),
-          
+              ] else ...[
+                if (state.reviewsStatus == LoadingStatus.loading) ...[
+                  const Center(child: CircularProgressIndicator())
+                ] else if (state.reviewsStatus == LoadingStatus.failure) ...[
+                  const Center(child: Text("Произошла ошибка"))
+                ]
+              ]
+            ]),
+          ),
         ],
       ),
     );
@@ -310,22 +328,21 @@ class _PlaceDetailedPageState extends State<PlaceDetailedPage>
     final textTheme = Theme.of(context).textTheme;
     return Scaffold(
         body: BlocBuilder<PlaceBloc, PlaceState>(
-          bloc: _placeBloc,
-          builder: (context, state) {
-      switch (state.placeDetailedStatus) {
-        case LoadingStatus.success:
-          return NestedScrollView(
-            headerSliverBuilder: (context, innerBoxIsScrolled) => [
-              _buildSliverAppBar(
-                  screenSize.width, state.place!.images, state.placeId!),
-            ],
-            body: _buildScrollBody(state, textTheme, screenSize)
-          );
-        case LoadingStatus.failure:
-          return _buildError();
-        default:
-          return _buildLoading();
-      }
-    }));
+            bloc: _placeBloc,
+            builder: (context, state) {
+              switch (state.placeDetailedStatus) {
+                case LoadingStatus.success:
+                  return NestedScrollView(
+                      headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                            _buildSliverAppBar(screenSize.width,
+                                state.place!.images, state.placeId!),
+                          ],
+                      body: _buildScrollBody(state, textTheme, screenSize));
+                case LoadingStatus.failure:
+                  return _buildError();
+                default:
+                  return _buildLoading();
+              }
+            }));
   }
 }
