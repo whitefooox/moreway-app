@@ -95,12 +95,7 @@ class _HomePageState extends State<HomePage> {
           titleSpacing: 0.0,
           surfaceTintColor: Colors.transparent,
           automaticallyImplyLeading: false,
-          title: BlocBuilder<LocationBloc, LocationState>(
-              builder: (context, state) {
-            return LocationWidget(
-              city: state.city,
-            );
-          }),
+          title: Text("Главная")
         ),
         body: RefreshIndicator(
           color: AppColor.pink,

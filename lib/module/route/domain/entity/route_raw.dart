@@ -1,7 +1,8 @@
 import 'package:moreway/module/place/domain/entity/place.dart';
+import 'package:moreway/module/place/domain/entity/place_base.dart';
 
 class RouteRaw {
-  final List<Place> points;
+  final List<PlaceBase> points;
 
   RouteRaw({
     required this.points,

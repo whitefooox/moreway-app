@@ -1,34 +1,35 @@
 part of 'route_builder_bloc.dart';
 
+enum RouteBuilderOperationStatus {
+  initial,
+  loading,
+  added,
+  errorAdding,
+  removed,
+  errorRemoving
+}
+
 class RouteBuilderState {
   final RouteRaw? route;
   final LoadingStatus routeStatus;
 
-  final LoadingStatus addPlaceStatus;
-  final LoadingStatus removePlaceStatus;
-  final LoadingStatus reorderPlacesStatus;
+  final RouteBuilderOperationStatus operationStatus;
 
   RouteBuilderState({
     this.route,
     this.routeStatus = LoadingStatus.initial,
-    this.addPlaceStatus = LoadingStatus.initial,
-    this.removePlaceStatus = LoadingStatus.initial,
-    this.reorderPlacesStatus = LoadingStatus.initial,
+    this.operationStatus = RouteBuilderOperationStatus.initial
   });
 
   RouteBuilderState copyWith({
     RouteRaw? route,
     LoadingStatus? routeStatus,
-    LoadingStatus? addPlaceStatus,
-    LoadingStatus? removePlaceStatus,
-    LoadingStatus? reorderPlacesStatus,
+    RouteBuilderOperationStatus? operationStatus
   }) {
     return RouteBuilderState(
       route: route ?? this.route,
       routeStatus: routeStatus ?? this.routeStatus,
-      addPlaceStatus: addPlaceStatus ?? this.addPlaceStatus,
-      removePlaceStatus: removePlaceStatus ?? this.removePlaceStatus,
-      reorderPlacesStatus: reorderPlacesStatus ?? this.reorderPlacesStatus,
+      operationStatus: operationStatus ?? this.operationStatus
     );
   }
 }

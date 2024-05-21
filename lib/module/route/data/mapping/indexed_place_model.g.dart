@@ -9,7 +9,7 @@ part of 'indexed_place_model.dart';
 IndexedPlaceModel _$IndexedPlaceModelFromJson(Map<String, dynamic> json) =>
     IndexedPlaceModel(
       index: json['index'] as int,
-      place: PlaceModel.fromJson(json['place'] as Map<String, dynamic>),
+      place: PlaceRouteModel.fromJson(json['place'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$IndexedPlaceModelToJson(IndexedPlaceModel instance) =>

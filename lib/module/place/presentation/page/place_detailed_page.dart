@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:go_router/go_router.dart';
 import 'package:moreway/core/api/loading_status.dart';
+import 'package:moreway/core/snackbar.dart';
 import 'package:moreway/core/theme/colors.dart';
 import 'package:moreway/module/place/domain/entity/place_detailed.dart';
 import 'package:moreway/module/place/presentation/state/place/place_bloc.dart';
@@ -42,6 +43,11 @@ class _PlaceDetailedPageState extends State<PlaceDetailedPage>
   void _addToBuilder() {
     _builderBloc
         .add(AddPlaceRouteBuilderEvent(placeId: _placeBloc.state.placeId!));
+  }
+
+  void _removeToBuilder() {
+    _builderBloc
+        .add(RemovePlaceRouteBuilderEvent(placeId: _placeBloc.state.placeId!));
   }
 
   @override
@@ -174,63 +180,64 @@ class _PlaceDetailedPageState extends State<PlaceDetailedPage>
     );
   }
 
-  SliverAppBar _buildSliverAppBar(
-      double width, List<String> images, String placeId) {
-    return SliverAppBar(
-      pinned: true,
-      expandedHeight: width,
-      flexibleSpace: FlexibleSpaceBar(
-        background: ImagesCarousel(images: images),
-        stretchModes: const [
-          StretchMode.blurBackground,
-          StretchMode.zoomBackground,
-        ],
-      ),
-      bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(0),
-        child: Container(
-          alignment: Alignment.center,
-          height: width * 0.1,
-          width: width,
-          decoration: const BoxDecoration(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
-              color: AppColor.white),
-          child: Container(
-            width: 40,
-            height: 5,
-            decoration: BoxDecoration(
-              color: AppColor.gray,
-              borderRadius: BorderRadius.circular(100.0),
+  Widget _buildSliverAppBar(double width, List<String> images, String placeId) {
+    return BlocBuilder<RouteBuilderBloc, RouteBuilderState>(
+      bloc: _builderBloc,
+      builder: (context, state) {
+        return SliverAppBar(
+          pinned: true,
+          expandedHeight: width,
+          flexibleSpace: FlexibleSpaceBar(
+            background: ImagesCarousel(images: images),
+            stretchModes: const [
+              StretchMode.blurBackground,
+              StretchMode.zoomBackground,
+            ],
+          ),
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(0),
+            child: Container(
+              alignment: Alignment.center,
+              height: width * 0.1,
+              width: width,
+              decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+                  color: AppColor.white),
+              child: Container(
+                width: 40,
+                height: 5,
+                decoration: BoxDecoration(
+                  color: AppColor.gray,
+                  borderRadius: BorderRadius.circular(100.0),
+                ),
+              ),
             ),
           ),
-        ),
-      ),
-      actions: [
-        IconButton(
-            onPressed: _addToBuilder,
-            icon: CircleAvatar(
-              backgroundColor: AppColor.white,
-              child: BlocBuilder<RouteBuilderBloc, RouteBuilderState>(
-                bloc: _builderBloc,
-                builder: (context, state) {
-                  if (state.route!.points
-                      .map((place) => place.id)
-                      .toList()
-                      .contains(_placeBloc.state.placeId!)) {
-                    return const Icon(Icons.check);
-                  } else {
-                    return const Icon(Icons.add);
-                  }
-                },
-              ),
-            ))
-      ],
-      leading: IconButton(
-          onPressed: () {
-            context.pop();
-          },
-          icon: const CircleAvatar(
-              backgroundColor: AppColor.white, child: Icon(Icons.arrow_back))),
+          actions: [
+            if (state.route!.points
+                .map((place) => place.id)
+                .toList()
+                .contains(_placeBloc.state.placeId!)) ...[
+              CircleAvatar(
+                  backgroundColor: AppColor.white,
+                  child: IconButton(
+                      onPressed: _removeToBuilder, icon: Icon(Icons.check)))
+            ] else ...[
+              CircleAvatar(
+                  backgroundColor: AppColor.white,
+                  child: IconButton(
+                      onPressed: _addToBuilder, icon: Icon(Icons.add)))
+            ]
+          ],
+          leading: IconButton(
+              onPressed: () {
+                context.pop();
+              },
+              icon: const CircleAvatar(
+                  backgroundColor: AppColor.white,
+                  child: Icon(Icons.arrow_back))),
+        );
+      },
     );
   }
 
@@ -327,22 +334,68 @@ class _PlaceDetailedPageState extends State<PlaceDetailedPage>
     final screenSize = MediaQuery.of(context).size;
     final textTheme = Theme.of(context).textTheme;
     return Scaffold(
-        body: BlocBuilder<PlaceBloc, PlaceState>(
-            bloc: _placeBloc,
-            builder: (context, state) {
-              switch (state.placeDetailedStatus) {
-                case LoadingStatus.success:
-                  return NestedScrollView(
-                      headerSliverBuilder: (context, innerBoxIsScrolled) => [
-                            _buildSliverAppBar(screenSize.width,
-                                state.place!.images, state.placeId!),
-                          ],
-                      body: _buildScrollBody(state, textTheme, screenSize));
-                case LoadingStatus.failure:
-                  return _buildError();
-                default:
-                  return _buildLoading();
-              }
-            }));
+        body: BlocListener<RouteBuilderBloc, RouteBuilderState>(
+      listener: (context, state) {
+        switch (state.operationStatus) {
+          case RouteBuilderOperationStatus.added:
+            {
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(buildSnackBar("Добавлено"));
+              break;
+            }
+          case RouteBuilderOperationStatus.removed:
+            {
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(buildSnackBar("Удалено"));
+              break;
+            }
+          case RouteBuilderOperationStatus.errorAdding:
+            {
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(buildSnackBar("Не удалось добавить"));
+              break;
+            }
+          case RouteBuilderOperationStatus.errorRemoving:
+            {
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(buildSnackBar("Не удалось удалить"));
+              break;
+            }
+          default:
+        }
+        // if (state. == LoadingStatus.failure) {
+        //   ScaffoldMessenger.of(context)
+        //       .showSnackBar(buildSnackBar("Не удалось удалить"));
+        // }
+        // if (state.addPlaceStatus == LoadingStatus.failure) {
+        //   ScaffoldMessenger.of(context)
+        //       .showSnackBar(buildSnackBar("Не удалось добавить"));
+        // }
+        // if (state.operationStatus == RouteBuilderOperationStatus.added) {
+        //   ScaffoldMessenger.of(context)
+        //       .showSnackBar(buildSnackBar("Добавлено"));
+        // }
+        // if (state.removePlaceStatus == LoadingStatus.success) {
+        //   ScaffoldMessenger.of(context).showSnackBar(buildSnackBar("Удалено"));
+        // }
+      },
+      child: BlocBuilder<PlaceBloc, PlaceState>(
+          bloc: _placeBloc,
+          builder: (context, state) {
+            switch (state.placeDetailedStatus) {
+              case LoadingStatus.success:
+                return NestedScrollView(
+                    headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                          _buildSliverAppBar(screenSize.width,
+                              state.place!.images, state.placeId!),
+                        ],
+                    body: _buildScrollBody(state, textTheme, screenSize));
+              case LoadingStatus.failure:
+                return _buildError();
+              default:
+                return _buildLoading();
+            }
+          }),
+    ));
   }
 }

@@ -1,8 +1,10 @@
 import 'dart:developer';
+import 'dart:ffi';
 
 import 'package:moreway/core/api/api.dart';
 import 'package:moreway/core/api/api_client.dart';
 import 'package:moreway/module/place/domain/entity/place.dart';
+import 'package:moreway/module/place/domain/entity/place_base.dart';
 import 'package:moreway/module/route/data/mapping/indexed_place_model.dart';
 import 'package:moreway/module/route/domain/dependency/i_route_builder_repository.dart';
 import 'package:moreway/module/route/domain/entity/route.dart';
@@ -24,16 +26,18 @@ class RouteBuilderAPI implements IRouteBuilderService {
     try {
       final response = await _client.dio.get(Api.getConstructor(userId));
       final pointsJson = response.data['data']['items'] as List<dynamic>;
+      log(pointsJson.toString());
       final points = pointsJson
           .map((pointJson) =>
               IndexedPlaceModel.fromJson(pointJson as Map<String, dynamic>))
           .toList();
-      final routePoints = List<Place>.empty(growable: true);
+      final routePoints = List<PlaceBase>.empty(growable: true);
       for (final point in points) {
-        routePoints.insert(point.index, point.place.toPlace());
+        routePoints.insert(point.index - 1, point.place.toPlaceBase());
       }
       return RouteRaw(points: routePoints);
-    } catch (e) {
+    } catch (e, stacktrace) {
+      log("error", stackTrace: stacktrace);
       log("[route builder api] $e");
       rethrow;
     }
@@ -53,9 +57,9 @@ class RouteBuilderAPI implements IRouteBuilderService {
           .map((pointJson) =>
               IndexedPlaceModel.fromJson(pointJson as Map<String, dynamic>))
           .toList();
-      final routePoints = List<Place>.empty(growable: true);
+      final routePoints = List<PlaceBase>.empty(growable: true);
       for (final point in points) {
-        routePoints.insert(point.index, point.place.toPlace());
+        routePoints.insert(point.index - 1, point.place.toPlaceBase());
       }
       return RouteRaw(points: routePoints);
     } catch (e) {

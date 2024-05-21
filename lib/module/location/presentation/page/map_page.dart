@@ -62,6 +62,9 @@ class _MapPageState extends State<MapPage> {
     final screenSize = MediaQuery.of(context).size;
 
     return Scaffold(
+      // appBar: AppBar(
+      //   title: Text("Карта"),
+      // ),
       body: BlocBuilder<LocationV2Bloc, LocationV2State>(
         bloc: locationBloc,
         builder: (context, state) {

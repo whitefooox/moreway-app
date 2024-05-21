@@ -36,10 +36,17 @@ class AppRouter {
   GetIt get getIt => DIContainer.getIt;
 
   void setupState() {
-    _authBloc = getIt<AuthBloc>()..add(AuthCheckAuthorizationEvent());
     _launchBloc = getIt<LaunchBloc>()..add(CheckFirstLaunchEvent());
-    _userBloc = getIt<UserBloc>()..add(LoadUserEvent());
-    _builderBloc = getIt<RouteBuilderBloc>()..add(LoadRouteBuilderEvent());
+    _userBloc = getIt<UserBloc>();
+    _builderBloc = getIt<RouteBuilderBloc>();
+    _authBloc = getIt<AuthBloc>();
+    _authBloc.stream.listen((state) {
+      if (state.status == AuthStatus.authorized) {
+        _userBloc.add(LoadUserEvent());
+        _builderBloc.add(LoadRouteBuilderEvent());
+      }
+    });
+    _authBloc.add(AuthCheckAuthorizationEvent());
   }
 
   AppRouter() {
@@ -78,22 +85,24 @@ class AppRouter {
       initialLocation: "/home",
       navigatorKey: _rootNavigatorKey,
       routes: [
-        GoRoute(
-          path: "/loading",
-          builder: (context, state) => BlocListener<AuthBloc, AuthState>(
-            bloc: _authBloc,
-            listener: (context, state) {
-              if (state.status != AuthStatus.loading) {
-                context.go("/home");
-              }
-            },
-            child: Scaffold(
-              body: Center(
-                child: CircularProgressIndicator(),
-              ),
-            ),
-          ),
-        ),
+        // GoRoute(
+        //   path: "/loading",
+        //   builder: (context, state) => BlocListener<AuthBloc, AuthState>(
+        //     bloc: _authBloc,
+        //     listener: (context, state) {
+        //       if (state.status == AuthStatus.authorized) {
+        //         _userBloc.add(LoadUserEvent());
+        //         _builderBloc.add(LoadRouteBuilderEvent());
+        //         context.go("/home");
+        //       }
+        //     },
+        //     child: Scaffold(
+        //       body: Center(
+        //         child: CircularProgressIndicator(),
+        //       ),
+        //     ),
+        //   ),
+        // ),
         _buildWelcomePage(),
         _buildSigninPage(routes: [
           GoRoute(
