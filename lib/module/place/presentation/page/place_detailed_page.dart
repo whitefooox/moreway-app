@@ -340,25 +340,25 @@ class _PlaceDetailedPageState extends State<PlaceDetailedPage>
           case RouteBuilderOperationStatus.added:
             {
               ScaffoldMessenger.of(context)
-                  .showSnackBar(buildSnackBar("Добавлено"));
+                  .showSnackBar(buildSuccessSnackbar("Добавлено"));
               break;
             }
           case RouteBuilderOperationStatus.removed:
             {
               ScaffoldMessenger.of(context)
-                  .showSnackBar(buildSnackBar("Удалено"));
+                  .showSnackBar(buildSuccessSnackbar("Удалено"));
               break;
             }
           case RouteBuilderOperationStatus.errorAdding:
             {
               ScaffoldMessenger.of(context)
-                  .showSnackBar(buildSnackBar("Не удалось добавить"));
+                  .showSnackBar(buildFailureSnackbar("Не удалось добавить"));
               break;
             }
           case RouteBuilderOperationStatus.errorRemoving:
             {
               ScaffoldMessenger.of(context)
-                  .showSnackBar(buildSnackBar("Не удалось удалить"));
+                  .showSnackBar(buildFailureSnackbar("Не удалось удалить"));
               break;
             }
           default:

@@ -18,9 +18,17 @@ final class RemovePlaceRouteBuilderEvent extends RouteBuilderEvent {
 }
 
 final class ReorderPlacesRouteBuilderEvent extends RouteBuilderEvent {
-  final String firstPlaceId;
-  final String secondPlaceId;
+  final int oldIndex;
+  final int newIndex;
 
   ReorderPlacesRouteBuilderEvent(
-      {required this.firstPlaceId, required this.secondPlaceId});
+      {required this.oldIndex, required this.newIndex});
 }
+
+final class UpdateAllRouteBuilderEvent extends RouteBuilderEvent {
+  final RouteRaw route;
+
+  UpdateAllRouteBuilderEvent({required this.route});
+}
+
+final class CreateRouteBuilderEvent extends RouteBuilderEvent {}

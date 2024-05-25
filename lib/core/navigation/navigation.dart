@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:moreway/core/api/loading_status.dart';
 import 'package:moreway/core/di/inject.dart';
 import 'package:moreway/module/auth/presentation/bloc/auth_bloc.dart';
 import 'package:moreway/module/auth/presentation/page/auth/signin.dart';
@@ -43,6 +44,10 @@ class AppRouter {
     _authBloc.stream.listen((state) {
       if (state.status == AuthStatus.authorized) {
         _userBloc.add(LoadUserEvent());
+      }
+    });
+    _userBloc.stream.listen((state) {
+      if (state.loadingStatus == LoadingStatus.success) {
         _builderBloc.add(LoadRouteBuilderEvent());
       }
     });
@@ -85,24 +90,6 @@ class AppRouter {
       initialLocation: "/home",
       navigatorKey: _rootNavigatorKey,
       routes: [
-        // GoRoute(
-        //   path: "/loading",
-        //   builder: (context, state) => BlocListener<AuthBloc, AuthState>(
-        //     bloc: _authBloc,
-        //     listener: (context, state) {
-        //       if (state.status == AuthStatus.authorized) {
-        //         _userBloc.add(LoadUserEvent());
-        //         _builderBloc.add(LoadRouteBuilderEvent());
-        //         context.go("/home");
-        //       }
-        //     },
-        //     child: Scaffold(
-        //       body: Center(
-        //         child: CircularProgressIndicator(),
-        //       ),
-        //     ),
-        //   ),
-        // ),
         _buildWelcomePage(),
         _buildSigninPage(routes: [
           GoRoute(
@@ -131,7 +118,10 @@ class AppRouter {
         StatefulShellRoute.indexedStack(
             //parentNavigatorKey: _rootNavigatorKey,
             builder: (context, state, navigationShell) =>
-                RootPage(navigationShell: navigationShell),
+                BlocProvider<RouteBuilderBloc>.value(
+                  value: _builderBloc,
+                  child: RootPage(navigationShell: navigationShell),
+                ),
             branches: [
               StatefulShellBranch(routes: [
                 GoRoute(
@@ -180,11 +170,7 @@ class AppRouter {
               StatefulShellBranch(routes: [
                 GoRoute(
                   path: '/route',
-                  builder: (context, state) =>
-                      BlocProvider<RouteBuilderBloc>.value(
-                    value: _builderBloc,
-                    child: RouteBuilderPage(),
-                  ),
+                  builder: (context, state) => RouteBuilderPage(),
                 ),
               ]),
               StatefulShellBranch(routes: [

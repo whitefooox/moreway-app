@@ -7,7 +7,7 @@ part 'indexed_place_model.g.dart';
 @JsonSerializable()
 class IndexedPlaceModel {
   final int index;
-  final PlaceRouteModel place;
+  final PlaceModel place;
 
   IndexedPlaceModel({
     required this.index,

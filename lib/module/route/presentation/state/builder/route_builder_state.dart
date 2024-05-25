@@ -15,6 +15,8 @@ class RouteBuilderState {
 
   final RouteBuilderOperationStatus operationStatus;
 
+  int get placesCount => route != null ? route!.points.length : 0;
+
   RouteBuilderState({
     this.route,
     this.routeStatus = LoadingStatus.initial,

@@ -1,15 +1,213 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:moreway/core/api/loading_status.dart';
+import 'package:moreway/core/theme/colors.dart';
+import 'package:moreway/module/place/domain/entity/place.dart';
+import 'package:moreway/module/route/domain/entity/route_raw.dart';
 import 'package:moreway/module/route/presentation/state/builder/route_builder_bloc.dart';
+import 'package:moreway/module/route/presentation/view/widget/dashed_vertical_line.dart';
 
 class RouteBuilderPage extends StatefulWidget {
+  const RouteBuilderPage({super.key});
+
   @override
   _RouteBuilderPageState createState() => _RouteBuilderPageState();
 }
 
 class _RouteBuilderPageState extends State<RouteBuilderPage> {
   late final RouteBuilderBloc _builderBloc;
+  bool isEditMode = false;
+  RouteRaw? editRoute;
+
+  Widget _buildRouteBuilderListViewForEditMode(
+      List<Place> points, TextTheme textTheme) {
+    return ReorderableListView.builder(
+      onReorder: (oldIndex, newIndex) {
+        if (newIndex > oldIndex) {
+          newIndex -= 1;
+        }
+        final place = points[oldIndex];
+        points
+          ..removeAt(oldIndex)
+          ..insert(newIndex, place);
+      },
+      itemCount: points.length,
+      itemBuilder: (context, index) {
+        return Slidable(
+          key: Key(points[index].id),
+          endActionPane: ActionPane(
+            extentRatio: 0.2,
+            motion: ScrollMotion(),
+            children: [
+              SlidableAction(
+                  autoClose: true,
+                  borderRadius: BorderRadius.circular(15),
+                  flex: 1,
+                  onPressed: (contex) {
+                    setState(() {
+                      points.removeAt(index);
+                    });
+                  },
+                  backgroundColor: AppColor.pink,
+                  foregroundColor: Colors.white,
+                  icon: Icons.close,
+                ),
+              
+            ],
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              CircleAvatar(
+                radius: 20,
+                backgroundColor: AppColor.pink,
+                child: CircleAvatar(
+                  radius: 15,
+                  backgroundColor: AppColor.white,
+                  child: Text(
+                    "${index + 1}",
+                    style: const TextStyle(color: AppColor.black),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                width: 5,
+              ),
+              Expanded(
+                  child: Card(
+                child: ListTile(
+                  subtitle: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.place,
+                        color: AppColor.pink,
+                        size: textTheme.titleSmall!.fontSize,
+                      ),
+                      Text(
+                        "${points[index].distance.toStringAsFixed(1)} км",
+                        style: textTheme.titleSmall!
+                            .copyWith(color: AppColor.gray),
+                      )
+                    ],
+                  ),
+                  leading: CircleAvatar(
+                      child: ClipOval(
+                    child: AspectRatio(
+                      aspectRatio: 1,
+                      child: Image.network(
+                        points[index].image,
+                        fit: BoxFit.fill,
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Center(
+                              child: Icon(Icons.not_interested));
+                        },
+                      ),
+                    ),
+                  )),
+                  title: Text(
+                    points[index].name,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontFamily: "roboto"),
+                  ),
+                ),
+              ))
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildRouteBuilderListView(List<Place> points, TextTheme textTheme) {
+    return ListView.separated(
+      itemCount: points.length,
+      itemBuilder: (context, index) {
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            CircleAvatar(
+              radius: 20,
+              backgroundColor: AppColor.pink,
+              child: CircleAvatar(
+                radius: 15,
+                backgroundColor: AppColor.white,
+                child: Text(
+                  "${index + 1}",
+                  style: const TextStyle(color: AppColor.black),
+                ),
+              ),
+            ),
+            const SizedBox(
+              width: 5,
+            ),
+            Expanded(
+                child: Card(
+              child: ListTile(
+                subtitle: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.place,
+                      color: AppColor.pink,
+                      size: textTheme.titleSmall!.fontSize,
+                    ),
+                    Text(
+                      "${points[index].distance.toStringAsFixed(1)} км",
+                      style:
+                          textTheme.titleSmall!.copyWith(color: AppColor.gray),
+                    )
+                  ],
+                ),
+                leading: CircleAvatar(
+                    child: ClipOval(
+                  child: AspectRatio(
+                    aspectRatio: 1,
+                    child: Image.network(
+                      points[index].image,
+                      fit: BoxFit.fill,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Center(child: Icon(Icons.not_interested));
+                      },
+                    ),
+                  ),
+                )),
+                title: Text(
+                  points[index].name,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontFamily: "roboto"),
+                ),
+              ),
+            ))
+          ],
+        );
+      },
+      separatorBuilder: (BuildContext context, int index) {
+        return const Row(
+          children: [
+            SizedBox(
+                height: 40,
+                width: 40,
+                child: Center(
+                    child: DashedVerticalLine(
+                  dashWidth: 5,
+                  color: AppColor.pink,
+                  height: double.infinity,
+                  dashSpace: 5,
+                  dashHeight: 10,
+                )))
+          ],
+        );
+      },
+    );
+  }
 
   @override
   void initState() {
@@ -17,97 +215,103 @@ class _RouteBuilderPageState extends State<RouteBuilderPage> {
     _builderBloc = BlocProvider.of<RouteBuilderBloc>(context);
   }
 
-  List<String> attractions = [
-    'Достопримечательность 1',
-    'Достопримечательность 2',
-    'Достопримечательность 3',
-    'Достопримечательность 4',
-  ];
-
-  void _addAttraction(String attraction) {
+  void _onEditMode(bool isEnable) {
     setState(() {
-      attractions.add(attraction);
+      isEditMode = isEnable;
     });
+    if (isEditMode == true) {
+      setState(() {
+        editRoute =
+            RouteRaw(points: List.from(_builderBloc.state.route!.points));
+      });
+    }
   }
 
-  void _removeAttraction(int index) {
-    setState(() {
-      attractions.removeAt(index);
-    });
-  }
-
-  void _reorderAttraction(int oldIndex, int newIndex) {
-    setState(() {
-      if (newIndex > oldIndex) {
-        newIndex -= 1;
-      }
-      final String item = attractions.removeAt(oldIndex);
-      attractions.insert(newIndex, item);
-    });
+  void _onSave() {
+    _builderBloc.add(UpdateAllRouteBuilderEvent(route: editRoute!));
+    _onEditMode(false);
   }
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    final textTheme = Theme.of(context).textTheme;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Конструктор'),
-      ),
-      body: BlocBuilder<RouteBuilderBloc, RouteBuilderState>(builder:(context, state) {
-        if(state.routeStatus == LoadingStatus.loading){
-          return Center(child: CircularProgressIndicator(),);
-        } else if(state.routeStatus == LoadingStatus.success){
-          return ListView.builder(
-            itemCount: state.route!.points.length,
-            itemBuilder: (context, index) {
-              return ListTile(title: Text(state.route!.points[index].name),);
+        title: const Text('Конструктор'),
+        actions: [
+          BlocBuilder<RouteBuilderBloc, RouteBuilderState>(
+            bloc: _builderBloc,
+            builder: (context, state) {
+              if (state.operationStatus ==
+                  RouteBuilderOperationStatus.loading) {
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        color: AppColor.pink,
+                      )),
+                );
+              } else {
+                return IconButton(
+                    onPressed: () => _onEditMode(!isEditMode),
+                    icon: Icon(!isEditMode ? Icons.edit : Icons.undo));
+              }
             },
-          );
-        } else {
-          return Center(child: Text("Ошибка"),);
-        }
-      },),
-      // body: ReorderableListView(
-      //   children: <Widget>[
-      //     for (int index = 0; index < attractions.length; index++)
-      //       ListTile(
-      //         key: Key('$index'),
-      //         title: Text(attractions[index]),
-      //         trailing: IconButton(
-      //           icon: Icon(Icons.delete),
-      //           onPressed: () => _removeAttraction(index),
-      //         ),
-      //       ),
-      //   ],
-      //   onReorder: _reorderAttraction,
-      // ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     showDialog(
-      //       context: context,
-      //       builder: (BuildContext context) {
-      //         String newAttraction = '';
-      //         return AlertDialog(
-      //           title: Text('Добавить достопримечательность'),
-      //           content: TextField(
-      //             onChanged: (value) {
-      //               newAttraction = value;
-      //             },
-      //           ),
-      //           actions: [
-      //             TextButton(
-      //               onPressed: () {
-      //                 Navigator.of(context).pop();
-      //                 _addAttraction(newAttraction);
-      //               },
-      //               child: Text('Добавить'),
-      //             ),
-      //           ],
-      //         );
-      //       },
-      //     );
-      //   },
-      //   child: Icon(Icons.add),
-      // ),
+          ),
+          if (isEditMode) ...[
+            IconButton(onPressed: _onSave, icon: Icon(Icons.check))
+          ],
+        ],
+      ),
+      body: BlocBuilder<RouteBuilderBloc, RouteBuilderState>(
+        bloc: _builderBloc,
+        builder: (context, state) {
+          if (state.routeStatus == LoadingStatus.loading) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (state.routeStatus == LoadingStatus.success) {
+            if (isEditMode ||
+                state.operationStatus == RouteBuilderOperationStatus.loading) {
+              return Padding(
+                padding: EdgeInsets.only(
+                  left: screenSize.width * 0.035,
+                  right: screenSize.width * 0.035,
+                ),
+                child: _buildRouteBuilderListViewForEditMode(
+                    editRoute!.points, textTheme),
+              );
+            } else {
+              return Stack(
+                children: [
+                  Padding(
+                      padding: EdgeInsets.only(
+                        left: screenSize.width * 0.035,
+                        right: screenSize.width * 0.035,
+                      ),
+                      child: _buildRouteBuilderListView(
+                          state.route!.points, textTheme)),
+                  Positioned(
+                    bottom: screenSize.width * 0.035 + 60 + 10,
+                    right: screenSize.width * 0.035,
+                    child: ElevatedButton.icon(
+                        onPressed: () {},
+                        icon: Icon(Icons.explore_outlined),
+                        label: Text("Создать")),
+                  )
+                ],
+              );
+            }
+          } else {
+            return const Center(
+              child: Text("Ошибка"),
+            );
+          }
+        },
+      ),
     );
   }
 }

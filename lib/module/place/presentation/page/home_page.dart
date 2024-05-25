@@ -91,12 +91,11 @@ class _HomePageState extends State<HomePage> {
           top: screenSize.height * 0.01),
       child: Scaffold(
         appBar: AppBar(
-          centerTitle: false,
-          titleSpacing: 0.0,
-          surfaceTintColor: Colors.transparent,
-          automaticallyImplyLeading: false,
-          title: Text("Главная")
-        ),
+            centerTitle: false,
+            titleSpacing: 0.0,
+            surfaceTintColor: Colors.transparent,
+            automaticallyImplyLeading: false,
+            title: const Text("Главная")),
         body: RefreshIndicator(
           color: AppColor.pink,
           onRefresh: () async {

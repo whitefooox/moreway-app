@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:moreway/core/api/loading_status.dart';
@@ -14,10 +16,26 @@ class RouteBuilderBloc extends Bloc<RouteBuilderEvent, RouteBuilderState> {
     on<LoadRouteBuilderEvent>(_loadBuilder);
     on<AddPlaceRouteBuilderEvent>(_addPlace);
     on<RemovePlaceRouteBuilderEvent>(_removePlace);
+    on<ReorderPlacesRouteBuilderEvent>(_reorderPlace);
+    on<UpdateAllRouteBuilderEvent>(_updateAll);
   }
 
   List<String> _getPlaceIndexes() {
-    return state.route!.points.map((place) => place.id).toList();
+    return state.route!.toPlacesId();
+  }
+
+  void _updateAll(
+      UpdateAllRouteBuilderEvent event, Emitter<RouteBuilderState> emit) async {
+    emit(state.copyWith(operationStatus: RouteBuilderOperationStatus.loading));
+    try {
+      final routeRaw = await _routeBuilderInteractor
+          .editRoute(event.route.toPlacesId());
+      emit(state.copyWith(
+          route: routeRaw, operationStatus: RouteBuilderOperationStatus.added));
+    } catch (e) {
+      emit(state.copyWith(
+          operationStatus: RouteBuilderOperationStatus.errorAdding));
+    }
   }
 
   void _addPlace(
@@ -46,6 +64,34 @@ class RouteBuilderBloc extends Bloc<RouteBuilderEvent, RouteBuilderState> {
     } catch (e) {
       emit(state.copyWith(
           operationStatus: RouteBuilderOperationStatus.errorRemoving));
+    }
+  }
+
+  void _reorderPlace(ReorderPlacesRouteBuilderEvent event,
+      Emitter<RouteBuilderState> emit) async {
+    emit(state.copyWith(operationStatus: RouteBuilderOperationStatus.loading));
+    log("loading");
+    try {
+      int newIndex = event.newIndex;
+      int oldIndex = event.oldIndex;
+      final indexes = _getPlaceIndexes();
+      final placeId = indexes[oldIndex];
+
+      if (newIndex > oldIndex) {
+        newIndex -= 1;
+      }
+      final routeRaw = await _routeBuilderInteractor.editRoute(indexes
+        ..removeAt(oldIndex)
+        ..insert(newIndex, placeId));
+      emit(state.copyWith(
+          route: routeRaw,
+          operationStatus: RouteBuilderOperationStatus.removed));
+      log("success");
+    } catch (e) {
+      log(e.toString());
+      emit(state.copyWith(
+          operationStatus: RouteBuilderOperationStatus.errorRemoving));
+      log("error");
     }
   }
 
