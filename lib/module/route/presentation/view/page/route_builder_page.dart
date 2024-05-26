@@ -8,7 +8,9 @@ import 'package:moreway/core/theme/colors.dart';
 import 'package:moreway/module/place/domain/entity/place.dart';
 import 'package:moreway/module/route/domain/entity/route_raw.dart';
 import 'package:moreway/module/route/presentation/state/builder/route_builder_bloc.dart';
+import 'package:moreway/module/route/presentation/view/widget/create_route_name_dialog.dart';
 import 'package:moreway/module/route/presentation/view/widget/dashed_vertical_line.dart';
+import 'package:moreway/module/route/presentation/view/widget/few_places_dialog.dart';
 
 class RouteBuilderPage extends StatefulWidget {
   const RouteBuilderPage({super.key});
@@ -40,22 +42,21 @@ class _RouteBuilderPageState extends State<RouteBuilderPage> {
           key: Key(points[index].id),
           endActionPane: ActionPane(
             extentRatio: 0.2,
-            motion: ScrollMotion(),
+            motion: const ScrollMotion(),
             children: [
               SlidableAction(
-                  autoClose: true,
-                  borderRadius: BorderRadius.circular(15),
-                  flex: 1,
-                  onPressed: (contex) {
-                    setState(() {
-                      points.removeAt(index);
-                    });
-                  },
-                  backgroundColor: AppColor.pink,
-                  foregroundColor: Colors.white,
-                  icon: Icons.close,
-                ),
-              
+                autoClose: true,
+                borderRadius: BorderRadius.circular(15),
+                flex: 1,
+                onPressed: (contex) {
+                  setState(() {
+                    points.removeAt(index);
+                  });
+                },
+                backgroundColor: AppColor.pink,
+                foregroundColor: Colors.white,
+                icon: Icons.close,
+              ),
             ],
           ),
           child: Row(
@@ -232,11 +233,24 @@ class _RouteBuilderPageState extends State<RouteBuilderPage> {
     _onEditMode(false);
   }
 
+  void _onCreate(BuildContext context) async {
+    final placesCount = _builderBloc.state.placesCount;
+    if (placesCount >= 2 && placesCount <= 15) {
+      final routeName = await showCreateRouteNameDialog(context);
+      if(routeName != null && routeName.isNotEmpty){
+        _builderBloc.add(CreateRouteBuilderEvent(name: routeName));
+      }
+    } else {
+      await showFewPlacesDialog(context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     final textTheme = Theme.of(context).textTheme;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: const Text('Конструктор'),
         actions: [
@@ -244,9 +258,9 @@ class _RouteBuilderPageState extends State<RouteBuilderPage> {
             bloc: _builderBloc,
             builder: (context, state) {
               if (state.operationStatus ==
-                  RouteBuilderOperationStatus.loading) {
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  RouteBuilderOperationStatus.loadingUpdating) {
+                return const Padding(
+                  padding: EdgeInsets.all(8.0),
                   child: SizedBox(
                       width: 24,
                       height: 24,
@@ -262,7 +276,7 @@ class _RouteBuilderPageState extends State<RouteBuilderPage> {
             },
           ),
           if (isEditMode) ...[
-            IconButton(onPressed: _onSave, icon: Icon(Icons.check))
+            IconButton(onPressed: _onSave, icon: const Icon(Icons.check))
           ],
         ],
       ),
@@ -274,8 +288,7 @@ class _RouteBuilderPageState extends State<RouteBuilderPage> {
               child: CircularProgressIndicator(),
             );
           } else if (state.routeStatus == LoadingStatus.success) {
-            if (isEditMode ||
-                state.operationStatus == RouteBuilderOperationStatus.loading) {
+            if (isEditMode || state.operationStatus == RouteBuilderOperationStatus.loadingUpdating) {
               return Padding(
                 padding: EdgeInsets.only(
                   left: screenSize.width * 0.035,
@@ -298,9 +311,9 @@ class _RouteBuilderPageState extends State<RouteBuilderPage> {
                     bottom: screenSize.width * 0.035 + 60 + 10,
                     right: screenSize.width * 0.035,
                     child: ElevatedButton.icon(
-                        onPressed: () {},
-                        icon: Icon(Icons.explore_outlined),
-                        label: Text("Создать")),
+                        onPressed: () => _onCreate(context),
+                        icon: const Icon(Icons.explore_outlined),
+                        label: const Text("Создать")),
                   )
                 ],
               );

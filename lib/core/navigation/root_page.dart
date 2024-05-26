@@ -14,7 +14,7 @@ class RootPage extends StatelessWidget {
     final screenSize = MediaQuery.of(context).size;
     return SafeArea(
       child: Scaffold(
-        resizeToAvoidBottomInset: true,
+        resizeToAvoidBottomInset: false,
         body: Stack(children: [
           navigationShell,
           Positioned(

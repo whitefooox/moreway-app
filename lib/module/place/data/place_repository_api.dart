@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:moreway/core/api/api.dart';
 import 'package:moreway/core/api/api_client.dart';
 import 'package:moreway/core/api/paginated_page.dart';
+import 'package:moreway/module/review/data/mapping/review_model.dart';
 import 'package:moreway/module/review/data/mapping/review_page_model.dart';
 import 'package:moreway/module/review/domain/entity/review.dart';
 import 'package:moreway/module/location/data/mapper/position_model.dart';
@@ -80,7 +81,7 @@ class PlaceRepositoryAPI implements IPlaceRepository {
   }
 
   @override
-  Future<void> createReview(
+  Future<Review> createReview(
       String placeId, ReviewRaw review, String userId) async {
     try {
       final response = await _client.dio.post(Api.createReview(placeId),
@@ -89,6 +90,8 @@ class PlaceRepositoryAPI implements IPlaceRepository {
             "text": review.text,
             "rating": review.rating
           });
+        final json = response.data['data'];
+        return ReviewModel.fromJson(json).toReview();
     } catch (e) {
       log("[place repository api] $e");
       rethrow;

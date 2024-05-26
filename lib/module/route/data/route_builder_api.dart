@@ -7,6 +7,7 @@ import 'package:moreway/module/location/domain/usecase/get_current_location.dart
 import 'package:moreway/module/place/domain/entity/place.dart';
 import 'package:moreway/module/place/domain/entity/place_base.dart';
 import 'package:moreway/module/route/data/mapping/indexed_place_model.dart';
+import 'package:moreway/module/route/data/mapping/route_model.dart';
 import 'package:moreway/module/route/domain/dependency/i_route_builder_repository.dart';
 import 'package:moreway/module/route/domain/entity/route.dart';
 import 'package:moreway/module/route/domain/entity/route_raw.dart';
@@ -18,19 +19,27 @@ class RouteBuilderAPI implements IRouteBuilderService {
   RouteBuilderAPI(this._client, this._getCurrentPositionUseCase);
 
   @override
-  Future<Route> build(String name, String userId) {
-    // TODO: implement build
-    throw UnimplementedError();
+  Future<Route> build(String name, String userId) async {
+    try {
+      final response = await _client.dio
+          .post(Api.routes, data: {"name": name, "userId": userId});
+      final json = response.data['data'];
+      return RouteModel.fromJson(json).toRoute();
+    } catch (e) {
+      log("[route builder api] $e");
+      rethrow;
+    }
   }
 
   @override
   Future<RouteRaw> getRoute(String userId) async {
     try {
       final position = await _getCurrentPositionUseCase.execute();
-      final response = await _client.dio.get(Api.getConstructor(userId), queryParameters: {
-        "lat": position.point.latitude,
-        "lon": position.point.longitude
-      });
+      final response = await _client.dio.get(Api.getConstructor(userId),
+          queryParameters: {
+            "lat": position.point.latitude,
+            "lon": position.point.longitude
+          });
       final pointsJson = response.data['data']['items'] as List<dynamic>;
       log(pointsJson.toString());
       final points = pointsJson
@@ -55,8 +64,8 @@ class RouteBuilderAPI implements IRouteBuilderService {
       final position = await _getCurrentPositionUseCase.execute();
       final response = await _client.dio.put(Api.putConstructor(userId), data: {
         "items": placesId.indexed
-            .map(
-                (indexedId) => {"index": indexedId.$1 + 1, "placeId": indexedId.$2})
+            .map((indexedId) =>
+                {"index": indexedId.$1 + 1, "placeId": indexedId.$2})
             .toList()
       }, queryParameters: {
         "lat": position.point.latitude,

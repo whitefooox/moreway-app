@@ -334,6 +334,7 @@ class _PlaceDetailedPageState extends State<PlaceDetailedPage>
     final screenSize = MediaQuery.of(context).size;
     final textTheme = Theme.of(context).textTheme;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
         body: BlocListener<RouteBuilderBloc, RouteBuilderState>(
       listener: (context, state) {
         switch (state.operationStatus) {
@@ -352,13 +353,13 @@ class _PlaceDetailedPageState extends State<PlaceDetailedPage>
           case RouteBuilderOperationStatus.errorAdding:
             {
               ScaffoldMessenger.of(context)
-                  .showSnackBar(buildFailureSnackbar("Не удалось добавить"));
+                  .showSnackBar(buildFailureSnackbar(state.errorMessage!));
               break;
             }
           case RouteBuilderOperationStatus.errorRemoving:
             {
               ScaffoldMessenger.of(context)
-                  .showSnackBar(buildFailureSnackbar("Не удалось удалить"));
+                  .showSnackBar(buildFailureSnackbar(state.errorMessage!));
               break;
             }
           default:

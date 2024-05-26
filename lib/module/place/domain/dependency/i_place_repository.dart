@@ -9,5 +9,5 @@ abstract class IPlaceRepository {
   Future<PaginatedPage<Place>> getPlaces({String? cursor, SelectedPlaceFilters? filters});
   Future<PlaceDetailed> getPlaceById(String id);
   Future<PaginatedPage<Review>> getReviews({String? cursor, required String placeId});
-  Future<void> createReview(String placeId, ReviewRaw review, String userId);
+  Future<Review> createReview(String placeId, ReviewRaw review, String userId);
 }

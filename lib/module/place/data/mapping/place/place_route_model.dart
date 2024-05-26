@@ -23,16 +23,15 @@ class PlaceRouteModel {
   @JsonKey(name: "type", fromJson: _typeFromJson)
   final String type;
 
-  PlaceRouteModel({
-    required this.id,
-    required this.name,
-    required this.lat,
-    required this.lon,
-    required this.rating,
-    required this.image,
-    required this.locality,
-    required this.type
-  });
+  PlaceRouteModel(
+      {required this.id,
+      required this.name,
+      required this.lat,
+      required this.lon,
+      required this.rating,
+      required this.image,
+      required this.locality,
+      required this.type});
 
   static String _imageFromJson(Map<String, dynamic> json) {
     return json["path"] as String;

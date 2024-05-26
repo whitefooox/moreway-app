@@ -57,9 +57,9 @@ class PlaceBloc extends Bloc<PlaceEvent, PlaceState> {
       CreateReviewPlaceEvent event, Emitter<PlaceState> emit) async {
     emit(state.copyWith(createReviewStatus: LoadingStatus.loading));
     try {
-      await _placeInteractor.createReview(
+      final review = await _placeInteractor.createReview(
           placeId: state.placeId!, review: event.review);
-      emit(state.copyWith(createReviewStatus: LoadingStatus.success));
+      emit(state.copyWith(createReviewStatus: LoadingStatus.success, reviews: state.reviews!..add(review)));
     } catch (e) {
       log(e.toString());
       emit(state.copyWith(createReviewStatus: LoadingStatus.failure));

@@ -6,11 +6,18 @@ enum RouteBuilderOperationStatus {
   added,
   errorAdding,
   removed,
-  errorRemoving
+  errorRemoving,
+  updated,
+  errorUpdating,
+  loadingUpdating,
+  created,
+  errorCreating,
+  loadingCreating
 }
 
 class RouteBuilderState {
   final RouteRaw? route;
+  final String? errorMessage;
   final LoadingStatus routeStatus;
 
   final RouteBuilderOperationStatus operationStatus;
@@ -19,6 +26,7 @@ class RouteBuilderState {
 
   RouteBuilderState({
     this.route,
+    this.errorMessage,
     this.routeStatus = LoadingStatus.initial,
     this.operationStatus = RouteBuilderOperationStatus.initial
   });
@@ -26,12 +34,14 @@ class RouteBuilderState {
   RouteBuilderState copyWith({
     RouteRaw? route,
     LoadingStatus? routeStatus,
+    String? errorMessage,
     RouteBuilderOperationStatus? operationStatus
   }) {
     return RouteBuilderState(
       route: route ?? this.route,
       routeStatus: routeStatus ?? this.routeStatus,
-      operationStatus: operationStatus ?? this.operationStatus
+      operationStatus: operationStatus ?? this.operationStatus,
+      errorMessage: errorMessage ?? this.errorMessage
     );
   }
 }

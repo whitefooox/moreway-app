@@ -39,7 +39,7 @@ class PlaceInteractor {
     return _placeRepository.getReviews(placeId: placeId, cursor: cursor);
   }
 
-  Future<void> createReview({required String placeId, required ReviewRaw review}) async {
+  Future<Review> createReview({required String placeId, required ReviewRaw review}) async {
     try {
       final userId = await _userRepository.getUserId();
       return _placeRepository.createReview(placeId, review, userId);
