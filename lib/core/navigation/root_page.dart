@@ -40,22 +40,40 @@ class RootPage extends StatelessWidget {
                       child: BottomNavigationBar(
                         currentIndex: navigationShell.currentIndex,
                         items: [
-                          const BottomNavigationBarItem(
-                              icon: Icon(Icons.home), label: "home"),
                           BottomNavigationBarItem(
-                              icon: Badge(
-                                isLabelVisible: state.placesCount != 0,
-                                label: Text(state.placesCount.toString()),
-                                child: const Icon(Icons.route),
-                              ),
-                              label: "route"),
-                          const BottomNavigationBarItem(
-                              icon: Icon(Icons.place), label: "place"),
-                          const BottomNavigationBarItem(
-                              icon: Icon(Icons.chat_rounded), label: "chat"),
-                          const BottomNavigationBarItem(
-                              icon: Icon(Icons.account_circle),
-                              label: "account")
+                            icon: Icon(navigationShell.currentIndex == 0
+                                ? Icons.home
+                                : Icons.home_outlined),
+                            label: "home",
+                          ),
+                          BottomNavigationBarItem(
+                            icon: Badge(
+                              isLabelVisible: state.placesCount != 0,
+                              label: Text(state.placesCount.toString()),
+                              child: Icon(navigationShell.currentIndex == 1
+                                  ? Icons.route
+                                  : Icons.route_outlined),
+                            ),
+                            label: "route",
+                          ),
+                          BottomNavigationBarItem(
+                            icon: Icon(navigationShell.currentIndex == 2
+                                ? Icons.place
+                                : Icons.place_outlined),
+                            label: "place",
+                          ),
+                          BottomNavigationBarItem(
+                            icon: Icon(navigationShell.currentIndex == 3
+                                ? Icons.chat_rounded
+                                : Icons.chat_bubble_outline_rounded),
+                            label: "chat",
+                          ),
+                          BottomNavigationBarItem(
+                            icon: Icon(navigationShell.currentIndex == 4
+                                ? Icons.account_circle
+                                : Icons.account_circle_outlined),
+                            label: "account",
+                          ),
                         ],
                         onTap: (index) => navigationShell.goBranch(
                           index,
