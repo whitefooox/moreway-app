@@ -95,7 +95,11 @@ class _HomePageState extends State<HomePage> {
             titleSpacing: 0.0,
             surfaceTintColor: Colors.transparent,
             automaticallyImplyLeading: false,
-            title: const Text("Главная")),
+            title: const Text("Главная"),
+            actions: [
+              IconButton(onPressed: (){}, icon: Badge(child: Icon(Icons.notifications,)))
+            ],
+            ),
         body: RefreshIndicator(
           color: AppColor.pink,
           onRefresh: () async {

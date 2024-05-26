@@ -8,7 +8,7 @@ part of 'route_point_model.dart';
 
 RoutePointModel _$RoutePointModelFromJson(Map<String, dynamic> json) =>
     RoutePointModel(
-      id: json['id'] as String,
+      id: json['id'] as int,
       index: json['index'] as int,
       place: PlaceRouteModel.fromJson(json['place'] as Map<String, dynamic>),
     );

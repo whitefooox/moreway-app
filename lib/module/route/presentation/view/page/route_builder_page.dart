@@ -1,9 +1,12 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:go_router/go_router.dart';
 import 'package:moreway/core/api/loading_status.dart';
+import 'package:moreway/core/const/assets.dart';
 import 'package:moreway/core/theme/colors.dart';
 import 'package:moreway/module/place/domain/entity/place.dart';
 import 'package:moreway/module/route/domain/entity/route_raw.dart';
@@ -11,6 +14,7 @@ import 'package:moreway/module/route/presentation/state/builder/route_builder_bl
 import 'package:moreway/module/route/presentation/view/widget/create_route_name_dialog.dart';
 import 'package:moreway/module/route/presentation/view/widget/dashed_vertical_line.dart';
 import 'package:moreway/module/route/presentation/view/widget/few_places_dialog.dart';
+import 'package:moreway/module/route/presentation/view/widget/route_created_popup.dart';
 
 class RouteBuilderPage extends StatefulWidget {
   const RouteBuilderPage({super.key});
@@ -237,7 +241,7 @@ class _RouteBuilderPageState extends State<RouteBuilderPage> {
     final placesCount = _builderBloc.state.placesCount;
     if (placesCount >= 2 && placesCount <= 15) {
       final routeName = await showCreateRouteNameDialog(context);
-      if(routeName != null && routeName.isNotEmpty){
+      if (routeName != null && routeName.isNotEmpty) {
         _builderBloc.add(CreateRouteBuilderEvent(name: routeName));
       }
     } else {
@@ -249,81 +253,128 @@ class _RouteBuilderPageState extends State<RouteBuilderPage> {
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     final textTheme = Theme.of(context).textTheme;
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        title: const Text('Конструктор'),
-        actions: [
-          BlocBuilder<RouteBuilderBloc, RouteBuilderState>(
-            bloc: _builderBloc,
-            builder: (context, state) {
-              if (state.operationStatus ==
-                  RouteBuilderOperationStatus.loadingUpdating) {
-                return const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: CircularProgressIndicator(
-                        color: AppColor.pink,
-                      )),
+    return BlocListener<RouteBuilderBloc, RouteBuilderState>(
+      bloc: _builderBloc,
+      listener: (context, state) {
+        if(state.operationStatus == RouteBuilderOperationStatus.created){
+          showDialog(context: context, builder:(context) => const RouteCreatedPopup(),);
+        }
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          title: const Text('Конструктор'),
+          actions: [
+            BlocBuilder<RouteBuilderBloc, RouteBuilderState>(
+              bloc: _builderBloc,
+              builder: (context, state) {
+                if (state.operationStatus ==
+                    RouteBuilderOperationStatus.loadingUpdating) {
+                  return const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(
+                          color: AppColor.pink,
+                        )),
+                  );
+                } else {
+                  return IconButton(
+                      onPressed: () => _onEditMode(!isEditMode),
+                      icon: Icon(!isEditMode ? Icons.edit : Icons.undo));
+                }
+              },
+            ),
+            if (isEditMode) ...[
+              IconButton(onPressed: _onSave, icon: const Icon(Icons.check))
+            ],
+          ],
+        ),
+        body: BlocBuilder<RouteBuilderBloc, RouteBuilderState>(
+          bloc: _builderBloc,
+          builder: (context, state) {
+            if (state.routeStatus == LoadingStatus.loading) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (state.routeStatus == LoadingStatus.success) {
+              if (isEditMode ||
+                  state.operationStatus ==
+                      RouteBuilderOperationStatus.loadingUpdating) {
+                return Padding(
+                  padding: EdgeInsets.only(
+                    left: screenSize.width * 0.035,
+                    right: screenSize.width * 0.035,
+                  ),
+                  child: _buildRouteBuilderListViewForEditMode(
+                      editRoute!.points, textTheme),
                 );
               } else {
-                return IconButton(
-                    onPressed: () => _onEditMode(!isEditMode),
-                    icon: Icon(!isEditMode ? Icons.edit : Icons.undo));
+                if(state.route!.points.isEmpty){
+                  return EmptyRouteBuilder();
+                  //return const Center(child: Text("Здесь пусто...\nВыберете места для путешествий"));
+                } else {
+                  return Stack(
+                  children: [
+                    Padding(
+                        padding: EdgeInsets.only(
+                          left: screenSize.width * 0.035,
+                          right: screenSize.width * 0.035,
+                        ),
+                        child: _buildRouteBuilderListView(
+                            state.route!.points, textTheme)),
+                    Positioned(
+                      bottom: screenSize.width * 0.035 + 60 + 10,
+                      right: screenSize.width * 0.035,
+                      child: ElevatedButton.icon(
+                          onPressed: () => _onCreate(context),
+                          icon: const Icon(Icons.explore_outlined),
+                          label: const Text("Создать")),
+                    )
+                  ],
+                );
+                }
               }
-            },
-          ),
-          if (isEditMode) ...[
-            IconButton(onPressed: _onSave, icon: const Icon(Icons.check))
-          ],
-        ],
-      ),
-      body: BlocBuilder<RouteBuilderBloc, RouteBuilderState>(
-        bloc: _builderBloc,
-        builder: (context, state) {
-          if (state.routeStatus == LoadingStatus.loading) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (state.routeStatus == LoadingStatus.success) {
-            if (isEditMode || state.operationStatus == RouteBuilderOperationStatus.loadingUpdating) {
-              return Padding(
-                padding: EdgeInsets.only(
-                  left: screenSize.width * 0.035,
-                  right: screenSize.width * 0.035,
-                ),
-                child: _buildRouteBuilderListViewForEditMode(
-                    editRoute!.points, textTheme),
-              );
             } else {
-              return Stack(
-                children: [
-                  Padding(
-                      padding: EdgeInsets.only(
-                        left: screenSize.width * 0.035,
-                        right: screenSize.width * 0.035,
-                      ),
-                      child: _buildRouteBuilderListView(
-                          state.route!.points, textTheme)),
-                  Positioned(
-                    bottom: screenSize.width * 0.035 + 60 + 10,
-                    right: screenSize.width * 0.035,
-                    child: ElevatedButton.icon(
-                        onPressed: () => _onCreate(context),
-                        icon: const Icon(Icons.explore_outlined),
-                        label: const Text("Создать")),
-                  )
-                ],
+              return const Center(
+                child: Text("Ошибка"),
               );
             }
-          } else {
-            return const Center(
-              child: Text("Ошибка"),
-            );
-          }
-        },
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class EmptyRouteBuilder extends StatelessWidget {
+  const EmptyRouteBuilder({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return Container(
+      alignment: Alignment.center,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Image.asset(Assets.panelIconImage, height: 50),
+          SizedBox(height: 24),
+          Text(
+            "Здесь пусто!",
+            style: textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.bold)
+          ),
+          SizedBox(height: 16),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 32),
+            child: Text(
+              "Начните добавлять интересные места, чтобы спланировать свое путешествие.",
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.grey[600]),
+            ),
+          ),
+        ],
       ),
     );
   }

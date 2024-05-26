@@ -44,4 +44,12 @@ class RouteBuilderState {
       errorMessage: errorMessage ?? this.errorMessage
     );
   }
+
+  RouteBuilderState createdState(){
+    return RouteBuilderState(
+      routeStatus: routeStatus,
+      route: RouteRaw(points: []),
+      operationStatus: RouteBuilderOperationStatus.created
+    );
+  }
 }

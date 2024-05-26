@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:moreway/core/theme/colors.dart';
 import 'package:moreway/module/route/presentation/state/builder/route_builder_bloc.dart';
 
 class RootPage extends StatelessWidget {
@@ -46,8 +45,6 @@ class RootPage extends StatelessWidget {
                           BottomNavigationBarItem(
                               icon: Badge(
                                 isLabelVisible: state.placesCount != 0,
-                                backgroundColor: AppColor.pink,
-                                textColor: AppColor.white,
                                 label: Text(state.placesCount.toString()),
                                 child: const Icon(Icons.route),
                               ),

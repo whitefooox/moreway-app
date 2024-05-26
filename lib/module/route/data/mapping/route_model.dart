@@ -8,9 +8,8 @@ part 'route_model.g.dart';
 
 @JsonSerializable()
 class RouteModel {
-  final String id;
+  final int id;
   final String name;
-  final int points;
   final double rating;
   final List<RoutePointModel> routePoints;
   final UserPreviewModel creator;
@@ -18,7 +17,6 @@ class RouteModel {
   RouteModel({
     required this.id,
     required this.name,
-    required this.points,
     required this.rating,
     required this.routePoints,
     required this.creator,
@@ -31,7 +29,7 @@ class RouteModel {
 
   Route toRoute() {
     return Route(
-        id: id,
+        id: id.toString(),
         name: name,
         rating: rating,
         points: routePoints

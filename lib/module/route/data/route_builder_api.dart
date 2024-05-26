@@ -25,8 +25,8 @@ class RouteBuilderAPI implements IRouteBuilderService {
           .post(Api.routes, data: {"name": name, "userId": userId});
       final json = response.data['data'];
       return RouteModel.fromJson(json).toRoute();
-    } catch (e) {
-      log("[route builder api] $e");
+    } catch (e, stacktrace) {
+      log("[route builder api] $e", stackTrace: stacktrace);
       rethrow;
     }
   }

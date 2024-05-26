@@ -30,7 +30,13 @@ class RouteBuilderInteractor {
     }
   }
 
-  Future<Route> build(String name){
-    throw UnimplementedError();
+  Future<Route> build(String name) async {
+    try {
+      final userId = await _userRepository.getUserId();
+      final route = await _builderService.build(name, userId);
+      return route;
+    } catch (e) {
+      rethrow;
+    }
   }
 }

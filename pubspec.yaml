@@ -54,6 +54,7 @@ flutter:
     - assets/images/logo1152.png
     - assets/images/logo400.png
     - assets/images/error.jpg
+    - assets/icons/panel.png
   fonts:
     - family: Poppins
       fonts:

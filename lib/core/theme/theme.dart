@@ -41,6 +41,7 @@ final appThemeData = ThemeData(
     bottomSheetTheme: const BottomSheetThemeData(backgroundColor: Colors.transparent),
     appBarTheme: const AppBarTheme(),
     textButtonTheme: TextButtonThemeData(style: TextButton.styleFrom(foregroundColor: AppColor.black)),
-    progressIndicatorTheme: const ProgressIndicatorThemeData(color: AppColor.pink)
+    progressIndicatorTheme: const ProgressIndicatorThemeData(color: AppColor.pink),
+    badgeTheme: const BadgeThemeData(backgroundColor: AppColor.pink, textColor: AppColor.white)
     // textTheme: TextTheme()
     );
