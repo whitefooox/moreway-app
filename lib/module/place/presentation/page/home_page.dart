@@ -12,6 +12,8 @@ import 'package:moreway/module/place/presentation/widget/location_filter.dart';
 import 'package:moreway/module/place/presentation/widget/location_widget.dart';
 import 'package:moreway/module/place/presentation/widget/place_card.dart';
 import 'package:moreway/module/place/presentation/widget/search_bar.dart';
+import 'package:moreway/module/route/presentation/state/routes/routes_bloc.dart';
+import 'package:moreway/module/route/presentation/view/widget/route_card.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 enum ViewMode { place, route }
@@ -29,11 +31,16 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController _searchController = TextEditingController();
   Timer? _debounce;
   late final PlacesBloc _placesBloc;
+  late final RoutesBloc _routesBloc;
 
   void _onScroll() {
     if (_scrollController.position.maxScrollExtent ==
         _scrollController.offset) {
-      _placesBloc.add(LoadMorePlacesEvent());
+      if (_viewMode == ViewMode.place) {
+        _placesBloc.add(LoadMorePlacesEvent());
+      } else {
+        //_routesBloc.add(LoadMoreRoutesEvent());
+      }
     }
   }
 
@@ -41,15 +48,21 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _placesBloc = BlocProvider.of<PlacesBloc>(context);
+    _routesBloc = BlocProvider.of<RoutesBloc>(context);
     _scrollController.addListener(_onScroll);
-    _searchController.addListener(() {
-      log(_searchController.text);
-      final query =
-          _searchController.text.isEmpty ? null : _searchController.text;
-      if (_debounce?.isActive ?? false) _debounce?.cancel();
-      _debounce = Timer(const Duration(milliseconds: 300), () {
+    _searchController.addListener(_onSearchQueryChanged);
+  }
+
+  void _onSearchQueryChanged() {
+    final query =
+        _searchController.text.isEmpty ? null : _searchController.text;
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 300), () {
+      if (_viewMode == ViewMode.place) {
         _placesBloc.add(SearchPlacesEvent(query));
-      });
+      } else {
+        //_routesBloc.add(SearchRoutesEvent(query));
+      }
     });
   }
 
@@ -61,6 +74,14 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _onClickFilter() {
+    if (_viewMode == ViewMode.place) {
+      _showPlaceFilters();
+    } else {
+      _showRouteFilters();
+    }
+  }
+
+  void _showPlaceFilters() {
     showMaterialModalBottomSheet(
       useRootNavigator: true,
       context: context,
@@ -77,8 +98,16 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void _showRouteFilters() {
+    // Implement route filters logic
+  }
+
   void _onClickPlace(String id) {
     context.go("/home/place/$id");
+  }
+
+  void _onClickRoute(String id) {
+    context.go("/home/route/$id");
   }
 
   @override
@@ -99,17 +128,21 @@ class _HomePageState extends State<HomePage> {
           title: const Text("Главная"),
           actions: [
             IconButton(
-                onPressed: () {},
-                icon: const Badge(
-                    child: Icon(
-                  Icons.notifications,
-                )))
+              onPressed: () {},
+              icon: const Badge(
+                child: Icon(Icons.notifications),
+              ),
+            ),
           ],
         ),
         body: RefreshIndicator(
           color: AppColor.pink,
           onRefresh: () async {
-            _placesBloc.add(LoadPlacesEvent());
+            if (_viewMode == ViewMode.place) {
+              _placesBloc.add(LoadPlacesEvent());
+            } else {
+              //_routesBloc.add(LoadRoutesEvent());
+            }
           },
           child: CustomScrollView(
             controller: _scrollController,
@@ -129,84 +162,132 @@ class _HomePageState extends State<HomePage> {
                 elevation: 0,
                 pinned: false,
                 flexibleSpace: FlexibleSpaceBar(
-                    background: Center(
-                  child: ToggleSwitch(
-                    minWidth: 100,
-                    minHeight: 35,
-                    inactiveBgColor: AppColor.gray.withOpacity(0.5),
-                    totalSwitches: 2,
-                    initialLabelIndex: _viewMode == ViewMode.place ? 0 : 1,
-                    labels: const ['Места', 'Маршруты'],
-                    radiusStyle: true,
-                    cornerRadius: 15.0,
-                    activeBgColor: const [AppColor.black],
-                    onToggle: (index) {
-                      if (index == 0) {
+                  background: Center(
+                    child: ToggleSwitch(
+                      minWidth: 100,
+                      minHeight: 35,
+                      inactiveBgColor: AppColor.gray.withOpacity(0.5),
+                      totalSwitches: 2,
+                      initialLabelIndex: _viewMode == ViewMode.place ? 0 : 1,
+                      labels: const ['Места', 'Маршруты'],
+                      radiusStyle: true,
+                      cornerRadius: 15.0,
+                      activeBgColor: const [AppColor.black],
+                      onToggle: (index) {
                         setState(() {
-                          _viewMode = ViewMode.place;
+                          _viewMode =
+                              index == 0 ? ViewMode.place : ViewMode.route;
                         });
-                      } else {
-                        setState(() {
-                          _viewMode = ViewMode.route;
-                        });
-                      }
-                    },
+                      },
+                    ),
                   ),
-                )),
+                ),
               ),
-              BlocBuilder<PlacesBloc, PlacesState>(
-                bloc: _placesBloc,
-                builder: (context, state) {
-                  if (state.places != null) {
-                    if (state.places!.isEmpty) {
-                      return const SliverFillRemaining(
-                          child: Center(child: Text("Не найдено")));
-                    } else {
-                      return SliverGrid(
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          mainAxisSpacing: 5.0,
-                          crossAxisSpacing: 5.0,
-                        ),
-                        delegate: SliverChildBuilderDelegate(
-                          (context, index) {
-                            final place = state.places![index];
-                            return InkWell(
-                                onTap: () => _onClickPlace(place.id),
-                                child: PlaceCard(place: place));
-                          },
-                          childCount: state.places!.length,
-                        ),
-                      );
-                    }
-                  } else {
-                    if (state.status == PlacesStatus.failure) {
-                      return const SliverFillRemaining(
-                        child: Center(
-                          child: Text('Что-то сломалось'),
-                        ),
-                      );
-                    } else {
-                      return const SliverFillRemaining(
-                          child: Center(
-                              child: CircularProgressIndicator(
-                        color: AppColor.pink,
-                      )));
-                    }
-                  }
-                },
-              ),
+              if (_viewMode == ViewMode.place)
+                _buildPlacesList()
+              else
+                _buildRoutesList(),
               SliverToBoxAdapter(
                 child: SizedBox(
                   width: screenSize.width,
                   height: 60 + screenSize.width * 0.035 * 2,
                 ),
-              )
+              ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildPlacesList() {
+    return BlocBuilder<PlacesBloc, PlacesState>(
+      bloc: _placesBloc,
+      builder: (context, state) {
+        if (state.places != null) {
+          if (state.places!.isEmpty) {
+            return const SliverFillRemaining(
+              child: Center(child: Text("Не найдено")),
+            );
+          } else {
+            return SliverGrid(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 5.0,
+                crossAxisSpacing: 5.0,
+              ),
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  final place = state.places![index];
+                  return InkWell(
+                    onTap: () => _onClickPlace(place.id),
+                    child: PlaceCard(place: place),
+                  );
+                },
+                childCount: state.places!.length,
+              ),
+            );
+          }
+        } else {
+          if (state.status == PlacesStatus.failure) {
+            return const SliverFillRemaining(
+              child: Center(child: Text('Что-то сломалось')),
+            );
+          } else {
+            return const SliverFillRemaining(
+              child: Center(
+                child: CircularProgressIndicator(color: AppColor.pink),
+              ),
+            );
+          }
+        }
+      },
+    );
+  }
+
+  Widget _buildRoutesList() {
+    return BlocBuilder<RoutesBloc, RoutesState>(
+      bloc: _routesBloc,
+      builder: (context, state) {
+        if (state.routes != null) {
+          if (state.routes!.isEmpty) {
+            return const SliverFillRemaining(
+              child: Center(child: Text("Не найдено")),
+            );
+          } else {
+            return SliverGrid(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 5.0,
+                crossAxisSpacing: 5.0,
+              ),
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  final route = state.routes![index];
+                  return InkWell(
+                    onTap: () => _onClickRoute(route.id),
+                    child: RouteCard(route: route),
+                    //child: Placeholder(),
+                  );
+                },
+                childCount: state.routes!.length,
+              ),
+            );
+          }
+        } else {
+          if (state.status == RoutesStatus.failure) {
+            return const SliverFillRemaining(
+              child: Center(child: Text('Что-то сломалось')),
+            );
+          } else {
+            return const SliverFillRemaining(
+              child: Center(
+                child: CircularProgressIndicator(color: AppColor.pink),
+              ),
+            );
+          }
+        }
+      },
     );
   }
 }

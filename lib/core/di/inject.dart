@@ -28,9 +28,13 @@ import 'package:moreway/module/place/domain/usecase/place_interactor.dart';
 import 'package:moreway/module/place/presentation/state/place/place_bloc.dart';
 import 'package:moreway/module/place/presentation/state/places/places_bloc.dart';
 import 'package:moreway/module/route/data/route_builder_api.dart';
+import 'package:moreway/module/route/data/route_repository_api.dart';
 import 'package:moreway/module/route/domain/dependency/i_route_builder_repository.dart';
+import 'package:moreway/module/route/domain/dependency/i_route_repository.dart';
 import 'package:moreway/module/route/domain/interactor/route_builder_interactor.dart';
+import 'package:moreway/module/route/domain/interactor/route_interactor.dart';
 import 'package:moreway/module/route/presentation/state/builder/route_builder_bloc.dart';
+import 'package:moreway/module/route/presentation/state/routes/routes_bloc.dart';
 import 'package:moreway/module/user/data/user_repository_api.dart';
 import 'package:moreway/module/user/domain/dependency/i_user_repository.dart';
 import 'package:moreway/module/user/domain/interactor/user_interactor.dart';
@@ -55,6 +59,7 @@ class DIContainer {
     _injectBuilder();
     _injectLocation();
     _injectPlace();
+    _injectRoute();
     _injectLaunch();
     await getIt.allReady();
   }
@@ -98,6 +103,12 @@ class DIContainer {
     getIt.registerLazySingleton<PlaceInteractor>(() => PlaceInteractor(getIt(), getIt(), getIt()));
     getIt.registerFactory<PlacesBloc>(() => PlacesBloc(getIt()));
     getIt.registerFactory<PlaceBloc>(() => PlaceBloc(getIt()));
+  }
+
+  void _injectRoute(){
+    getIt.registerLazySingleton<IRouteRepository>(() => RouteRepositoryAPI(getIt()));
+    getIt.registerLazySingleton<RouteInteractor>(() => RouteInteractor(getIt()));
+    getIt.registerLazySingleton<RoutesBloc>(() => RoutesBloc(getIt()));
   }
 
   void _injectLaunch() {

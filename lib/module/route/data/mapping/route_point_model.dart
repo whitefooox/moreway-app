@@ -9,13 +9,11 @@ part 'route_point_model.g.dart';
 @JsonSerializable()
 class RoutePointModel {
   final int id;
-  final int index;
-  final PlaceRouteModel place;
+  final String image;
 
   RoutePointModel({
     required this.id,
-    required this.index,
-    required this.place,
+    required this.image,
   });
 
   factory RoutePointModel.fromJson(Map<String, dynamic> json) =>
@@ -24,6 +22,6 @@ class RoutePointModel {
   Map<String, dynamic> toJson() => _$RoutePointModelToJson(this);
 
   RoutePoint toRoutePoint() {
-    return RoutePoint(id: id.toString(), index: index, place: place.toPlaceBase());
+    return RoutePoint(id: id.toString(), image: image);
   }
 }

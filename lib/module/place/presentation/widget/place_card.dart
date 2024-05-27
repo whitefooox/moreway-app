@@ -9,33 +9,32 @@ class PlaceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
     return Card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
         children: [
-          ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-            child: Image.network(
-              place.image,
-              height: 90,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return const SizedBox(
-                  height: 90,
-                  child: Center(
-                    child: Icon(Icons.not_interested),
-                  ),
-                );
-              },
+          Expanded(
+            flex: 1,
+            child: ClipRRect(
+              borderRadius: const BorderRadius.all(Radius.circular(16)),
+              child: Image.network(
+                place.image,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return const SizedBox(
+                    child: Center(
+                      child: Icon(Icons.not_interested),
+                    ),
+                  );
+                },
+              ),
             ),
           ),
-          const SizedBox(
-            height: 5,
-          ),
           Padding(
-            padding: const EdgeInsets.only(left: 10, right: 10),
+            padding: const EdgeInsets.all(10),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -43,12 +42,10 @@ class PlaceCard extends StatelessWidget {
                     Flexible(
                       child: Text(
                         place.name,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          overflow: TextOverflow.ellipsis,
-                          fontFamily: "roboto",
-                        ),
+                        style: textTheme.titleSmall!.copyWith(
+                            fontWeight: FontWeight.bold,
+                            fontFamily: "roboto",
+                            overflow: TextOverflow.ellipsis),
                       ),
                     ),
                   ],
@@ -61,15 +58,15 @@ class PlaceCard extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.place,
                           color: AppColor.pink,
-                          size: 12,
+                          size: textTheme.bodySmall!.fontSize,
                         ),
                         Text(
                           "${place.distance.toStringAsFixed(1)} км",
-                          style: const TextStyle(
-                              fontSize: 12, color: AppColor.gray),
+                          style: textTheme.bodySmall!
+                              .copyWith(color: AppColor.gray),
                         )
                       ],
                     ),
@@ -78,9 +75,9 @@ class PlaceCard extends StatelessWidget {
                     ),
                     Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.star,
-                          size: 12,
+                          size: textTheme.bodySmall!.fontSize,
                           color: AppColor.pink,
                         ),
                         const SizedBox(
@@ -88,11 +85,8 @@ class PlaceCard extends StatelessWidget {
                         ),
                         Text(
                           place.rating.toStringAsFixed(1),
-                          style: const TextStyle(
-                            color: AppColor.gray,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                          ),
+                          style: textTheme.bodySmall!
+                              .copyWith(color: AppColor.gray),
                         )
                       ],
                     ),
@@ -100,7 +94,7 @@ class PlaceCard extends StatelessWidget {
                 )
               ],
             ),
-          )
+          ),
         ],
       ),
     );

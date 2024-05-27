@@ -16,7 +16,9 @@ class RouteRepositoryAPI implements IRouteRepository {
   @override
   Future<PaginatedPage<Route>> getRoutes({String? cursor}) async {
     try {
-      final response = await _client.dio.get(Api.routes);
+      final response = await _client.dio.get(Api.routes, queryParameters: {
+        "limit": _routesLimit
+      });
       final json = response.data;
       return RoutePageModel.fromJson(json).toRoutePage();
     } catch (e, stacktrace) {
