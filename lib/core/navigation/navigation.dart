@@ -31,6 +31,7 @@ class AppRouter {
   late final LaunchBloc _launchBloc;
   late final UserBloc _userBloc;
   late final RouteBuilderBloc _builderBloc;
+  late final LocationV2Bloc _locationV2Bloc;
   late GoRouter router;
   final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -41,6 +42,7 @@ class AppRouter {
     _userBloc = getIt<UserBloc>();
     _builderBloc = getIt<RouteBuilderBloc>();
     _authBloc = getIt<AuthBloc>();
+    _locationV2Bloc = getIt<LocationV2Bloc>();
     _authBloc.stream.listen((state) {
       if (state.status == AuthStatus.authorized) {
         _userBloc.add(LoadUserEvent());
@@ -49,6 +51,7 @@ class AppRouter {
     _userBloc.stream.listen((state) {
       if (state.loadingStatus == LoadingStatus.success) {
         _builderBloc.add(LoadRouteBuilderEvent());
+        _locationV2Bloc.add(LocationV2EventLoad());
       }
     });
     _authBloc.add(AuthCheckAuthorizationEvent());
@@ -177,8 +180,7 @@ class AppRouter {
                 GoRoute(
                     path: '/map',
                     builder: (context, state) => BlocProvider.value(
-                        value: getIt<LocationV2Bloc>()
-                          ..add(LocationV2EventLoad()),
+                        value: _locationV2Bloc,
                         child: const MapPage())),
               ]),
               StatefulShellBranch(routes: [

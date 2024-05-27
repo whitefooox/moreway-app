@@ -12,6 +12,7 @@ import 'package:moreway/module/place/presentation/widget/location_filter.dart';
 import 'package:moreway/module/place/presentation/widget/location_widget.dart';
 import 'package:moreway/module/place/presentation/widget/place_card.dart';
 import 'package:moreway/module/place/presentation/widget/search_bar.dart';
+import 'package:toggle_switch/toggle_switch.dart';
 
 enum ViewMode { place, route }
 
@@ -83,23 +84,28 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-
+    final textTheme = Theme.of(context).textTheme;
     return Padding(
       padding: EdgeInsets.only(
-          left: screenSize.width * 0.035,
-          right: screenSize.width * 0.035,
-          top: screenSize.height * 0.01),
+        left: screenSize.width * 0.035,
+        right: screenSize.width * 0.035,
+      ),
       child: Scaffold(
         appBar: AppBar(
-            centerTitle: false,
-            titleSpacing: 0.0,
-            surfaceTintColor: Colors.transparent,
-            automaticallyImplyLeading: false,
-            title: const Text("Главная"),
-            actions: [
-              IconButton(onPressed: (){}, icon: Badge(child: Icon(Icons.notifications,)))
-            ],
-            ),
+          centerTitle: false,
+          titleSpacing: 0.0,
+          surfaceTintColor: Colors.transparent,
+          automaticallyImplyLeading: false,
+          title: const Text("Главная"),
+          actions: [
+            IconButton(
+                onPressed: () {},
+                icon: const Badge(
+                    child: Icon(
+                  Icons.notifications,
+                )))
+          ],
+        ),
         body: RefreshIndicator(
           color: AppColor.pink,
           onRefresh: () async {
@@ -123,35 +129,29 @@ class _HomePageState extends State<HomePage> {
                 elevation: 0,
                 pinned: false,
                 flexibleSpace: FlexibleSpaceBar(
-                    background: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        ChoiceChip(
-                          label: const Text("Места"),
-                          selected: _viewMode == ViewMode.place,
-                          onSelected: (value) {
-                            setState(() {
-                              _viewMode = ViewMode.place;
-                            });
-                          },
-                        ),
-                        const SizedBox(width: 10),
-                        ChoiceChip(
-                          label: const Text("Маршруты"),
-                          selected: _viewMode == ViewMode.route,
-                          onSelected: (value) {
-                            setState(() {
-                              _viewMode = ViewMode.route;
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
+                    background: Center(
+                  child: ToggleSwitch(
+                    minWidth: 100,
+                    minHeight: 35,
+                    inactiveBgColor: AppColor.gray.withOpacity(0.5),
+                    totalSwitches: 2,
+                    initialLabelIndex: _viewMode == ViewMode.place ? 0 : 1,
+                    labels: const ['Места', 'Маршруты'],
+                    radiusStyle: true,
+                    cornerRadius: 15.0,
+                    activeBgColor: const [AppColor.black],
+                    onToggle: (index) {
+                      if (index == 0) {
+                        setState(() {
+                          _viewMode = ViewMode.place;
+                        });
+                      } else {
+                        setState(() {
+                          _viewMode = ViewMode.route;
+                        });
+                      }
+                    },
+                  ),
                 )),
               ),
               BlocBuilder<PlacesBloc, PlacesState>(
@@ -207,20 +207,6 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-    );
-  }
-}
-
-class CategoryChip extends StatelessWidget {
-  final String label;
-
-  const CategoryChip({super.key, required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return Chip(
-      label: Text(label),
-      backgroundColor: Colors.white,
     );
   }
 }
