@@ -33,4 +33,16 @@ class SelectedPlaceFilters {
         type: type != null ? type() : this.type,
         locality: locality != null ? locality() : this.locality);
   }
+
+  bool isReseted() {
+    if (search == null &&
+        rangeRating == null &&
+        distance == null &&
+        type == null &&
+        locality == null) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }

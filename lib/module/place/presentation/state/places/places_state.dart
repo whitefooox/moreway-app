@@ -1,7 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 part of 'places_bloc.dart';
 
-enum PlacesStatus {initial, success, failure}
+enum PlacesStatus { initial, loading, success, failure }
 
 class PlacesState {
   final PlacesStatus status;
@@ -46,7 +46,7 @@ class PlacesState {
       errorMessage: errorMessage ?? this.errorMessage,
       places: places != null ? places() : this.places,
       cursor: cursor ?? this.cursor,
-      filters: filters ?? this.filters,
+      filters: filters  ?? this.filters,
       filterOptions: filterOptions ?? this.filterOptions,
     );
   }

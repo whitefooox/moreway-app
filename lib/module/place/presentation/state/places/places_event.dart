@@ -22,3 +22,5 @@ class UpdateFiltersEvent extends PlacesEvent {
 
   UpdateFiltersEvent({required this.filters});
 }
+
+class ResetFiltersEvent extends PlacesEvent {}

@@ -36,10 +36,11 @@ class _HomePageState extends State<HomePage> {
   void _onScroll() {
     if (_scrollController.position.maxScrollExtent ==
         _scrollController.offset) {
+      log("end scroll");
       if (_viewMode == ViewMode.place) {
         _placesBloc.add(LoadMorePlacesEvent());
       } else {
-        //_routesBloc.add(LoadMoreRoutesEvent());
+        _routesBloc.add(LoadMoreRoutesEvent());
       }
     }
   }
@@ -93,6 +94,10 @@ class _HomePageState extends State<HomePage> {
             Navigator.maybePop(context);
           },
           selectedPlaceFilters: _placesBloc.state.filters,
+          onReset: () {
+            _placesBloc.add(ResetFiltersEvent());
+            Navigator.maybePop(context);
+          },
         );
       },
     );
@@ -147,16 +152,21 @@ class _HomePageState extends State<HomePage> {
           child: CustomScrollView(
             controller: _scrollController,
             slivers: [
-              SliverAppBar(
-                expandedHeight: 45,
-                flexibleSpace: AppSearchBar(
-                  controller: _searchController,
-                  onClickFilter: _onClickFilter,
-                ),
-                pinned: true,
-                floating: true,
-                elevation: 0,
-                surfaceTintColor: Colors.transparent,
+              BlocBuilder<PlacesBloc, PlacesState>(
+                builder: (context, state) {
+                  return SliverAppBar(
+                    expandedHeight: 45,
+                    flexibleSpace: AppSearchBar(
+                      controller: _searchController,
+                      onClickFilter: _onClickFilter,
+                      isFiltersActive: !state.filters.isReseted(),
+                    ),
+                    pinned: true,
+                    floating: true,
+                    elevation: 0,
+                    surfaceTintColor: Colors.transparent,
+                  );
+                },
               ),
               SliverAppBar(
                 elevation: 0,

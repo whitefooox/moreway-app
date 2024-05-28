@@ -5,12 +5,14 @@ class AppSearchBar extends StatelessWidget {
   final TextEditingController? controller;
   final void Function()? onClickFilter;
   final void Function(String)? onChanged;
+  final bool isFiltersActive;
 
   const AppSearchBar({
     super.key,
     this.controller,
     this.onClickFilter,
     this.onChanged,
+    this.isFiltersActive = false
   });
 
   @override
@@ -56,9 +58,12 @@ class AppSearchBar extends StatelessWidget {
               ),
               child: IconButton(
                 onPressed: onClickFilter,
-                icon: const Icon(
-                  Icons.tune,
-                  color: AppColor.white,
+                icon: Badge(
+                  isLabelVisible: isFiltersActive,
+                  child: const Icon(
+                    Icons.tune,
+                    color: AppColor.white,
+                  ),
                 ),
               ),
             ),

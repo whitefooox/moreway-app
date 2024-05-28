@@ -11,12 +11,12 @@ PlacePageModel _$PlacePageModelFromJson(Map<String, dynamic> json) =>
       places: (json['data'] as List<dynamic>)
           .map((e) => PlaceModel.fromJson(e as Map<String, dynamic>))
           .toList(),
-      cursor:
+      next_cursor:
           PlacePageModel._cursorFromJson(json['meta'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$PlacePageModelToJson(PlacePageModel instance) =>
     <String, dynamic>{
       'data': instance.places,
-      'meta': instance.cursor,
+      'meta': instance.next_cursor,
     };

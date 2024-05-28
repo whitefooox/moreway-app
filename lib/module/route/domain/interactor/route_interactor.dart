@@ -8,6 +8,6 @@ class RouteInteractor {
   RouteInteractor(this._routeRepository);
 
   Future<PaginatedPage<Route>> getRoutes({String? cursor}){
-    return _routeRepository.getRoutes();
+    return _routeRepository.getRoutes(cursor: cursor);
   }
 }

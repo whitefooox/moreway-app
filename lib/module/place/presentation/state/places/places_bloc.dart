@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:moreway/module/place/domain/entity/place.dart';
@@ -18,13 +20,15 @@ class PlacesBloc extends Bloc<PlacesEvent, PlacesState> {
     on<LoadPlacesAndFiltersEvent>(_loadPlacesAndFilters);
     on<UpdateFiltersEvent>(_updateFilters);
     on<LoadMorePlacesEvent>(_loadMore);
+    on<ResetFiltersEvent>(_resetFilters);
   }
 
   void _load(LoadPlacesEvent event, Emitter<PlacesState> emit) async {
     emit(state.resetData());
+    emit(state.copyWith(status: PlacesStatus.loading));
     try {
       final placePage = await _placeInteractor.getPlaces(
-          cursor: state.cursor, filters: state.filters);
+          filters: state.filters);
       emit(state.copyWith(
           status: PlacesStatus.success,
           places: () => placePage.items,
@@ -37,7 +41,7 @@ class PlacesBloc extends Bloc<PlacesEvent, PlacesState> {
 
   void _loadMore(LoadMorePlacesEvent event, Emitter<PlacesState> emit) async {
     if (state.hasReachedMax) return;
-    emit(state.copyWith(status: PlacesStatus.initial));
+    emit(state.copyWith(status: PlacesStatus.loading));
     try {
       final placePage = await _placeInteractor.getPlaces(
           cursor: state.cursor, filters: state.filters);
@@ -55,12 +59,12 @@ class PlacesBloc extends Bloc<PlacesEvent, PlacesState> {
     if (state.filters.search == event.query) return;
     emit(state.resetData().copyWith(
         filters: state.filters.copyWithNull(search: () => event.query)));
-    super.add(LoadPlacesEvent());
+    add(LoadPlacesEvent());
   }
 
   void _loadPlacesAndFilters(
       LoadPlacesAndFiltersEvent event, Emitter<PlacesState> emit) async {
-    emit(state.copyWith(status: PlacesStatus.initial));
+    emit(state.copyWith(status: PlacesStatus.loading));
     try {
       final placePage = await _placeInteractor.getPlaces();
       final placeFilters = await _placeInteractor.getFilters();
@@ -78,6 +82,11 @@ class PlacesBloc extends Bloc<PlacesEvent, PlacesState> {
   void _updateFilters(
       UpdateFiltersEvent event, Emitter<PlacesState> emit) async {
     emit(state.resetData().copyWith(filters: event.filters));
-    super.add(LoadPlacesEvent());
+    add(LoadPlacesEvent());
+  }
+
+  void _resetFilters(ResetFiltersEvent event, Emitter<PlacesState> emit) async {
+    emit(state.resetData().copyWith(filters: const SelectedPlaceFilters()));
+    add(LoadPlacesEvent());
   }
 }

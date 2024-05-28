@@ -11,15 +11,15 @@ class RoutePageModel {
   final List<RouteModel> routes;
 
   @JsonKey(name: "meta", fromJson: _cursorFromJson)
-  final String? cursor;
+  final String? next_cursor;
 
   RoutePageModel({
     required this.routes,
-    this.cursor,
+    this.next_cursor,
   });
 
   static String? _cursorFromJson(Map<String, dynamic> json) {
-    return json["cursor"] as String?;
+    return json["next_cursor"] as String?;
   }
 
   factory RoutePageModel.fromJson(Map<String, dynamic> json) =>
@@ -30,7 +30,7 @@ class RoutePageModel {
   PaginatedPage<Route> toRoutePage() {
     return PaginatedPage<Route>(
       items: routes.map((routeModel) => routeModel.toRoute()).toList(), 
-      cursor: cursor
+      cursor: next_cursor
     );
   }
 }

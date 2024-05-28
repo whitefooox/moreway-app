@@ -12,12 +12,14 @@ class LocationFilter extends StatefulWidget {
   final PlaceFilterOptions filtersOptions;
   final SelectedPlaceFilters selectedPlaceFilters;
   final void Function(SelectedPlaceFilters) onSubmit;
+  final void Function() onReset;
 
   const LocationFilter({
     super.key,
     required this.filtersOptions,
     required this.onSubmit,
     required this.selectedPlaceFilters,
+    required this.onReset
   });
 
   @override
@@ -82,7 +84,7 @@ class _LocationFilterState extends State<LocationFilter> {
                     flex: 1,
                     child: ElevatedButton.icon(
                         icon: const Icon(Icons.clear),
-                        onPressed: () {},
+                        onPressed: widget.onReset,
                         label: const Padding(
                           padding: EdgeInsets.symmetric(vertical: 14),
                           child: Text("Сбросить"),
