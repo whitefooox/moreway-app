@@ -21,7 +21,7 @@ class RouteCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Expanded(child: DynamicImageGrid(imageUrls: images)),
+          DynamicImageGrid(imageUrls: images),
           Padding(
             padding: const EdgeInsets.all(10),
             child: Column(
