@@ -11,15 +11,15 @@ class PlacePageModel {
   final List<PlaceModel> places;
 
   @JsonKey(name: "meta", fromJson: _cursorFromJson)
-  final String? next_cursor;
+  final String? cursor;
 
   PlacePageModel({
     required this.places,
-    this.next_cursor,
+    this.cursor,
   });
 
   static String? _cursorFromJson(Map<String, dynamic> json) {
-    return json["next_cursor"] as String?;
+    return json["cursor"] as String?;
   }
 
   factory PlacePageModel.fromJson(Map<String, dynamic> json) =>
@@ -30,7 +30,7 @@ class PlacePageModel {
   PaginatedPage<Place> toPlacePage() {
     return PaginatedPage<Place>(
       items: places.map((placeModel) => placeModel.toPlace()).toList(), 
-      cursor: next_cursor
+      cursor: cursor
     );
   }
 }
