@@ -14,11 +14,13 @@ class ProfileCard extends StatelessWidget {
       children: [
         CircleAvatar(
           radius: 40,
-          child: Image.network(
-            imageUrl,
-            errorBuilder: (context, error, stackTrace) {
-              return const Icon(Icons.not_interested);
-            },
+          child: ClipOval(
+            child: Image.network(
+              imageUrl,
+              errorBuilder: (context, error, stackTrace) {
+                return const Icon(Icons.not_interested);
+              },
+            ),
           ),
         ),
         const SizedBox(height: 10,),

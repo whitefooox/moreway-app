@@ -2,7 +2,7 @@ import 'package:moreway/module/auth/domain/dependency/i_auth_service.dart';
 import 'package:moreway/module/auth/domain/entity/signin_data.dart';
 import 'package:moreway/module/auth/domain/entity/signup_data.dart';
 import 'package:moreway/module/auth/domain/entity/token.dart';
-import 'package:moreway/module/auth/domain/entity/user_profile.dart';
+import 'package:moreway/module/user/domain/entity/user_profile.dart';
 
 class AuthServiceMock implements IAuthService {
   @override

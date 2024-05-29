@@ -15,4 +15,5 @@ class Api {
   static putConstructor(String userId) => "/users/$userId/constructor";
 
   static const routes = "/routes";
+  static const users = "/users";
 }

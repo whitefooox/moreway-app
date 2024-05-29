@@ -19,6 +19,7 @@ class AuthInterceptor extends Interceptor {
       options.contentType = Headers.jsonContentType;
       options.headers["Accept"] = "application/json";
     }
+    options.queryParameters.removeWhere((key, value) => value == null);
     return super.onRequest(options, handler);
   }
 

@@ -1,16 +1,9 @@
-import 'dart:developer';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:go_router/go_router.dart';
 import 'package:moreway/core/api/loading_status.dart';
 import 'package:moreway/core/snackbar.dart';
 import 'package:moreway/core/theme/colors.dart';
-import 'package:moreway/module/place/domain/entity/place_detailed.dart';
 import 'package:moreway/module/place/presentation/state/place/place_bloc.dart';
 import 'package:moreway/module/place/presentation/widget/images_carousel.dart';
 import 'package:moreway/module/review/domain/entity/review.dart';

@@ -4,7 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:moreway/module/auth/domain/entity/signin_data.dart';
 import 'package:moreway/module/auth/domain/entity/signup_data.dart';
-import 'package:moreway/module/auth/domain/entity/user_profile.dart';
+import 'package:moreway/module/user/domain/entity/user_profile.dart';
 import 'package:moreway/module/auth/domain/exception/auth_exception.dart';
 import 'package:moreway/module/auth/domain/usecase/auth_interactor.dart';
 

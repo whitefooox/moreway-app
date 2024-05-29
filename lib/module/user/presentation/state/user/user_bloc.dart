@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:moreway/core/api/loading_status.dart';
-import 'package:moreway/module/auth/domain/entity/user_profile.dart';
+import 'package:moreway/module/user/domain/entity/user_profile.dart';
 import 'package:moreway/module/user/domain/entity/user_preview.dart';
 import 'package:moreway/module/user/domain/interactor/user_interactor.dart';
 

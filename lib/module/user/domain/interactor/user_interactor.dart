@@ -1,4 +1,6 @@
-import 'package:moreway/module/auth/domain/entity/user_profile.dart';
+import 'package:moreway/core/api/paginated_page.dart';
+import 'package:moreway/module/user/domain/entity/user_preview.dart';
+import 'package:moreway/module/user/domain/entity/user_profile.dart';
 import 'package:moreway/module/user/domain/dependency/i_user_repository.dart';
 
 class UserInteractor {
@@ -9,5 +11,13 @@ class UserInteractor {
 
   Future<UserProfile> getProfileData(){
     return _userRepository.getProfileData();
+  }
+
+  Future<UserPreview> getFriends(){
+    throw UnimplementedError();
+  }
+
+  Future<PaginatedPage<UserPreview>> searchUsers({String? name, String? cursor}){
+    return _userRepository.getUsersByName(name: name, cursor: cursor);
   }
 }

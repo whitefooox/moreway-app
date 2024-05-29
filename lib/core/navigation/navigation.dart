@@ -20,8 +20,10 @@ import 'package:moreway/module/route/presentation/state/builder/route_builder_bl
 import 'package:moreway/module/route/presentation/state/routes/routes_bloc.dart';
 import 'package:moreway/module/route/presentation/view/page/route_builder_page.dart';
 import 'package:moreway/module/setting/presentation/page/settings_page.dart';
-import 'package:moreway/module/user/presentation/state/bloc/user_bloc.dart';
+import 'package:moreway/module/user/presentation/state/search/search_users_bloc.dart';
+import 'package:moreway/module/user/presentation/state/user/user_bloc.dart';
 import 'package:moreway/module/user/presentation/view/page/profile_page.dart';
+import 'package:moreway/module/user/presentation/view/page/search_users_page.dart';
 import 'package:moreway/module/welcome/presentation/bloc/launch_bloc.dart';
 import 'package:moreway/module/welcome/presentation/page/welcome.dart';
 import 'package:moreway/core/navigation/root_page.dart';
@@ -166,7 +168,8 @@ class AppRouter {
                             GoRoute(
                               parentNavigatorKey: _rootNavigatorKey,
                               path: "create-review",
-                              builder: (context, state) => CreateReviewPage(),
+                              builder: (context, state) =>
+                                  const CreateReviewPage(),
                             )
                           ])
                     ]),
@@ -174,7 +177,7 @@ class AppRouter {
               StatefulShellBranch(routes: [
                 GoRoute(
                   path: '/route',
-                  builder: (context, state) => RouteBuilderPage(),
+                  builder: (context, state) => const RouteBuilderPage(),
                 ),
               ]),
               StatefulShellBranch(routes: [
@@ -195,7 +198,7 @@ class AppRouter {
                     path: '/profile',
                     builder: (context, state) => BlocProvider<UserBloc>.value(
                           value: _userBloc,
-                          child: ProfilePage(),
+                          child: const ProfilePage(),
                         ),
                     routes: [
                       GoRoute(
@@ -204,7 +207,15 @@ class AppRouter {
                         builder: (context, state) =>
                             BlocProvider<AuthBloc>.value(
                           value: _authBloc,
-                          child: SettingsPage(),
+                          child: const SettingsPage(),
+                        ),
+                      ),
+                      GoRoute(
+                        path: "search-users",
+                        parentNavigatorKey: _rootNavigatorKey,
+                        builder: (context, state) => BlocProvider<SearchUsersBloc>(
+                          create: (_) => getIt<SearchUsersBloc>(),
+                          child: const SearchUsersPage(),
                         ),
                       )
                     ]),
