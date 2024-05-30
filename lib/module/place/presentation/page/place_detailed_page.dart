@@ -246,20 +246,9 @@ class _PlaceDetailedPageState extends State<PlaceDetailedPage>
       padding: EdgeInsets.only(
           left: screenSize.width * 0.035, right: screenSize.width * 0.035),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(
-            height: 10,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
               _buildPlaceName(state.place!.name, textTheme),
-              const SizedBox(
-                width: 10,
-              ),
-              //_buildRating(state.place!.rating),
-            ],
-          ),
           const SizedBox(
             height: 10,
           ),
@@ -364,6 +353,7 @@ class _PlaceDetailedPageState extends State<PlaceDetailedPage>
             switch (state.placeDetailedStatus) {
               case LoadingStatus.success:
                 return NestedScrollView(
+                  scrollBehavior: ScrollBehavior(),
                     headerSliverBuilder: (context, innerBoxIsScrolled) => [
                           _buildSliverAppBar(screenSize.width,
                               state.place!.images, state.placeId!),

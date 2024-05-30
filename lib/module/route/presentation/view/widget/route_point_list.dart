@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:moreway/core/theme/colors.dart';
 import 'package:moreway/module/place/domain/entity/place.dart';
 import 'package:moreway/module/place/domain/entity/place_base.dart';
+import 'package:moreway/module/route/presentation/view/widget/dashed_vertical_line.dart';
 
 class RoutePointsList extends StatelessWidget {
   final List<PlaceBase> points;
@@ -18,12 +19,20 @@ class RoutePointsList extends StatelessWidget {
         return _buildPointTile(context, index, textTheme);
       },
       separatorBuilder: (BuildContext context, int index) {
-        return const Divider(
-          height: 1,
-          thickness: 1,
-          indent: 40,
-          endIndent: 20,
-          color: AppColor.gray,
+        return const Row(
+          children: [
+            SizedBox(
+                height: 40,
+                width: 40,
+                child: Center(
+                    child: DashedVerticalLine(
+                  dashWidth: 5,
+                  color: AppColor.pink,
+                  height: double.infinity,
+                  dashSpace: 5,
+                  dashHeight: 10,
+                )))
+          ],
         );
       },
     );
@@ -42,7 +51,6 @@ class RoutePointsList extends StatelessWidget {
             child: ListTile(
               contentPadding: const EdgeInsets.symmetric(
                   vertical: 8, horizontal: 16),
-              //subtitle: _buildDistanceRow(index, textTheme),
               leading: _buildImageAvatar(index),
               title: Text(
                 points[index].name,

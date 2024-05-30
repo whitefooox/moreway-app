@@ -13,6 +13,7 @@ import 'package:moreway/module/route/domain/entity/route_raw.dart';
 import 'package:moreway/module/route/presentation/state/builder/route_builder_bloc.dart';
 import 'package:moreway/module/route/presentation/view/widget/create_route_name_dialog.dart';
 import 'package:moreway/module/route/presentation/view/widget/dashed_vertical_line.dart';
+import 'package:moreway/module/route/presentation/view/widget/empty_route_builder.dart';
 import 'package:moreway/module/route/presentation/view/widget/few_places_dialog.dart';
 import 'package:moreway/module/route/presentation/view/widget/route_created_popup.dart';
 
@@ -348,34 +349,3 @@ class _RouteBuilderPageState extends State<RouteBuilderPage> {
   }
 }
 
-class EmptyRouteBuilder extends StatelessWidget {
-  const EmptyRouteBuilder({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    return Container(
-      alignment: Alignment.center,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Image.asset(Assets.panelIconImage, height: 50),
-          SizedBox(height: 24),
-          Text(
-            "Здесь пусто!",
-            style: textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.bold)
-          ),
-          SizedBox(height: 16),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 32),
-            child: Text(
-              "Начните добавлять интересные места, чтобы спланировать свое путешествие.",
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey[600]),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}

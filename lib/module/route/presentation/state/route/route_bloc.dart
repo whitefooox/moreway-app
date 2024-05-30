@@ -16,12 +16,28 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
   RouteBloc(this._routeInteractor, this._navigationInteractor)
       : super(RouteState()) {
     on<RouteLoadEvent>(_load);
+    on<LikeRouteEvent>(_like);
+    on<UnlikeRouteEvent>(_unlike);
   }
 
   void _load(RouteLoadEvent event, Emitter<RouteState> emit) async {
     emit(state.copyWith(routeId: event.id));
     await _loadRouteDetailed(emit);
     await _loadRouteCoordinates(emit);
+  }
+
+  void _like(LikeRouteEvent event, Emitter<RouteState> emit) async {
+    try {
+      await _routeInteractor.addToFavorite(state.routeId!);
+      emit(state.copyWith(route: state.route!.copyWith(isFavorite: true)));
+    } catch (e) {}
+  }
+
+  void _unlike(UnlikeRouteEvent event, Emitter<RouteState> emit) async {
+    try {
+      await _routeInteractor.removeToFavorite(state.routeId!);
+      emit(state.copyWith(route: state.route!.copyWith(isFavorite: false)));
+    } catch (e) {}
   }
 
   Future<void> _loadRouteDetailed(Emitter<RouteState> emit) async {
@@ -38,12 +54,14 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
   Future<void> _loadRouteCoordinates(Emitter<RouteState> emit) async {
     emit(state.copyWith(routeCoordinatesStatus: LoadingStatus.loading));
     try {
-      final coordinates = await _navigationInteractor.getRoute(state.route!.points
+      final coordinates = await _navigationInteractor.getRoute(state
+          .route!.points
           .map((e) =>
               PositionPoint(latitude: e.place.lat, longitude: e.place.lon))
           .toList());
       emit(state.copyWith(
-          routeCoordinatesStatus: LoadingStatus.success, routeCoordinates: coordinates));
+          routeCoordinatesStatus: LoadingStatus.success,
+          routeCoordinates: coordinates));
     } catch (e) {
       emit(state.copyWith(routeCoordinatesStatus: LoadingStatus.failure));
     }

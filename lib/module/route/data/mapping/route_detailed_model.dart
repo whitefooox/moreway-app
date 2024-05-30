@@ -13,6 +13,8 @@ class RouteDetailedModel {
   final double rating;
   final List<RoutePointDetailedModel> routePoints;
   final UserPreviewModel creator;
+  final bool isActive;
+  final bool isFavorite;
 
   RouteDetailedModel({
     required this.id,
@@ -20,6 +22,8 @@ class RouteDetailedModel {
     required this.rating,
     required this.routePoints,
     required this.creator,
+    required this.isActive,
+    required this.isFavorite
   });
 
   factory RouteDetailedModel.fromJson(Map<String, dynamic> json) =>
@@ -33,6 +37,9 @@ class RouteDetailedModel {
         name: name,
         rating: rating,
         points: routePoints.map((e) => e.toRoutePointDetailed()).toList(),
-        creator: creator.toUserPreview());
+        creator: creator.toUserPreview(),
+        isActive: isActive,
+        isFavorite: isFavorite
+        );
   }
 }

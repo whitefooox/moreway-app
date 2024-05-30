@@ -17,6 +17,8 @@ RouteDetailedModel _$RouteDetailedModelFromJson(Map<String, dynamic> json) =>
           .toList(),
       creator:
           UserPreviewModel.fromJson(json['creator'] as Map<String, dynamic>),
+      isActive: json['isActive'] as bool,
+      isFavorite: json['isFavorite'] as bool,
     );
 
 Map<String, dynamic> _$RouteDetailedModelToJson(RouteDetailedModel instance) =>
@@ -26,4 +28,6 @@ Map<String, dynamic> _$RouteDetailedModelToJson(RouteDetailedModel instance) =>
       'rating': instance.rating,
       'routePoints': instance.routePoints,
       'creator': instance.creator,
+      'isActive': instance.isActive,
+      'isFavorite': instance.isFavorite,
     };

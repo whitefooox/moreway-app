@@ -112,7 +112,7 @@ class DIContainer {
 
   void _injectRoute(){
     getIt.registerLazySingleton<IRouteRepository>(() => RouteRepositoryAPI(getIt()));
-    getIt.registerLazySingleton<RouteInteractor>(() => RouteInteractor(getIt()));
+    getIt.registerLazySingleton<RouteInteractor>(() => RouteInteractor(getIt(), getIt()));
     getIt.registerLazySingleton<RoutesBloc>(() => RoutesBloc(getIt()));
     getIt.registerFactory<RouteBloc>(() => RouteBloc(getIt(), getIt()));
   }

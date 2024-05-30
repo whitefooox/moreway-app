@@ -7,6 +7,8 @@ class RouteDetailed {
   final double rating;
   final List<RoutePointDetailed> points;
   final UserPreview creator;
+  final bool isFavorite;
+  final bool isActive;
 
   RouteDetailed({
     required this.id,
@@ -14,5 +16,27 @@ class RouteDetailed {
     required this.rating,
     required this.points,
     required this.creator,
+    required this.isActive,
+    required this.isFavorite
   });
+
+  RouteDetailed copyWith({
+    String? id,
+    String? name,
+    double? rating,
+    List<RoutePointDetailed>? points,
+    UserPreview? creator,
+    bool? isFavorite,
+    bool? isActive,
+  }) {
+    return RouteDetailed(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      rating: rating ?? this.rating,
+      points: points ?? this.points,
+      creator: creator ?? this.creator,
+      isFavorite: isFavorite ?? this.isFavorite,
+      isActive: isActive ?? this.isActive,
+    );
+  }
 }

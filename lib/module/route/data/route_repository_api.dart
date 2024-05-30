@@ -39,4 +39,26 @@ class RouteRepositoryAPI implements IRouteRepository {
       rethrow;
     }
   }
+
+  @override
+  Future<void> addToFavorite(String routeId, String userId) async {
+    try {
+      final response = await _client.dio
+          .post(Api.favoriteRoutes(userId), data: {"routeId": routeId});
+    } catch (e, stackTrace) {
+      log("[route repository api] $e", stackTrace: stackTrace);
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> removeToFavorite(String routeId, String userId) async {
+    try {
+      final response =
+          await _client.dio.delete(Api.favoriteRoutesRouteId(userId, routeId));
+    } catch (e, stackTrace) {
+      log("[route repository api] $e", stackTrace: stackTrace);
+      rethrow;
+    }
+  }
 }

@@ -8,3 +8,7 @@ class RouteLoadEvent extends RouteEvent {
 
   RouteLoadEvent({required this.id});
 }
+
+class LikeRouteEvent extends RouteEvent {}
+
+class UnlikeRouteEvent extends RouteEvent {}
