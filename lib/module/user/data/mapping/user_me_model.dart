@@ -1,6 +1,4 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:moreway/module/user/domain/entity/user_profile.dart';
-import 'package:moreway/module/user/domain/entity/user_preview.dart';
 
 part 'user_me_model.g.dart';
 
@@ -22,13 +20,4 @@ class UserMeModel {
       _$UserMeModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$UserMeModelToJson(this);
-
-  UserProfile toUserProfile(){
-    return UserProfile(
-      id: id.toString(), 
-      name: name, 
-      email: email, 
-      avatarUrl: avatar
-    );
-  }
 }

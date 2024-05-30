@@ -36,6 +36,8 @@ dependencies:
   intl: ^0.19.0
   flutter_slidable: ^3.1.0
   toggle_switch: ^2.3.0
+  osrm: ^0.0.5
+
 
 dev_dependencies:
   flutter_launcher_icons: "^0.13.1"

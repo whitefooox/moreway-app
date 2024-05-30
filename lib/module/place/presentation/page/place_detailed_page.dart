@@ -357,21 +357,6 @@ class _PlaceDetailedPageState extends State<PlaceDetailedPage>
             }
           default:
         }
-        // if (state. == LoadingStatus.failure) {
-        //   ScaffoldMessenger.of(context)
-        //       .showSnackBar(buildSnackBar("Не удалось удалить"));
-        // }
-        // if (state.addPlaceStatus == LoadingStatus.failure) {
-        //   ScaffoldMessenger.of(context)
-        //       .showSnackBar(buildSnackBar("Не удалось добавить"));
-        // }
-        // if (state.operationStatus == RouteBuilderOperationStatus.added) {
-        //   ScaffoldMessenger.of(context)
-        //       .showSnackBar(buildSnackBar("Добавлено"));
-        // }
-        // if (state.removePlaceStatus == LoadingStatus.success) {
-        //   ScaffoldMessenger.of(context).showSnackBar(buildSnackBar("Удалено"));
-        // }
       },
       child: BlocBuilder<PlaceBloc, PlaceState>(
           bloc: _placeBloc,

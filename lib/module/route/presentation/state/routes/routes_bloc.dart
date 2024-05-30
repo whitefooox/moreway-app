@@ -19,7 +19,7 @@ class RoutesBloc extends Bloc<RoutesEvent, RoutesState> {
   void _load(LoadRoutesEvent event, Emitter<RoutesState> emit) async {
     emit(state.resetData());
     try {
-      final routePage = await _routeInteractor.getRoutes(cursor: state.cursor);
+      final routePage = await _routeInteractor.getRoutes();
       emit(state.copyWith(
           status: RoutesStatus.success,
           routes: () => routePage.items,
@@ -31,12 +31,8 @@ class RoutesBloc extends Bloc<RoutesEvent, RoutesState> {
   }
 
   void _loadMore(LoadMoreRoutesEvent event, Emitter<RoutesState> emit) async {
-    log(state.hasReachedMax.toString());
-    log("load more");
     if (state.hasReachedMax) return;
     emit(state.copyWith(status: RoutesStatus.initial));
-    log("load loading");
-    
     try {
       final routePage =
           await _routeInteractor.getRoutes(cursor: state.cursor);

@@ -9,16 +9,16 @@ import 'package:moreway/module/auth/presentation/page/auth/signin.dart';
 import 'package:moreway/module/auth/presentation/page/auth/signup.dart';
 import 'package:moreway/module/auth/presentation/page/password/reset_password.dart';
 import 'package:moreway/module/auth/presentation/page/password/verify_code.dart';
-import 'package:moreway/module/location/presentation/state/location/location_bloc.dart';
 import 'package:moreway/module/location/presentation/page/map_page.dart';
 import 'package:moreway/module/location/presentation/state/location_v2/location_v2_bloc.dart';
 import 'package:moreway/module/place/presentation/page/place_detailed_page.dart';
 import 'package:moreway/module/place/presentation/state/place/place_bloc.dart';
 import 'package:moreway/module/place/presentation/state/places/places_bloc.dart';
-import 'package:moreway/module/review/presentation/view/page/create_review_page.dart';
 import 'package:moreway/module/route/presentation/state/builder/route_builder_bloc.dart';
+import 'package:moreway/module/route/presentation/state/route/route_bloc.dart';
 import 'package:moreway/module/route/presentation/state/routes/routes_bloc.dart';
 import 'package:moreway/module/route/presentation/view/page/route_builder_page.dart';
+import 'package:moreway/module/route/presentation/view/page/route_detailed_page.dart';
 import 'package:moreway/module/setting/presentation/page/settings_page.dart';
 import 'package:moreway/module/user/presentation/state/search/search_users_bloc.dart';
 import 'package:moreway/module/user/presentation/state/user/user_bloc.dart';
@@ -147,31 +147,36 @@ class AppRouter {
                         ),
                     routes: [
                       GoRoute(
-                          path: "place/:id",
-                          parentNavigatorKey: _rootNavigatorKey,
-                          builder: (context, state) {
-                            final placeId = state.pathParameters['id'];
-                            return MultiBlocProvider(
-                              providers: [
-                                BlocProvider(
-                                  create: (_) => getIt<PlaceBloc>()
-                                    ..add(PlaceLoadEvent(id: placeId!)),
-                                ),
-                                BlocProvider.value(
-                                  value: _builderBloc,
-                                ),
-                              ],
-                              child: const PlaceDetailedPage(),
-                            );
-                          },
-                          routes: [
-                            GoRoute(
-                              parentNavigatorKey: _rootNavigatorKey,
-                              path: "create-review",
-                              builder: (context, state) =>
-                                  const CreateReviewPage(),
-                            )
-                          ])
+                        path: "place/:id",
+                        parentNavigatorKey: _rootNavigatorKey,
+                        builder: (context, state) {
+                          final placeId = state.pathParameters['id'];
+                          return MultiBlocProvider(
+                            providers: [
+                              BlocProvider(
+                                create: (_) => getIt<PlaceBloc>()
+                                  ..add(PlaceLoadEvent(id: placeId!)),
+                              ),
+                              BlocProvider.value(
+                                value: _builderBloc,
+                              ),
+                            ],
+                            child: const PlaceDetailedPage(),
+                          );
+                        },
+                      ),
+                      GoRoute(
+                        path: "route/:id",
+                        parentNavigatorKey: _rootNavigatorKey,
+                        builder: (context, state) {
+                          final routeId = state.pathParameters['id'];
+                          return BlocProvider(
+                            create: (_) => getIt<RouteBloc>()
+                              ..add(RouteLoadEvent(id: routeId!)),
+                            child: const RouteDetailedPage(),
+                          );
+                        },
+                      )
                     ]),
               ]),
               StatefulShellBranch(routes: [
@@ -213,7 +218,8 @@ class AppRouter {
                       GoRoute(
                         path: "search-users",
                         parentNavigatorKey: _rootNavigatorKey,
-                        builder: (context, state) => BlocProvider<SearchUsersBloc>(
+                        builder: (context, state) =>
+                            BlocProvider<SearchUsersBloc>(
                           create: (_) => getIt<SearchUsersBloc>(),
                           child: const SearchUsersPage(),
                         ),

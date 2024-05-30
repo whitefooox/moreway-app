@@ -16,4 +16,5 @@ class Api {
 
   static const routes = "/routes";
   static const users = "/users";
+  static routesRoutesId(String routeId) => "/routes/$routeId";
 }

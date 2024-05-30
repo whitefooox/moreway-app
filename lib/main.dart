@@ -21,9 +21,8 @@ void main() async {
 
 Future<void> setupApp() async {
   await DIContainer().inject();
-  //setupApiClient(getIt<ITokenStorage>(), getIt<Dio>());
   setupOrientation();
-  setupSystemUI();
+  //setupSystemUI();
 }
 
 void setupOrientation() {

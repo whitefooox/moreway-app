@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:moreway/core/api/api.dart';
 import 'package:moreway/core/api/api_client.dart';
 import 'package:moreway/core/api/paginated_page.dart';
+import 'package:moreway/module/user/data/mapping/user_profile_model.dart';
 import 'package:moreway/module/user/data/mapping/users_page_model.dart';
 import 'package:moreway/module/user/domain/entity/user_preview.dart';
 import 'package:moreway/module/user/domain/entity/user_profile.dart';
@@ -20,7 +21,7 @@ class UserRepositoryAPI implements IUserRepository {
     try {
       final response = await _client.dio.get(Api.authMe);
       final json = response.data['data'];
-      final model = UserMeModel.fromJson(json);
+      final model = UserProfileModel.fromJson(json);
       final profile = model.toUserProfile();
       _userId = profile.id;
       return profile;
@@ -38,7 +39,7 @@ class UserRepositoryAPI implements IUserRepository {
       try {
         final response = await _client.dio.get(Api.authMe);
         final json = response.data['data'];
-        final model = UserMeModel.fromJson(json);
+        final model = UserProfileModel.fromJson(json);
         final profile = model.toUserProfile();
         _userId = profile.id;
         return _userId!;

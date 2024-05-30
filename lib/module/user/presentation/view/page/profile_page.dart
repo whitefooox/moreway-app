@@ -17,7 +17,7 @@ class _ProfilePageState extends State<ProfilePage>
     with TickerProviderStateMixin {
   late final TabController tabController;
 
-  void _goToSearchUsers(){
+  void _goToSearchUsers() {
     context.go("/profile/search-users");
   }
 
@@ -64,8 +64,10 @@ class _ProfilePageState extends State<ProfilePage>
                         flex: 1,
                         child: Center(
                             child: ProfileCard(
-                                imageUrl: state.user!.avatarUrl,
-                                name: state.user!.name))),
+                          imageUrl: state.user!.avatarUrl,
+                          name: state.user!.name,
+                          score: state.user!.score,
+                        ))),
                     Expanded(
                       flex: 2,
                       child: Column(

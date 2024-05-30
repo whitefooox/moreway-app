@@ -146,7 +146,7 @@ class _HomePageState extends State<HomePage> {
             if (_viewMode == ViewMode.place) {
               _placesBloc.add(LoadPlacesEvent());
             } else {
-              //_routesBloc.add(LoadRoutesEvent());
+              _routesBloc.add(LoadRoutesEvent());
             }
           },
           child: CustomScrollView(

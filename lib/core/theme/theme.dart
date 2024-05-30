@@ -5,6 +5,7 @@ const kPagePadding = EdgeInsets.only(left: 10, right: 10);
 
 final appThemeData = ThemeData(
     useMaterial3: true,
+    
     //colorScheme: ColorScheme.fromSeed(seedColor: AppColor.black, secondary: AppColor.pink),
     fontFamily: "Poppins",
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
@@ -39,7 +40,9 @@ final appThemeData = ThemeData(
         selectedColor: AppColor.pink.withOpacity(0.2),
         side: BorderSide.none),
     bottomSheetTheme: const BottomSheetThemeData(backgroundColor: Colors.transparent),
-    appBarTheme: const AppBarTheme(),
+    appBarTheme: const AppBarTheme(
+
+    ),
     textButtonTheme: TextButtonThemeData(style: TextButton.styleFrom(foregroundColor: AppColor.black)),
     progressIndicatorTheme: const ProgressIndicatorThemeData(color: AppColor.pink),
     badgeTheme: const BadgeThemeData(backgroundColor: AppColor.pink, textColor: AppColor.white)

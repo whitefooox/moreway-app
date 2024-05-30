@@ -10,13 +10,16 @@ import 'package:moreway/module/auth/domain/usecase/auth_interactor.dart';
 import 'package:moreway/module/auth/presentation/bloc/auth_bloc.dart';
 import 'package:moreway/module/location/data/geolocator_service.dart';
 import 'package:moreway/module/location/data/osm_geoincoder.dart';
+import 'package:moreway/module/location/data/osrm_navigation_service.dart';
 import 'package:moreway/module/location/data/permission_service.dart';
 import 'package:moreway/module/location/domain/dependency/i_geoincoder_service.dart';
 import 'package:moreway/module/location/domain/dependency/i_location_permission_service.dart';
 import 'package:moreway/module/location/domain/dependency/i_location_service.dart';
+import 'package:moreway/module/location/domain/dependency/i_navigation_service.dart';
 import 'package:moreway/module/location/domain/usecase/get_current_city.dart';
 import 'package:moreway/module/location/domain/usecase/get_current_location.dart';
 import 'package:moreway/module/location/domain/usecase/get_location_stream.dart';
+import 'package:moreway/module/location/domain/usecase/navigation_interactor.dart';
 import 'package:moreway/module/location/domain/usecase/send_request_location_permission.dart';
 import 'package:moreway/module/location/presentation/state/location/location_bloc.dart';
 import 'package:moreway/module/location/presentation/state/location_v2/location_v2_bloc.dart';
@@ -34,6 +37,7 @@ import 'package:moreway/module/route/domain/dependency/i_route_repository.dart';
 import 'package:moreway/module/route/domain/interactor/route_builder_interactor.dart';
 import 'package:moreway/module/route/domain/interactor/route_interactor.dart';
 import 'package:moreway/module/route/presentation/state/builder/route_builder_bloc.dart';
+import 'package:moreway/module/route/presentation/state/route/route_bloc.dart';
 import 'package:moreway/module/route/presentation/state/routes/routes_bloc.dart';
 import 'package:moreway/module/user/data/user_repository_api.dart';
 import 'package:moreway/module/user/domain/dependency/i_user_repository.dart';
@@ -70,8 +74,6 @@ class DIContainer {
         () => TokenSecureStorage(getIt()));
     getIt.registerLazySingleton<ApiClient>(() => ApiClient(getIt(), getIt()));
     getIt.registerLazySingleton<IAuthService>(() => AuthServiceAPI(getIt()));
-    // getIt.registerLazySingleton<IAuthService>(() => AuthServiceMock(),
-    //     instanceName: "AuthServiceMock");
     getIt.registerLazySingleton<AuthInteractor>(
         () => AuthInteractor(getIt(), getIt()));
     getIt.registerLazySingleton<AuthBloc>(() => AuthBloc(getIt()));
@@ -94,6 +96,8 @@ class DIContainer {
     getIt.registerLazySingleton<LocationBloc>(
         () => LocationBloc(getIt(), getIt()));
     getIt.registerLazySingleton<LocationV2Bloc>(() => LocationV2Bloc(getIt()));
+    getIt.registerLazySingleton<INavigationService>(() => OsrmNavigationService());
+    getIt.registerLazySingleton<NavigationInteractor>(() => NavigationInteractor(getIt()));
   }
 
   void _injectPlace() {
@@ -110,6 +114,7 @@ class DIContainer {
     getIt.registerLazySingleton<IRouteRepository>(() => RouteRepositoryAPI(getIt()));
     getIt.registerLazySingleton<RouteInteractor>(() => RouteInteractor(getIt()));
     getIt.registerLazySingleton<RoutesBloc>(() => RoutesBloc(getIt()));
+    getIt.registerFactory<RouteBloc>(() => RouteBloc(getIt(), getIt()));
   }
 
   void _injectLaunch() {
