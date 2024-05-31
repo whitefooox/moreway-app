@@ -1,5 +1,6 @@
 import 'package:moreway/module/route/domain/dependency/i_route_builder_repository.dart';
 import 'package:moreway/module/route/domain/entity/route.dart';
+import 'package:moreway/module/route/domain/entity/route_detailed.dart';
 import 'package:moreway/module/route/domain/entity/route_raw.dart';
 import 'package:moreway/module/user/domain/dependency/i_user_repository.dart';
 
@@ -30,7 +31,7 @@ class RouteBuilderInteractor {
     }
   }
 
-  Future<Route> build(String name) async {
+  Future<RouteDetailed> build(String name) async {
     try {
       final userId = await _userRepository.getUserId();
       final route = await _builderService.build(name, userId);

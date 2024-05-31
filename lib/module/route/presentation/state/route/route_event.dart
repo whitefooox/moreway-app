@@ -12,3 +12,5 @@ class RouteLoadEvent extends RouteEvent {
 class LikeRouteEvent extends RouteEvent {}
 
 class UnlikeRouteEvent extends RouteEvent {}
+
+class SetActiveRouteEvent extends RouteEvent {}

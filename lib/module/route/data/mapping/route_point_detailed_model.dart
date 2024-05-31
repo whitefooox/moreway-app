@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:moreway/module/place/data/mapping/place/place_route_model.dart';
-import 'package:moreway/module/place/domain/entity/place_base.dart';
+import 'package:moreway/module/route/domain/entity/route_point.dart';
 import 'package:moreway/module/route/domain/entity/route_point_detailed.dart';
 
 part 'route_point_detailed_model.g.dart';
@@ -24,5 +24,9 @@ class RoutePointDetailedModel {
 
   RoutePointDetailed toRoutePointDetailed() {
     return RoutePointDetailed(id: id.toString(), index: index, place: place.toPlaceBase());
+  }
+
+  RoutePoint toRoutePoint(){
+    return RoutePoint(id: id.toString(), image: place.toPlaceBase().image);
   }
 }

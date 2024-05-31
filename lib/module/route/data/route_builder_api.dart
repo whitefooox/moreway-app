@@ -7,9 +7,11 @@ import 'package:moreway/module/location/domain/usecase/get_current_location.dart
 import 'package:moreway/module/place/domain/entity/place.dart';
 import 'package:moreway/module/place/domain/entity/place_base.dart';
 import 'package:moreway/module/route/data/mapping/indexed_place_model.dart';
+import 'package:moreway/module/route/data/mapping/route_detailed_model.dart';
 import 'package:moreway/module/route/data/mapping/route_model.dart';
 import 'package:moreway/module/route/domain/dependency/i_route_builder_repository.dart';
 import 'package:moreway/module/route/domain/entity/route.dart';
+import 'package:moreway/module/route/domain/entity/route_detailed.dart';
 import 'package:moreway/module/route/domain/entity/route_raw.dart';
 
 class RouteBuilderAPI implements IRouteBuilderService {
@@ -19,12 +21,12 @@ class RouteBuilderAPI implements IRouteBuilderService {
   RouteBuilderAPI(this._client, this._getCurrentPositionUseCase);
 
   @override
-  Future<Route> build(String name, String userId) async {
+  Future<RouteDetailed> build(String name, String userId) async {
     try {
       final response = await _client.dio
           .post(Api.routes, data: {"name": name, "userId": userId});
       final json = response.data['data'];
-      return RouteModel.fromJson(json).toRoute();
+      return RouteDetailedModel.fromJson(json).toRouteDetailed();
     } catch (e, stacktrace) {
       log("[route builder api] $e", stackTrace: stacktrace);
       rethrow;
