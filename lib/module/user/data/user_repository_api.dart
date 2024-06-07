@@ -61,4 +61,9 @@ class UserRepositoryAPI implements IUserRepository {
       rethrow;
     }
   }
+  
+  @override
+  void removeUserId() {
+    _userId = null;
+  }
 }

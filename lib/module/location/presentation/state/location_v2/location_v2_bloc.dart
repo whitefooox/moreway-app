@@ -1,4 +1,6 @@
 
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:moreway/module/location/domain/entity/position.dart';
@@ -19,8 +21,12 @@ class LocationV2Bloc extends Bloc<LocationV2Event, LocationV2State> {
       final locationStream = await _getLocationStreamUsecase.execute();
       await emit.forEach(locationStream,
           onData: (position) => LocationV2Loaded(location: position),
-          onError: (error, stackTrace) => LocationV2Failure());
+          onError: (error, stackTrace) {
+            log("location v2 bloc error $error");
+            return LocationV2Failure();
+          });
     } catch (e) {
+      log("location v2 bloc error $e");
       emit(LocationV2Failure());
     }
   }

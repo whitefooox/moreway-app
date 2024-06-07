@@ -65,8 +65,8 @@ class DIContainer {
     getIt.registerSingleton<FlutterSecureStorage>(const FlutterSecureStorage());
     getIt.registerSingletonAsync<SharedPreferences>(
         () => SharedPreferences.getInstance());
-    _injectAuth();
     _injectUser();
+    _injectAuth();
     _injectScore();
     _injectBuilder();
     _injectLocation();
@@ -80,7 +80,8 @@ class DIContainer {
     getIt.registerSingleton<ITokenStorage>(TokenSecureStorage(getIt()));
     getIt.registerSingleton<ApiClient>(ApiClient(getIt(), getIt()));
     getIt.registerSingleton<IAuthService>(AuthServiceAPI(getIt()));
-    getIt.registerSingleton<AuthInteractor>(AuthInteractor(getIt(), getIt()));
+    getIt.registerSingleton<AuthInteractor>(AuthInteractor(getIt(), getIt(), getIt()));
+
     getIt.registerSingleton<AuthBloc>(AuthBloc(getIt()));
   }
 
@@ -98,9 +99,11 @@ class DIContainer {
         () => GetLocationStreamUsecase(getIt(), getIt()));
     getIt.registerLazySingleton<SendRequestLocationPermissionUseCase>(
         () => SendRequestLocationPermissionUseCase(getIt()));
-    getIt.registerLazySingleton<LocationBloc>(
+
+    getIt.registerFactory<LocationBloc>(
         () => LocationBloc(getIt(), getIt()));
-    getIt.registerLazySingleton<LocationV2Bloc>(() => LocationV2Bloc(getIt()));
+    getIt.registerFactory<LocationV2Bloc>(() => LocationV2Bloc(getIt()));
+
     getIt.registerLazySingleton<INavigationService>(() => OsrmNavigationService());
     getIt.registerLazySingleton<NavigationInteractor>(() => NavigationInteractor(getIt()));
   }
@@ -111,7 +114,9 @@ class DIContainer {
     getIt.registerLazySingleton<IPlaceRepository>(
         () => PlaceRepositoryAPI(getIt(), getIt()));
     getIt.registerLazySingleton<PlaceInteractor>(() => PlaceInteractor(getIt(), getIt(), getIt()));
+
     getIt.registerFactory<PlacesBloc>(() => PlacesBloc(getIt()));
+
     getIt.registerFactory<PlaceBloc>(() => PlaceBloc(getIt()));
   }
 
@@ -119,9 +124,11 @@ class DIContainer {
     getIt.registerLazySingleton<IRouteRepository>(() => RouteRepositoryAPI(getIt()));
     getIt.registerLazySingleton<RouteInteractor>(() => RouteInteractor(getIt(), getIt()));
     getIt.registerLazySingleton<ActiveRouteInteractor>(() => ActiveRouteInteractor(getIt(), getIt()));
-    getIt.registerLazySingleton<RoutesBloc>(() => RoutesBloc(getIt()));
+
+    getIt.registerFactory<RoutesBloc>(() => RoutesBloc(getIt()));
     getIt.registerFactory<RouteBloc>(() => RouteBloc(getIt(), getIt()));
-    getIt.registerLazySingleton<ActiveRouteBloc>(() => ActiveRouteBloc(getIt()));
+
+    getIt.registerFactory<ActiveRouteBloc>(() => ActiveRouteBloc(getIt()));
   }
 
   void _injectLaunch() {
@@ -130,6 +137,7 @@ class DIContainer {
         () => CheckFirstLaunchUseCase(getIt()));
     getIt.registerLazySingleton<SetStatusFirstLaunchUseCase>(
         () => SetStatusFirstLaunchUseCase(getIt()));
+
     getIt.registerLazySingleton(() => LaunchBloc(getIt(), getIt(), getIt()));
   }
 
@@ -137,19 +145,22 @@ class DIContainer {
   void _injectUser(){
     getIt.registerLazySingleton<IUserRepository>(() => UserRepositoryAPI(getIt()));
     getIt.registerLazySingleton<UserInteractor>(() => UserInteractor(getIt()));
-    getIt.registerLazySingleton<UserBloc>(() => UserBloc(getIt()));
+
+    getIt.registerFactory<UserBloc>(() => UserBloc(getIt()));
     getIt.registerFactory<SearchUsersBloc>(() => SearchUsersBloc(getIt()));
   }
   //user_repository
   void _injectBuilder(){
     getIt.registerLazySingleton<IRouteBuilderService>(() => RouteBuilderAPI(getIt(), getIt()),);
     getIt.registerLazySingleton<RouteBuilderInteractor>(() => RouteBuilderInteractor(getIt(), getIt()),);
-    getIt.registerLazySingleton<RouteBuilderBloc>(() => RouteBuilderBloc(getIt()));
+
+    getIt.registerFactory<RouteBuilderBloc>(() => RouteBuilderBloc(getIt()));
   }
 
   void _injectScore(){
     getIt.registerLazySingleton<IScoreRepository>(() => ScoreRepositoryAPI(getIt()));
     getIt.registerLazySingleton<ScoreInteractor>(() => ScoreInteractor(getIt()));
-    getIt.registerLazySingleton<RatingBloc>(() => RatingBloc(getIt()));
+
+    getIt.registerFactory<RatingBloc>(() => RatingBloc(getIt()));
   }
 }

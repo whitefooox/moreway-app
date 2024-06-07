@@ -143,36 +143,36 @@ class _MapPageState extends State<MapPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Expanded(
-                            child: Container(
-                          height: 100,
-                          //color: AppColor.white,
-                          decoration: BoxDecoration(
-                              color: AppColor.white,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(15))),
-                          child: Padding(
-                            padding: const EdgeInsets.all(5.0),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SquareWidget(
-                                    child: ClipRRect(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(15)),
-                                        child: Image.network(
-                                            fit: BoxFit.fill,
-                                            "https://images-ext-1.discordapp.net/external/QNwov659XgGfaotrWzJN8h5N4h0ybB5qQoNuMIyrVyE/https/redhill-kemerovo.ru/assets/images/resources/33/zdanie-muzeya.jpg?format=webp&width=1171&height=657"))),
-                                Expanded(
-                                    child: Text(
-                                  "Красная горка",
-                                  textAlign: TextAlign.center,
-                                ))
-                              ],
-                            ),
-                          ),
-                        )),
+                        // Expanded(
+                        //     child: Container(
+                        //   height: 100,
+                        //   //color: AppColor.white,
+                        //   decoration: BoxDecoration(
+                        //       color: AppColor.white,
+                        //       borderRadius:
+                        //           BorderRadius.all(Radius.circular(15))),
+                        //   child: Padding(
+                        //     padding: const EdgeInsets.all(5.0),
+                        //     child: Row(
+                        //       mainAxisSize: MainAxisSize.max,
+                        //       mainAxisAlignment: MainAxisAlignment.center,
+                        //       children: [
+                        //         SquareWidget(
+                        //             child: ClipRRect(
+                        //                 borderRadius: BorderRadius.all(
+                        //                     Radius.circular(15)),
+                        //                 child: Image.network(
+                        //                     fit: BoxFit.fill,
+                        //                     "https://images-ext-1.discordapp.net/external/QNwov659XgGfaotrWzJN8h5N4h0ybB5qQoNuMIyrVyE/https/redhill-kemerovo.ru/assets/images/resources/33/zdanie-muzeya.jpg?format=webp&width=1171&height=657"))),
+                        //         Expanded(
+                        //             child: Text(
+                        //           "Красная горка",
+                        //           textAlign: TextAlign.center,
+                        //         ))
+                        //       ],
+                        //     ),
+                        //   ),
+                        // )),
                         SizedBox(
                           width: 10,
                         ),
@@ -197,62 +197,62 @@ class _MapPageState extends State<MapPage> {
                                 backgroundColor: AppColor.black,
                               ),
                             ),
-                            ElevatedButton.icon(
-                                onPressed: () {},
-                                icon: const Icon(Icons.check),
-                                label: const Text("Группа"),
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: AppColor.pink,
-                                    minimumSize: const Size(100, 40))),
-                            ElevatedButton.icon(
-                                onPressed: () {},
-                                icon: const Icon(Icons.check),
-                                label: const Text("Прошел"),
-                                style: ElevatedButton.styleFrom(
-                                    minimumSize: const Size(100, 40))),
+                            // ElevatedButton.icon(
+                            //     onPressed: () {},
+                            //     icon: const Icon(Icons.check),
+                            //     label: const Text("Группа"),
+                            //     style: ElevatedButton.styleFrom(
+                            //         backgroundColor: AppColor.pink,
+                            //         minimumSize: const Size(100, 40))),
+                            // ElevatedButton.icon(
+                            //     onPressed: () {},
+                            //     icon: const Icon(Icons.check),
+                            //     label: const Text("Прошел"),
+                            //     style: ElevatedButton.styleFrom(
+                            //         minimumSize: const Size(100, 40))),
                           ],
                         ),
                       ],
                     )),
-                BlocBuilder<ActiveRouteBloc, ActiveRouteState>(
-                  builder: (context, activeRouteState) {
-                    return Positioned(
-                        top: screenSize.width * 0.035,
-                        left: screenSize.width * 0.035,
-                        right: screenSize.width * 0.035,
-                        child: Container(
-                          decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.5),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(15))),
-                          child: Padding(
-                            padding: const EdgeInsets.all(5.0),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  activeRouteState.activeRoute != null ? activeRouteState.activeRoute!.name : activeRouteState.activeRoutestatus.name,
-                                  style: textTheme.titleLarge!.copyWith(
-                                    color: AppColor.black,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                const Padding(
-                                  padding: EdgeInsets.all(5.0),
-                                  child: RouteProgressBar(
-                                    currentProgress: 2,
-                                    maxProgress: 5,
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ));
-                  },
-                )
+                // BlocBuilder<ActiveRouteBloc, ActiveRouteState>(
+                //   builder: (context, activeRouteState) {
+                //     return Positioned(
+                //         top: screenSize.width * 0.035,
+                //         left: screenSize.width * 0.035,
+                //         right: screenSize.width * 0.035,
+                //         child: Container(
+                //           decoration: BoxDecoration(
+                //               color: Colors.white.withOpacity(0.5),
+                //               borderRadius:
+                //                   BorderRadius.all(Radius.circular(15))),
+                //           child: Padding(
+                //             padding: const EdgeInsets.all(5.0),
+                //             child: Column(
+                //               mainAxisSize: MainAxisSize.min,
+                //               children: [
+                //                 Text(
+                //                   activeRouteState.activeRoute != null ? activeRouteState.activeRoute!.name : activeRouteState.activeRoutestatus.name,
+                //                   style: textTheme.titleLarge!.copyWith(
+                //                     color: AppColor.black,
+                //                     fontWeight: FontWeight.bold,
+                //                   ),
+                //                 ),
+                //                 const SizedBox(
+                //                   height: 10,
+                //                 ),
+                //                 const Padding(
+                //                   padding: EdgeInsets.all(5.0),
+                //                   child: RouteProgressBar(
+                //                     currentProgress: 2,
+                //                     maxProgress: 5,
+                //                   ),
+                //                 )
+                //               ],
+                //             ),
+                //           ),
+                //         ));
+                //   },
+                // )
               ],
             );
           } else {

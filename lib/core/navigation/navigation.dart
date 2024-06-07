@@ -53,15 +53,18 @@ class AppRouter {
     _authBloc.stream.listen((state) {
       if (state.status == AuthStatus.authorized) {
         _userBloc.add(LoadUserEvent());
-      } else if(state.status == AuthStatus.unauthorized){
-        _userBloc.add(ResetUserEvent());
-      }
-    });
-    _userBloc.stream.listen((state) {
-      if (state.loadingStatus == LoadingStatus.success) {
-        _builderBloc.add(LoadRouteBuilderEvent());
-        _locationV2Bloc.add(LocationV2EventLoad());
-        _ratingBloc.add(LoadRatingEvent());
+        _userBloc.stream.listen((state) {
+          if (state.loadingStatus == LoadingStatus.success) {
+            _builderBloc.add(LoadRouteBuilderEvent());
+            _locationV2Bloc.add(LocationV2EventLoad());
+            _ratingBloc.add(LoadRatingEvent());
+          }
+        });
+      } else if (state.status == AuthStatus.unauthorized) {
+        _userBloc = getIt<UserBloc>();
+        _builderBloc = getIt<RouteBuilderBloc>();
+        _locationV2Bloc = getIt<LocationV2Bloc>();
+        _ratingBloc = getIt<RatingBloc>();
       }
     });
     _authBloc.add(AuthCheckAuthorizationEvent());
@@ -197,7 +200,9 @@ class AppRouter {
                     path: '/map',
                     builder: (context, state) => MultiBlocProvider(providers: [
                           BlocProvider.value(value: _locationV2Bloc),
-                          BlocProvider(create: (_) => getIt<ActiveRouteBloc>()..add(LoadActiveRouteEvent()))
+                          BlocProvider(
+                              create: (_) => getIt<ActiveRouteBloc>()
+                                ..add(LoadActiveRouteEvent()))
                         ], child: const MapPage())),
               ]),
               StatefulShellBranch(routes: [
