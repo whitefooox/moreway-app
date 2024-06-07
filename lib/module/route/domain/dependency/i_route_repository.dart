@@ -7,4 +7,5 @@ abstract class IRouteRepository {
   Future<RouteDetailed> getRouteById(String id);
   Future<void> addToFavorite(String routeId, String userId);
   Future<void> removeToFavorite(String routeId, String userId);
+  Future<RouteDetailed?> getActiveRoute(String userId);
 }

@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -60,15 +63,13 @@ class _PlaceDetailedPageState extends State<PlaceDetailedPage>
   }
 
   Widget _buildPlaceName(String name, TextTheme textTheme) {
-    return Flexible(
-      child: Text(
-        name,
-        maxLines: 2,
-        style: textTheme.titleLarge!.copyWith(
-            fontWeight: FontWeight.bold,
-            overflow: TextOverflow.ellipsis,
-            fontFamily: "roboto"),
-      ),
+    return Text(
+      name,
+      maxLines: 2,
+      style: textTheme.titleLarge!.copyWith(
+          fontWeight: FontWeight.bold,
+          overflow: TextOverflow.ellipsis,
+          fontFamily: "roboto"),
     );
   }
 
@@ -248,7 +249,7 @@ class _PlaceDetailedPageState extends State<PlaceDetailedPage>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-              _buildPlaceName(state.place!.name, textTheme),
+          _buildPlaceName(state.place!.name, textTheme),
           const SizedBox(
             height: 10,
           ),
@@ -316,55 +317,55 @@ class _PlaceDetailedPageState extends State<PlaceDetailedPage>
     final screenSize = MediaQuery.of(context).size;
     final textTheme = Theme.of(context).textTheme;
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+        resizeToAvoidBottomInset: false,
         body: BlocListener<RouteBuilderBloc, RouteBuilderState>(
-      listener: (context, state) {
-        switch (state.operationStatus) {
-          case RouteBuilderOperationStatus.added:
-            {
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(buildSuccessSnackbar("Добавлено"));
-              break;
-            }
-          case RouteBuilderOperationStatus.removed:
-            {
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(buildSuccessSnackbar("Удалено"));
-              break;
-            }
-          case RouteBuilderOperationStatus.errorAdding:
-            {
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(buildFailureSnackbar(state.errorMessage!));
-              break;
-            }
-          case RouteBuilderOperationStatus.errorRemoving:
-            {
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(buildFailureSnackbar(state.errorMessage!));
-              break;
-            }
-          default:
-        }
-      },
-      child: BlocBuilder<PlaceBloc, PlaceState>(
-          bloc: _placeBloc,
-          builder: (context, state) {
-            switch (state.placeDetailedStatus) {
-              case LoadingStatus.success:
-                return NestedScrollView(
-                  scrollBehavior: ScrollBehavior(),
-                    headerSliverBuilder: (context, innerBoxIsScrolled) => [
-                          _buildSliverAppBar(screenSize.width,
-                              state.place!.images, state.placeId!),
-                        ],
-                    body: _buildScrollBody(state, textTheme, screenSize));
-              case LoadingStatus.failure:
-                return _buildError();
+          listener: (context, state) {
+            switch (state.operationStatus) {
+              case RouteBuilderOperationStatus.added:
+                {
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(buildSuccessSnackbar("Добавлено"));
+                  break;
+                }
+              case RouteBuilderOperationStatus.removed:
+                {
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(buildSuccessSnackbar("Удалено"));
+                  break;
+                }
+              case RouteBuilderOperationStatus.errorAdding:
+                {
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(buildFailureSnackbar(state.errorMessage!));
+                  break;
+                }
+              case RouteBuilderOperationStatus.errorRemoving:
+                {
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(buildFailureSnackbar(state.errorMessage!));
+                  break;
+                }
               default:
-                return _buildLoading();
             }
-          }),
-    ));
+          },
+          child: BlocBuilder<PlaceBloc, PlaceState>(
+              bloc: _placeBloc,
+              builder: (context, state) {
+                switch (state.placeDetailedStatus) {
+                  case LoadingStatus.success:
+                    return NestedScrollView(
+                        scrollBehavior: ScrollBehavior(),
+                        headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                              _buildSliverAppBar(screenSize.width,
+                                  state.place!.images, state.placeId!),
+                            ],
+                        body: _buildScrollBody(state, textTheme, screenSize));
+                  case LoadingStatus.failure:
+                    return _buildError();
+                  default:
+                    return _buildLoading();
+                }
+              }),
+        ));
   }
 }

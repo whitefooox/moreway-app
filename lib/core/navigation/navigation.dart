@@ -9,11 +9,13 @@ import 'package:moreway/module/auth/presentation/page/auth/signin.dart';
 import 'package:moreway/module/auth/presentation/page/auth/signup.dart';
 import 'package:moreway/module/auth/presentation/page/password/reset_password.dart';
 import 'package:moreway/module/auth/presentation/page/password/verify_code.dart';
+import 'package:moreway/module/game/presentation/state/rating/rating_bloc.dart';
 import 'package:moreway/module/location/presentation/page/map_page.dart';
 import 'package:moreway/module/location/presentation/state/location_v2/location_v2_bloc.dart';
 import 'package:moreway/module/place/presentation/page/place_detailed_page.dart';
 import 'package:moreway/module/place/presentation/state/place/place_bloc.dart';
 import 'package:moreway/module/place/presentation/state/places/places_bloc.dart';
+import 'package:moreway/module/route/presentation/state/active/active_route_bloc.dart';
 import 'package:moreway/module/route/presentation/state/builder/route_builder_bloc.dart';
 import 'package:moreway/module/route/presentation/state/route/route_bloc.dart';
 import 'package:moreway/module/route/presentation/state/routes/routes_bloc.dart';
@@ -35,6 +37,7 @@ class AppRouter {
   late final UserBloc _userBloc;
   late final RouteBuilderBloc _builderBloc;
   late final LocationV2Bloc _locationV2Bloc;
+  late final RatingBloc _ratingBloc;
   late GoRouter router;
   final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -46,15 +49,19 @@ class AppRouter {
     _builderBloc = getIt<RouteBuilderBloc>();
     _authBloc = getIt<AuthBloc>();
     _locationV2Bloc = getIt<LocationV2Bloc>();
+    _ratingBloc = getIt<RatingBloc>();
     _authBloc.stream.listen((state) {
       if (state.status == AuthStatus.authorized) {
         _userBloc.add(LoadUserEvent());
+      } else if(state.status == AuthStatus.unauthorized){
+        _userBloc.add(ResetUserEvent());
       }
     });
     _userBloc.stream.listen((state) {
       if (state.loadingStatus == LoadingStatus.success) {
         _builderBloc.add(LoadRouteBuilderEvent());
         _locationV2Bloc.add(LocationV2EventLoad());
+        _ratingBloc.add(LoadRatingEvent());
       }
     });
     _authBloc.add(AuthCheckAuthorizationEvent());
@@ -188,8 +195,10 @@ class AppRouter {
               StatefulShellBranch(routes: [
                 GoRoute(
                     path: '/map',
-                    builder: (context, state) => BlocProvider.value(
-                        value: _locationV2Bloc, child: const MapPage())),
+                    builder: (context, state) => MultiBlocProvider(providers: [
+                          BlocProvider.value(value: _locationV2Bloc),
+                          BlocProvider(create: (_) => getIt<ActiveRouteBloc>()..add(LoadActiveRouteEvent()))
+                        ], child: const MapPage())),
               ]),
               StatefulShellBranch(routes: [
                 GoRoute(
@@ -201,8 +210,15 @@ class AppRouter {
               StatefulShellBranch(routes: [
                 GoRoute(
                     path: '/profile',
-                    builder: (context, state) => BlocProvider<UserBloc>.value(
-                          value: _userBloc,
+                    builder: (context, state) => MultiBlocProvider(
+                          providers: [
+                            BlocProvider<UserBloc>.value(
+                              value: _userBloc,
+                            ),
+                            BlocProvider<RatingBloc>.value(
+                              value: _ratingBloc,
+                            ),
+                          ],
                           child: const ProfilePage(),
                         ),
                     routes: [

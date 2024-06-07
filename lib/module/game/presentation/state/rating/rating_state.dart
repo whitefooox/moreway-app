@@ -1,6 +1,21 @@
 part of 'rating_bloc.dart';
 
-@immutable
-sealed class RatingState {}
+class RatingState {
+  final LoadingStatus ratingStatus;
+  final List<UserScorePosition>? leaders;
 
-final class RatingInitial extends RatingState {}
+  RatingState({
+    this.ratingStatus = LoadingStatus.initial,
+    this.leaders,
+  });
+
+  RatingState copyWith({
+    LoadingStatus? ratingStatus,
+    List<UserScorePosition>? leaders,
+  }) {
+    return RatingState(
+      ratingStatus: ratingStatus ?? this.ratingStatus,
+      leaders: leaders ?? this.leaders,
+    );
+  }
+}

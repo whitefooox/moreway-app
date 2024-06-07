@@ -13,8 +13,8 @@ class RouteDetailedModel {
   final double rating;
   final List<RoutePointDetailedModel> routePoints;
   final UserPreviewModel creator;
-  final bool isActive;
-  final bool isFavorite;
+  final bool? isActive;
+  final bool? isFavorite;
 
   RouteDetailedModel({
     required this.id,

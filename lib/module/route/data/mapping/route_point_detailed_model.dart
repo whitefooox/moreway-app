@@ -10,11 +10,13 @@ class RoutePointDetailedModel {
   final int id;
   final int index;
   final PlaceRouteModel place;
+  final bool? isCompleted;
 
   RoutePointDetailedModel({
     required this.id,
     required this.index,
     required this.place,
+    required this.isCompleted
   });
 
   factory RoutePointDetailedModel.fromJson(Map<String, dynamic> json) =>
@@ -23,7 +25,7 @@ class RoutePointDetailedModel {
   Map<String, dynamic> toJson() => _$RoutePointDetailedModelToJson(this);
 
   RoutePointDetailed toRoutePointDetailed() {
-    return RoutePointDetailed(id: id.toString(), index: index, place: place.toPlaceBase());
+    return RoutePointDetailed(id: id.toString(), index: index, place: place.toPlaceBase(), isCompleted: isCompleted);
   }
 
   RoutePoint toRoutePoint(){

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moreway/core/api/loading_status.dart';
 import 'package:moreway/core/const/assets.dart';
+import 'package:moreway/module/user/domain/entity/user_relationship.dart';
 import 'package:moreway/module/user/presentation/state/search/search_users_bloc.dart';
 
 class SearchUsersPage extends StatefulWidget {
@@ -35,6 +36,27 @@ class _SearchUsersPageState extends State<SearchUsersPage> {
       _searchUsersBloc.add(SearchUsersByNameEvent(query: query));
     });
   }
+
+Widget buildFriendAction(UserRelationshipType? type) {
+  switch (type) {
+    case UserRelationshipType.friend:
+      return TextButton(
+        onPressed: () {
+          // TODO: Добавить логику удаления из друзей
+        },
+        child: const Text("Удалить"),
+      );
+    case UserRelationshipType.request:
+      return const Text("Запрос отправлен");
+    default:
+      return TextButton(
+        onPressed: () {
+          // TODO: Добавить логику отправки запроса в друзья
+        },
+        child: const Text("Добавить"),
+      );
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -77,11 +99,11 @@ class _SearchUsersPageState extends State<SearchUsersPage> {
             Expanded(child: BlocBuilder<SearchUsersBloc, SearchUsersState>(
               builder: (context, state) {
                 if (state.users != null && state.users!.isNotEmpty) {
-                  
                   return ListView.builder(
                     itemCount: state.users!.length,
                     itemBuilder: (context, index) {
-                      final user = state.users![index];
+                      final user = state.users![index].user;
+                      final relationship = state.users![index].relationship;
                       return ListTile(
                         title: Text(user.name),
                         leading: CircleAvatar(
@@ -89,9 +111,7 @@ class _SearchUsersPageState extends State<SearchUsersPage> {
                             child: Image.network(user.avatarUrl),
                           ),
                         ),
-                        trailing: IconButton(
-                            onPressed: () {},
-                            icon: const Icon(Icons.person_add)),
+                        trailing: buildFriendAction(relationship),
                       );
                     },
                   );

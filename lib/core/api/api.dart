@@ -21,4 +21,6 @@ class Api {
   static favoriteRoutesRouteId(String userId, String routeId) => "/users/$userId/favorite-routes/$routeId";
 
   static const rating = "/rating";
+
+  static getActiveRoute(String userId) => "/users/$userId/active-route";
 }

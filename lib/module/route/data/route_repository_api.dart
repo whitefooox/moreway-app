@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:dio/dio.dart';
 import 'package:moreway/core/api/api.dart';
 import 'package:moreway/core/api/api_client.dart';
 import 'package:moreway/core/api/paginated_page.dart';
@@ -56,6 +57,26 @@ class RouteRepositoryAPI implements IRouteRepository {
     try {
       final response =
           await _client.dio.delete(Api.favoriteRoutesRouteId(userId, routeId));
+    } catch (e, stackTrace) {
+      log("[route repository api] $e", stackTrace: stackTrace);
+      rethrow;
+    }
+  }
+
+  @override
+  Future<RouteDetailed?> getActiveRoute(String userId) async {
+    try {
+      final response = await _client.dio.get(Api.getActiveRoute(userId));
+      final json = response.data['data'];
+      return RouteDetailedModel.fromJson(json).toRouteDetailed();
+    }
+    on DioException catch(e, stackTrace){
+      if(e.type == DioExceptionType.badResponse){
+        return null;
+      } else {
+        log("[route repository api] $e", stackTrace: stackTrace);
+        rethrow;
+      }
     } catch (e, stackTrace) {
       log("[route repository api] $e", stackTrace: stackTrace);
       rethrow;

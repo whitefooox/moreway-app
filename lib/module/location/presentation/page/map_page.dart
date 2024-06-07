@@ -1,15 +1,21 @@
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:get_it/get_it.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:moreway/core/square_widget.dart';
 import 'package:moreway/core/theme/colors.dart';
 import 'package:moreway/module/location/domain/entity/position.dart';
+import 'package:moreway/module/location/domain/entity/position_point.dart';
+import 'package:moreway/module/location/domain/usecase/navigation_interactor.dart';
 import 'package:moreway/module/location/presentation/state/location_v2/location_v2_bloc.dart';
 import 'package:moreway/module/place/domain/entity/place.dart';
 import 'package:moreway/module/place/presentation/widget/place_card.dart';
+import 'package:moreway/module/route/presentation/state/active/active_route_bloc.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 
 class MapPage extends StatefulWidget {
@@ -21,11 +27,22 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> {
   final MapController _mapController = MapController();
+  //final navigator = GetIt.instance.get<NavigationInteractor>();
+  //List<PositionPoint>? route;
 
   @override
   void initState() {
     super.initState();
   }
+
+  // void a(Position position) async {
+  //   route = await navigator.getRoute([
+  //     PositionPoint(
+  //         latitude: position.point.latitude,
+  //         longitude: position.point.longitude),
+  //     PositionPoint(latitude: 55.375818, longitude: 86.072025)
+  //   ]);
+  // }
 
   Marker _buildCurrentPositionMarker(Position position) {
     final point = LatLng(position.point.latitude, position.point.longitude);
@@ -48,6 +65,10 @@ class _MapPageState extends State<MapPage> {
   }
 
   Widget _buildMap(Position position) {
+    // if (route == null) {
+    //   a(position);
+    // }
+
     return FlutterMap(
         mapController: _mapController,
         options: MapOptions(
@@ -57,9 +78,38 @@ class _MapPageState extends State<MapPage> {
         ),
         children: [
           TileLayer(
-            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+            urlTemplate:
+                'https://api.maptiler.com/maps/dataviz/256/{z}/{x}/{y}.png?key=U7c9AKtTUegJLtvD7NKg',
           ),
-          MarkerLayer(markers: [_buildCurrentPositionMarker(position)]),
+          // PolylineLayer(
+          //   polylines: route != null
+          //       ? [
+          //           Polyline(
+          //             points: route!
+          //                 .map((e) => LatLng(e.latitude, e.longitude))
+          //                 .toList(),
+          //             strokeWidth: 4.0,
+          //             color: AppColor.pink,
+          //           ),
+          //         ]
+          //       : [],
+          // ),
+          MarkerLayer(markers: [
+            _buildCurrentPositionMarker(position),
+            Marker(
+              width: 30,
+              height: 30,
+              point: LatLng(55.375818, 86.072025),
+              child: CircleAvatar(
+                radius: 15,
+                backgroundColor: AppColor.pink.withOpacity(0.5),
+                child: CircleAvatar(
+                  backgroundColor: AppColor.pink,
+                  radius: 8,
+                ),
+              ),
+            )
+          ]),
         ]);
   }
 
@@ -93,18 +143,39 @@ class _MapPageState extends State<MapPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        // Expanded(
-                        //     child: Container(
-                        //       height: 100,
-                        //   //color: AppColor.white,
-                        //   decoration: BoxDecoration(
-                        //       color: AppColor.white,
-                        //       borderRadius:
-                        //           BorderRadius.all(Radius.circular(15))),
-                        // )),
-                        // SizedBox(
-                        //   width: 10,
-                        // ),
+                        Expanded(
+                            child: Container(
+                          height: 100,
+                          //color: AppColor.white,
+                          decoration: BoxDecoration(
+                              color: AppColor.white,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(15))),
+                          child: Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SquareWidget(
+                                    child: ClipRRect(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(15)),
+                                        child: Image.network(
+                                            fit: BoxFit.fill,
+                                            "https://images-ext-1.discordapp.net/external/QNwov659XgGfaotrWzJN8h5N4h0ybB5qQoNuMIyrVyE/https/redhill-kemerovo.ru/assets/images/resources/33/zdanie-muzeya.jpg?format=webp&width=1171&height=657"))),
+                                Expanded(
+                                    child: Text(
+                                  "Красная горка",
+                                  textAlign: TextAlign.center,
+                                ))
+                              ],
+                            ),
+                          ),
+                        )),
+                        SizedBox(
+                          width: 10,
+                        ),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
@@ -126,57 +197,62 @@ class _MapPageState extends State<MapPage> {
                                 backgroundColor: AppColor.black,
                               ),
                             ),
-                            // ElevatedButton.icon(
-                            //     onPressed: () {},
-                            //     icon: const Icon(Icons.check),
-                            //     label: const Text("Группа"),
-                            //     style: ElevatedButton.styleFrom(
-                            //       backgroundColor: AppColor.pink,
-                            //         minimumSize: const Size(100, 40))),
-                            // ElevatedButton.icon(
-                            //     onPressed: () {},
-                            //     icon: const Icon(Icons.check),
-                            //     label: const Text("Прошел"),
-                            //     style: ElevatedButton.styleFrom(
-                            //         minimumSize: const Size(100, 40))),
+                            ElevatedButton.icon(
+                                onPressed: () {},
+                                icon: const Icon(Icons.check),
+                                label: const Text("Группа"),
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColor.pink,
+                                    minimumSize: const Size(100, 40))),
+                            ElevatedButton.icon(
+                                onPressed: () {},
+                                icon: const Icon(Icons.check),
+                                label: const Text("Прошел"),
+                                style: ElevatedButton.styleFrom(
+                                    minimumSize: const Size(100, 40))),
                           ],
                         ),
                       ],
                     )),
-                // Positioned(
-                //     top: screenSize.width * 0.035,
-                //     left: screenSize.width * 0.035,
-                //     right: screenSize.width * 0.035,
-                //     child: Container(
-                //       decoration: BoxDecoration(
-                //           color: Colors.white.withOpacity(0.5),
-                //           borderRadius: BorderRadius.all(Radius.circular(15))),
-                //       child: Padding(
-                //         padding: const EdgeInsets.all(5.0),
-                //         child: Column(
-                //           mainAxisSize: MainAxisSize.min,
-                //           children: [
-                //             Text(
-                //               "Название маршрута",
-                //               style: textTheme.titleLarge!.copyWith(
-                //                 color: AppColor.black,
-                //                 fontWeight: FontWeight.bold,
-                //               ),
-                //             ),
-                //             const SizedBox(
-                //               height: 10,
-                //             ),
-                //             const Padding(
-                //               padding: EdgeInsets.all(5.0),
-                //               child: RouteProgressBar(
-                //                 currentProgress: 3,
-                //                 maxProgress: 15,
-                //               ),
-                //             )
-                //           ],
-                //         ),
-                //       ),
-                //     ))
+                BlocBuilder<ActiveRouteBloc, ActiveRouteState>(
+                  builder: (context, activeRouteState) {
+                    return Positioned(
+                        top: screenSize.width * 0.035,
+                        left: screenSize.width * 0.035,
+                        right: screenSize.width * 0.035,
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.5),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(15))),
+                          child: Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  activeRouteState.activeRoute != null ? activeRouteState.activeRoute!.name : activeRouteState.activeRoutestatus.name,
+                                  style: textTheme.titleLarge!.copyWith(
+                                    color: AppColor.black,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                const Padding(
+                                  padding: EdgeInsets.all(5.0),
+                                  child: RouteProgressBar(
+                                    currentProgress: 2,
+                                    maxProgress: 5,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ));
+                  },
+                )
               ],
             );
           } else {

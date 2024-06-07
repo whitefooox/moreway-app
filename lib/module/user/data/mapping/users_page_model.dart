@@ -2,15 +2,15 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:moreway/core/api/paginated_page.dart';
 
 import 'package:moreway/module/user/data/mapping/user_preview_model.dart';
-import 'package:moreway/module/user/domain/entity/user_preview.dart';
-import 'package:moreway/module/user/domain/entity/user_profile.dart';
+import 'package:moreway/module/user/data/mapping/user_relationship_model.dart';
+import 'package:moreway/module/user/domain/entity/user_relationship.dart';
 
 part 'users_page_model.g.dart';
 
 @JsonSerializable()
 class UsersPageModel {
   @JsonKey(name: "data")
-  final List<UserPreviewModel> users;
+  final List<UserRelationshipModel> users;
 
   @JsonKey(name: "meta", fromJson: _cursorFromJson)
   final String? cursor;
@@ -28,8 +28,8 @@ class UsersPageModel {
 
   Map<String, dynamic> toJson() => _$UsersPageModelToJson(this);
 
-  PaginatedPage<UserPreview> toUserProfilePage() {
+  PaginatedPage<UserRelationship> toUsersRelationship() {
     return PaginatedPage(
-        items: users.map((e) => e.toUserPreview()).toList(), cursor: cursor);
+        items: users.map((e) => e.toUserRelationship()).toList(), cursor: cursor);
   }
 }

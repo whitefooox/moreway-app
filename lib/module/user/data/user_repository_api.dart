@@ -5,10 +5,9 @@ import 'package:moreway/core/api/api_client.dart';
 import 'package:moreway/core/api/paginated_page.dart';
 import 'package:moreway/module/user/data/mapping/user_profile_model.dart';
 import 'package:moreway/module/user/data/mapping/users_page_model.dart';
-import 'package:moreway/module/user/domain/entity/user_preview.dart';
 import 'package:moreway/module/user/domain/entity/user_profile.dart';
-import 'package:moreway/module/user/data/mapping/user_me_model.dart';
 import 'package:moreway/module/user/domain/dependency/i_user_repository.dart';
+import 'package:moreway/module/user/domain/entity/user_relationship.dart';
 
 class UserRepositoryAPI implements IUserRepository {
   final ApiClient _client;
@@ -51,12 +50,12 @@ class UserRepositoryAPI implements IUserRepository {
   }
 
   @override
-  Future<PaginatedPage<UserPreview>> getUsersByName({String? name, String? cursor}) async {
+  Future<PaginatedPage<UserRelationship>> getUsersByName({String? name, String? cursor}) async {
     try {
       final response = await _client.dio
           .get(Api.users, queryParameters: {"name": name, "cursor": cursor});
       final json = response.data;
-      return UsersPageModel.fromJson(json).toUserProfilePage();
+      return UsersPageModel.fromJson(json).toUsersRelationship();
     } catch (e) {
       log("[auth  api] $e");
       rethrow;

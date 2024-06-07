@@ -22,8 +22,8 @@ class FilterRepositoryAPI implements IFilterRepository {
           types: filtersModel.types,
           rangeDistance: [filtersModel.minDistance, filtersModel.maxDistance],
           rangeRating: [0, 5]);
-    } catch (e) {
-      log(e.toString());
+    } catch (e, stackTrace) {
+      log(e.toString(), stackTrace: stackTrace);
       rethrow;
     }
   }

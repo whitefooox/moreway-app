@@ -88,7 +88,7 @@ class _RouteDetailedPageState extends State<RouteDetailedPage>
           ),
           actions: [
             IconButton(
-                onPressed: state.route!.isFavorite ? _unlike : _like,
+                onPressed: state.route!.isFavorite! ? _unlike : _like,
                 icon: CircleAvatar(
                     backgroundColor: AppColor.white,
                     child: Icon(

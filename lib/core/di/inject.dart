@@ -8,6 +8,10 @@ import 'package:moreway/module/auth/domain/dependency/i_auth_service.dart';
 import 'package:moreway/module/auth/domain/dependency/i_token_storage.dart';
 import 'package:moreway/module/auth/domain/usecase/auth_interactor.dart';
 import 'package:moreway/module/auth/presentation/bloc/auth_bloc.dart';
+import 'package:moreway/module/game/data/score_repository_api.dart';
+import 'package:moreway/module/game/domain/dependency/i_score_repository.dart';
+import 'package:moreway/module/game/domain/interactor/score_interactor.dart';
+import 'package:moreway/module/game/presentation/state/rating/rating_bloc.dart';
 import 'package:moreway/module/location/data/geolocator_service.dart';
 import 'package:moreway/module/location/data/osm_geoincoder.dart';
 import 'package:moreway/module/location/data/osrm_navigation_service.dart';
@@ -34,8 +38,10 @@ import 'package:moreway/module/route/data/route_builder_api.dart';
 import 'package:moreway/module/route/data/route_repository_api.dart';
 import 'package:moreway/module/route/domain/dependency/i_route_builder_repository.dart';
 import 'package:moreway/module/route/domain/dependency/i_route_repository.dart';
+import 'package:moreway/module/route/domain/interactor/active_route_interactor.dart';
 import 'package:moreway/module/route/domain/interactor/route_builder_interactor.dart';
 import 'package:moreway/module/route/domain/interactor/route_interactor.dart';
+import 'package:moreway/module/route/presentation/state/active/active_route_bloc.dart';
 import 'package:moreway/module/route/presentation/state/builder/route_builder_bloc.dart';
 import 'package:moreway/module/route/presentation/state/route/route_bloc.dart';
 import 'package:moreway/module/route/presentation/state/routes/routes_bloc.dart';
@@ -61,6 +67,7 @@ class DIContainer {
         () => SharedPreferences.getInstance());
     _injectAuth();
     _injectUser();
+    _injectScore();
     _injectBuilder();
     _injectLocation();
     _injectPlace();
@@ -70,13 +77,11 @@ class DIContainer {
   }
 
   void _injectAuth() {
-    getIt.registerLazySingleton<ITokenStorage>(
-        () => TokenSecureStorage(getIt()));
-    getIt.registerLazySingleton<ApiClient>(() => ApiClient(getIt(), getIt()));
-    getIt.registerLazySingleton<IAuthService>(() => AuthServiceAPI(getIt()));
-    getIt.registerLazySingleton<AuthInteractor>(
-        () => AuthInteractor(getIt(), getIt()));
-    getIt.registerLazySingleton<AuthBloc>(() => AuthBloc(getIt()));
+    getIt.registerSingleton<ITokenStorage>(TokenSecureStorage(getIt()));
+    getIt.registerSingleton<ApiClient>(ApiClient(getIt(), getIt()));
+    getIt.registerSingleton<IAuthService>(AuthServiceAPI(getIt()));
+    getIt.registerSingleton<AuthInteractor>(AuthInteractor(getIt(), getIt()));
+    getIt.registerSingleton<AuthBloc>(AuthBloc(getIt()));
   }
 
   void _injectLocation() {
@@ -113,8 +118,10 @@ class DIContainer {
   void _injectRoute(){
     getIt.registerLazySingleton<IRouteRepository>(() => RouteRepositoryAPI(getIt()));
     getIt.registerLazySingleton<RouteInteractor>(() => RouteInteractor(getIt(), getIt()));
+    getIt.registerLazySingleton<ActiveRouteInteractor>(() => ActiveRouteInteractor(getIt(), getIt()));
     getIt.registerLazySingleton<RoutesBloc>(() => RoutesBloc(getIt()));
     getIt.registerFactory<RouteBloc>(() => RouteBloc(getIt(), getIt()));
+    getIt.registerLazySingleton<ActiveRouteBloc>(() => ActiveRouteBloc(getIt()));
   }
 
   void _injectLaunch() {
@@ -138,5 +145,11 @@ class DIContainer {
     getIt.registerLazySingleton<IRouteBuilderService>(() => RouteBuilderAPI(getIt(), getIt()),);
     getIt.registerLazySingleton<RouteBuilderInteractor>(() => RouteBuilderInteractor(getIt(), getIt()),);
     getIt.registerLazySingleton<RouteBuilderBloc>(() => RouteBuilderBloc(getIt()));
+  }
+
+  void _injectScore(){
+    getIt.registerLazySingleton<IScoreRepository>(() => ScoreRepositoryAPI(getIt()));
+    getIt.registerLazySingleton<ScoreInteractor>(() => ScoreInteractor(getIt()));
+    getIt.registerLazySingleton<RatingBloc>(() => RatingBloc(getIt()));
   }
 }

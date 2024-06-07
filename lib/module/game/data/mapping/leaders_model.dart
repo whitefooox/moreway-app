@@ -22,6 +22,6 @@ class LeadersModel {
 
   List<UserScorePosition> toUserScorePositionList() {
     return leaders.map((e) => e.toUserScorePosition()).toList()
-      ..add(userRating.toUserScorePosition());
+      ..add(userRating.toUserScorePosition())..sort((a, b) => a.position.compareTo(b.position));
   }
 }

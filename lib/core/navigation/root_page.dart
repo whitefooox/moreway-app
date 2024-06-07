@@ -31,9 +31,7 @@ class RootPage extends StatelessWidget {
               bottom: screenSize.width * 0.035,
               left: screenSize.width * 0.035,
               right: screenSize.width * 0.035,
-              child: SizedBox(
-                height: 60,
-                child: BlocBuilder<RouteBuilderBloc, RouteBuilderState>(
+              child: BlocBuilder<RouteBuilderBloc, RouteBuilderState>(
                   builder: (context, state) {
                     return ClipRRect(
                       borderRadius: const BorderRadius.all(Radius.circular(15)),
@@ -84,7 +82,7 @@ class RootPage extends StatelessWidget {
                     );
                   },
                 ),
-              ))
+              )
         ]),
       ),
     );

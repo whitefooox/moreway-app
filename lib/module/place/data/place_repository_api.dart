@@ -42,8 +42,8 @@ class PlaceRepositoryAPI implements IPlaceRepository {
           await _client.dio.get(Api.places, queryParameters: queryParameters);
       final json = response.data;
       return PlacePageModel.fromJson(json).toPlacePage();
-    } catch (e) {
-      log("[place repository api] $e");
+    } catch (e, stackTrace) {
+      log("[place repository api] $e", stackTrace: stackTrace);
       rethrow;
     }
   }
@@ -57,7 +57,7 @@ class PlaceRepositoryAPI implements IPlaceRepository {
           PlaceQueryParametersBuilder().setPosition(positionModel).build();
       final response = await _client.dio
           .get(Api.getPlace(id), queryParameters: queryParameters);
-      final json = response.data['data'];
+      final json = response.data['data']['place'];
       return PlaceDetailedModel.fromJson(json).toPlaceDetailed();
     } catch (e) {
       log("[place repository api] $e");

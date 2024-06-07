@@ -7,18 +7,17 @@ class RouteDetailed {
   final double rating;
   final List<RoutePointDetailed> points;
   final UserPreview creator;
-  final bool isFavorite;
-  final bool isActive;
+  final bool? isFavorite;
+  final bool? isActive;
 
-  RouteDetailed({
-    required this.id,
-    required this.name,
-    required this.rating,
-    required this.points,
-    required this.creator,
-    required this.isActive,
-    required this.isFavorite
-  });
+  RouteDetailed(
+      {required this.id,
+      required this.name,
+      required this.rating,
+      required this.points,
+      required this.creator,
+      this.isActive,
+      this.isFavorite});
 
   RouteDetailed copyWith({
     String? id,

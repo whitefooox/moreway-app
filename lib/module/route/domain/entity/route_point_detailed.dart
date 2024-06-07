@@ -5,10 +5,12 @@ class RoutePointDetailed {
   final String id;
   final int index;
   final PlaceBase place;
+  final bool? isCompleted;
   
   RoutePointDetailed({
     required this.id,
     required this.index,
     required this.place,
+    this.isCompleted
   });
 }

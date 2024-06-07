@@ -9,7 +9,7 @@ part of 'users_page_model.dart';
 UsersPageModel _$UsersPageModelFromJson(Map<String, dynamic> json) =>
     UsersPageModel(
       users: (json['data'] as List<dynamic>)
-          .map((e) => UserPreviewModel.fromJson(e as Map<String, dynamic>))
+          .map((e) => UserRelationshipModel.fromJson(e as Map<String, dynamic>))
           .toList(),
       cursor:
           UsersPageModel._cursorFromJson(json['meta'] as Map<String, dynamic>),

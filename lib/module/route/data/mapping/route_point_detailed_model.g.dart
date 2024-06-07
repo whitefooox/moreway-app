@@ -12,6 +12,7 @@ RoutePointDetailedModel _$RoutePointDetailedModelFromJson(
       id: json['id'] as int,
       index: json['index'] as int,
       place: PlaceRouteModel.fromJson(json['place'] as Map<String, dynamic>),
+      isCompleted: json['isCompleted'] as bool?,
     );
 
 Map<String, dynamic> _$RoutePointDetailedModelToJson(
@@ -20,4 +21,5 @@ Map<String, dynamic> _$RoutePointDetailedModelToJson(
       'id': instance.id,
       'index': instance.index,
       'place': instance.place,
+      'isCompleted': instance.isCompleted,
     };

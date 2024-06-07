@@ -2,7 +2,7 @@ part of 'search_users_bloc.dart';
 
 class SearchUsersState {
   final LoadingStatus status;
-  final List<UserPreview>? users;
+  final List<UserRelationship>? users;
   
   SearchUsersState({
     this.status = LoadingStatus.initial,
@@ -11,7 +11,7 @@ class SearchUsersState {
 
   SearchUsersState copyWith({
     LoadingStatus? status,
-    List<UserPreview>? users,
+    List<UserRelationship>? users,
   }) {
     return SearchUsersState(
       status: status ?? this.status,

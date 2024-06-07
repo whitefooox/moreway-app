@@ -3,6 +3,7 @@ import 'package:meta/meta.dart';
 import 'package:moreway/core/api/loading_status.dart';
 import 'package:moreway/module/user/domain/entity/user_preview.dart';
 import 'package:moreway/module/user/domain/entity/user_profile.dart';
+import 'package:moreway/module/user/domain/entity/user_relationship.dart';
 import 'package:moreway/module/user/domain/interactor/user_interactor.dart';
 
 part 'search_users_event.dart';
