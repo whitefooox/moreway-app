@@ -7,6 +7,8 @@ class RouteState {
 
   final List<PositionPoint>? routeCoordinates;
   final LoadingStatus routeCoordinatesStatus;
+
+  final LoadingStatus activeOperationstatus;
   
   RouteState({
     this.routeId,
@@ -14,6 +16,7 @@ class RouteState {
     this.routeDetailedStatus = LoadingStatus.initial,
     this.routeCoordinates,
     this.routeCoordinatesStatus = LoadingStatus.initial,
+    this.activeOperationstatus = LoadingStatus.initial
   });
 
   RouteState copyWith({
@@ -22,6 +25,7 @@ class RouteState {
     LoadingStatus? routeDetailedStatus,
     List<PositionPoint>? routeCoordinates,
     LoadingStatus? routeCoordinatesStatus,
+    LoadingStatus? activeOperationstatus
   }) {
     return RouteState(
       routeId: routeId ?? this.routeId,
@@ -29,6 +33,7 @@ class RouteState {
       routeDetailedStatus: routeDetailedStatus ?? this.routeDetailedStatus,
       routeCoordinates: routeCoordinates ?? this.routeCoordinates,
       routeCoordinatesStatus: routeCoordinatesStatus ?? this.routeCoordinatesStatus,
+      activeOperationstatus: activeOperationstatus ?? this.activeOperationstatus
     );
   }
 }

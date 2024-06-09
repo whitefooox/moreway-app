@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
@@ -11,11 +13,10 @@ import 'package:moreway/module/auth/presentation/page/password/reset_password.da
 import 'package:moreway/module/auth/presentation/page/password/verify_code.dart';
 import 'package:moreway/module/game/presentation/state/rating/rating_bloc.dart';
 import 'package:moreway/module/location/presentation/page/map_page.dart';
-import 'package:moreway/module/location/presentation/state/location_v2/location_v2_bloc.dart';
 import 'package:moreway/module/place/presentation/page/place_detailed_page.dart';
 import 'package:moreway/module/place/presentation/state/place/place_bloc.dart';
 import 'package:moreway/module/place/presentation/state/places/places_bloc.dart';
-import 'package:moreway/module/route/presentation/state/active/active_route_bloc.dart';
+import 'package:moreway/module/location/presentation/state/map/map_bloc.dart';
 import 'package:moreway/module/route/presentation/state/builder/route_builder_bloc.dart';
 import 'package:moreway/module/route/presentation/state/route/route_bloc.dart';
 import 'package:moreway/module/route/presentation/state/routes/routes_bloc.dart';
@@ -36,7 +37,7 @@ class AppRouter {
   late final LaunchBloc _launchBloc;
   late final UserBloc _userBloc;
   late final RouteBuilderBloc _builderBloc;
-  late final LocationV2Bloc _locationV2Bloc;
+  late final MapBloc _mapBloc;
   late final RatingBloc _ratingBloc;
   late GoRouter router;
   final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -44,26 +45,32 @@ class AppRouter {
   GetIt get getIt => DIContainer.getIt;
 
   void setupState() {
+    StreamSubscription<UserState>? userStateSubscription;
     _launchBloc = getIt<LaunchBloc>()..add(CheckFirstLaunchEvent());
     _userBloc = getIt<UserBloc>();
     _builderBloc = getIt<RouteBuilderBloc>();
     _authBloc = getIt<AuthBloc>();
-    _locationV2Bloc = getIt<LocationV2Bloc>();
+    _mapBloc = getIt<MapBloc>();
     _ratingBloc = getIt<RatingBloc>();
     _authBloc.stream.listen((state) {
       if (state.status == AuthStatus.authorized) {
         _userBloc.add(LoadUserEvent());
-        _userBloc.stream.listen((state) {
+        if (userStateSubscription != null) {
+          userStateSubscription!.cancel();
+        }
+        userStateSubscription = _userBloc.stream.listen((state) {
           if (state.loadingStatus == LoadingStatus.success) {
             _builderBloc.add(LoadRouteBuilderEvent());
-            _locationV2Bloc.add(LocationV2EventLoad());
+            _mapBloc
+              ..add(SubscribeToPositionsEvent())
+              ..add(LoadActiveRouteEvent());
             _ratingBloc.add(LoadRatingEvent());
           }
         });
       } else if (state.status == AuthStatus.unauthorized) {
         _userBloc = getIt<UserBloc>();
         _builderBloc = getIt<RouteBuilderBloc>();
-        _locationV2Bloc = getIt<LocationV2Bloc>();
+        _mapBloc.add(ResetMapEvent());
         _ratingBloc = getIt<RatingBloc>();
       }
     });
@@ -180,9 +187,16 @@ class AppRouter {
                         parentNavigatorKey: _rootNavigatorKey,
                         builder: (context, state) {
                           final routeId = state.pathParameters['id'];
-                          return BlocProvider(
-                            create: (_) => getIt<RouteBloc>()
-                              ..add(RouteLoadEvent(id: routeId!)),
+                          return MultiBlocProvider(
+                            providers: [
+                              BlocProvider(
+                                create: (_) => getIt<RouteBloc>()
+                                  ..add(RouteLoadEvent(id: routeId!)),
+                              ),
+                              BlocProvider.value(
+                                value: _mapBloc,
+                              ),
+                            ],
                             child: const RouteDetailedPage(),
                           );
                         },
@@ -199,10 +213,7 @@ class AppRouter {
                 GoRoute(
                     path: '/map',
                     builder: (context, state) => MultiBlocProvider(providers: [
-                          BlocProvider.value(value: _locationV2Bloc),
-                          BlocProvider(
-                              create: (_) => getIt<ActiveRouteBloc>()
-                                ..add(LoadActiveRouteEvent()))
+                          BlocProvider.value(value: _mapBloc),
                         ], child: const MapPage())),
               ]),
               StatefulShellBranch(routes: [

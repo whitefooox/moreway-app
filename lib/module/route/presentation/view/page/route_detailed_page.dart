@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:moreway/core/api/loading_status.dart';
 import 'package:moreway/core/theme/colors.dart';
+import 'package:moreway/module/location/presentation/state/map/map_bloc.dart';
 import 'package:moreway/module/location/presentation/widget/route_map_tile.dart';
 import 'package:moreway/module/route/presentation/state/route/route_bloc.dart';
 import 'package:moreway/module/route/presentation/view/widget/route_point_list.dart';
@@ -20,20 +21,26 @@ class _RouteDetailedPageState extends State<RouteDetailedPage>
     with TickerProviderStateMixin {
   late final RouteBloc _routeBloc;
   late final TabController tabController;
+  late final MapBloc _mapBloc;
 
   @override
   void initState() {
     super.initState();
     tabController = TabController(length: 2, vsync: this);
     _routeBloc = BlocProvider.of<RouteBloc>(context);
+    _mapBloc = BlocProvider.of<MapBloc>(context);
   }
 
-  void _like(){
+  void _like() {
     _routeBloc.add(LikeRouteEvent());
   }
 
-  void _unlike(){
+  void _unlike() {
     _routeBloc.add(UnlikeRouteEvent());
+  }
+
+  void _setActive() {
+    _mapBloc.add(SetActiveRouteEvent(_routeBloc.state.routeId!));
   }
 
   Widget _buildSliverAppBar(double width) {
@@ -50,16 +57,26 @@ class _RouteDetailedPageState extends State<RouteDetailedPage>
                   routePoints: state.route!.points,
                   routeCoordinates: state.routeCoordinates,
                 ),
-                                              Positioned(
-            bottom: width * 0.1 + 10,
-            right: 10.0,
-            child: FloatingActionButton.extended(
-              onPressed: () {},
-              label: const Text("В путь", style: TextStyle(color: AppColor.white),),
-              icon: const Icon(Icons.hiking, color: AppColor.white,),
-              backgroundColor: AppColor.black,
-            ),
-          ),
+                Positioned(
+                  bottom: width * 0.1 + 10,
+                  right: 10.0,
+                  child: FloatingActionButton.extended(
+                    onPressed: () {
+                      if (_routeBloc.state.route!.isActive != true) {
+                        _setActive();
+                      }
+                    },
+                    label: Text(
+                      state.route!.isActive! ? "В пути" : "В путь",
+                      style: TextStyle(color: AppColor.white),
+                    ),
+                    icon: const Icon(
+                      Icons.hiking,
+                      color: AppColor.white,
+                    ),
+                    backgroundColor: state.route!.isActive! ? AppColor.gray : AppColor.black,
+                  ),
+                ),
               ],
             ),
             stretchModes: const [
@@ -92,8 +109,12 @@ class _RouteDetailedPageState extends State<RouteDetailedPage>
                 icon: CircleAvatar(
                     backgroundColor: AppColor.white,
                     child: Icon(
-                      state.route!.isFavorite != true ? Icons.favorite_outline : Icons.favorite,
-                      color: state.route!.isFavorite != true ? AppColor.black : AppColor.pink,
+                      state.route!.isFavorite != true
+                          ? Icons.favorite_outline
+                          : Icons.favorite,
+                      color: state.route!.isFavorite != true
+                          ? AppColor.black
+                          : AppColor.pink,
                     ))),
           ],
           leading: IconButton(
@@ -135,10 +156,18 @@ class _RouteDetailedPageState extends State<RouteDetailedPage>
     final textTheme = Theme.of(context).textTheme;
     final screenSize = MediaQuery.of(context).size;
     return Scaffold(
-      // appBar: AppBar(
-      //   title: const Text('Детали маршрута'),
-      // ),
-      body: BlocBuilder<RouteBloc, RouteState>(
+      body: BlocListener<MapBloc, MapState>(listenWhen: (previous, current) {
+        if (previous.replaceStatus != current.replaceStatus) {
+          return true;
+        } else {
+          return false;
+        }
+      }, listener: (context, mapState) {
+        if (mapState.replaceStatus == LoadingStatus.success) {
+          _routeBloc.add(ActiveSetRouteEvent());
+          log("message");
+        }
+      }, child: BlocBuilder<RouteBloc, RouteState>(
         builder: (context, state) {
           if (state.routeDetailedStatus == LoadingStatus.success) {
             return Stack(
@@ -215,14 +244,16 @@ class _RouteDetailedPageState extends State<RouteDetailedPage>
                               labelColor: AppColor.gray,
                               tabs: [
                                 Padding(
-                                  padding: const EdgeInsets.only(top: 8, bottom: 8),
+                                  padding:
+                                      const EdgeInsets.only(top: 8, bottom: 8),
                                   child: Text(
                                     "Места",
                                     style: textTheme.bodyMedium,
                                   ),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.only(top: 8, bottom: 8),
+                                  padding:
+                                      const EdgeInsets.only(top: 8, bottom: 8),
                                   child: Text(
                                     "Отзывы",
                                     style: textTheme.bodyMedium,
@@ -233,26 +264,26 @@ class _RouteDetailedPageState extends State<RouteDetailedPage>
                             ),
                             Expanded(
                                 child: Padding(
-                                                    padding: const EdgeInsets.symmetric(vertical: 10),
-                                  child: RoutePointsList(
-                                      points: state.route!.points
-                                          .map((e) => e.place)
-                                          .toList()),
-                                ))
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: RoutePointsList(
+                                  points: state.route!.points
+                                      .map((e) => e.place)
+                                      .toList()),
+                            ))
                           ],
                         ),
                       ),
                     )),
-          //                     Positioned(
-          //   bottom: 16.0,
-          //   right: 16.0,
-          //   child: FloatingActionButton.extended(
-          //     onPressed: () {},
-          //     label: const Text("Начать", style: TextStyle(color: AppColor.white),),
-          //     icon: const Icon(Icons.play_arrow, color: AppColor.white,),
-          //     backgroundColor: AppColor.black,
-          //   ),
-          // ),
+                //                     Positioned(
+                //   bottom: 16.0,
+                //   right: 16.0,
+                //   child: FloatingActionButton.extended(
+                //     onPressed: () {},
+                //     label: const Text("Начать", style: TextStyle(color: AppColor.white),),
+                //     icon: const Icon(Icons.play_arrow, color: AppColor.white,),
+                //     backgroundColor: AppColor.black,
+                //   ),
+                // ),
               ],
             );
           }
@@ -262,7 +293,7 @@ class _RouteDetailedPageState extends State<RouteDetailedPage>
             return const Center(child: CircularProgressIndicator());
           }
         },
-      ),
+      )),
     );
   }
 }

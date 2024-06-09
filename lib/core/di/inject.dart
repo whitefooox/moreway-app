@@ -25,8 +25,6 @@ import 'package:moreway/module/location/domain/usecase/get_current_location.dart
 import 'package:moreway/module/location/domain/usecase/get_location_stream.dart';
 import 'package:moreway/module/location/domain/usecase/navigation_interactor.dart';
 import 'package:moreway/module/location/domain/usecase/send_request_location_permission.dart';
-import 'package:moreway/module/location/presentation/state/location/location_bloc.dart';
-import 'package:moreway/module/location/presentation/state/location_v2/location_v2_bloc.dart';
 import 'package:moreway/module/place/data/filter_repository_api.dart';
 import 'package:moreway/module/place/data/place_repository_api.dart';
 import 'package:moreway/module/place/domain/dependency/i_filter_repository.dart';
@@ -41,7 +39,7 @@ import 'package:moreway/module/route/domain/dependency/i_route_repository.dart';
 import 'package:moreway/module/route/domain/interactor/active_route_interactor.dart';
 import 'package:moreway/module/route/domain/interactor/route_builder_interactor.dart';
 import 'package:moreway/module/route/domain/interactor/route_interactor.dart';
-import 'package:moreway/module/route/presentation/state/active/active_route_bloc.dart';
+import 'package:moreway/module/location/presentation/state/map/map_bloc.dart';
 import 'package:moreway/module/route/presentation/state/builder/route_builder_bloc.dart';
 import 'package:moreway/module/route/presentation/state/route/route_bloc.dart';
 import 'package:moreway/module/route/presentation/state/routes/routes_bloc.dart';
@@ -80,7 +78,8 @@ class DIContainer {
     getIt.registerSingleton<ITokenStorage>(TokenSecureStorage(getIt()));
     getIt.registerSingleton<ApiClient>(ApiClient(getIt(), getIt()));
     getIt.registerSingleton<IAuthService>(AuthServiceAPI(getIt()));
-    getIt.registerSingleton<AuthInteractor>(AuthInteractor(getIt(), getIt(), getIt()));
+    getIt.registerSingleton<AuthInteractor>(
+        AuthInteractor(getIt(), getIt(), getIt()));
 
     getIt.registerSingleton<AuthBloc>(AuthBloc(getIt()));
   }
@@ -100,12 +99,12 @@ class DIContainer {
     getIt.registerLazySingleton<SendRequestLocationPermissionUseCase>(
         () => SendRequestLocationPermissionUseCase(getIt()));
 
-    getIt.registerFactory<LocationBloc>(
-        () => LocationBloc(getIt(), getIt()));
-    getIt.registerFactory<LocationV2Bloc>(() => LocationV2Bloc(getIt()));
+    getIt.registerLazySingleton<INavigationService>(
+        () => OsrmNavigationService());
+    getIt.registerLazySingleton<NavigationInteractor>(
+        () => NavigationInteractor(getIt()));
 
-    getIt.registerLazySingleton<INavigationService>(() => OsrmNavigationService());
-    getIt.registerLazySingleton<NavigationInteractor>(() => NavigationInteractor(getIt()));
+    getIt.registerLazySingleton<MapBloc>(() => MapBloc(getIt(), getIt(), getIt()));
   }
 
   void _injectPlace() {
@@ -113,22 +112,25 @@ class DIContainer {
         () => FilterRepositoryAPI(getIt()));
     getIt.registerLazySingleton<IPlaceRepository>(
         () => PlaceRepositoryAPI(getIt(), getIt()));
-    getIt.registerLazySingleton<PlaceInteractor>(() => PlaceInteractor(getIt(), getIt(), getIt()));
+    getIt.registerLazySingleton<PlaceInteractor>(
+        () => PlaceInteractor(getIt(), getIt(), getIt()));
 
     getIt.registerFactory<PlacesBloc>(() => PlacesBloc(getIt()));
 
     getIt.registerFactory<PlaceBloc>(() => PlaceBloc(getIt()));
   }
 
-  void _injectRoute(){
-    getIt.registerLazySingleton<IRouteRepository>(() => RouteRepositoryAPI(getIt()));
-    getIt.registerLazySingleton<RouteInteractor>(() => RouteInteractor(getIt(), getIt()));
-    getIt.registerLazySingleton<ActiveRouteInteractor>(() => ActiveRouteInteractor(getIt(), getIt()));
+  void _injectRoute() {
+    getIt.registerLazySingleton<IRouteRepository>(
+        () => RouteRepositoryAPI(getIt()));
+    getIt.registerLazySingleton<RouteInteractor>(
+        () => RouteInteractor(getIt(), getIt()));
+    getIt.registerLazySingleton<ActiveRouteInteractor>(
+        () => ActiveRouteInteractor(getIt(), getIt()));
 
     getIt.registerFactory<RoutesBloc>(() => RoutesBloc(getIt()));
-    getIt.registerFactory<RouteBloc>(() => RouteBloc(getIt(), getIt()));
-
-    getIt.registerFactory<ActiveRouteBloc>(() => ActiveRouteBloc(getIt()));
+    getIt
+        .registerFactory<RouteBloc>(() => RouteBloc(getIt(), getIt(), getIt(), getIt()));
   }
 
   void _injectLaunch() {
@@ -142,24 +144,32 @@ class DIContainer {
   }
 
   //dependency: api
-  void _injectUser(){
-    getIt.registerLazySingleton<IUserRepository>(() => UserRepositoryAPI(getIt()));
+  void _injectUser() {
+    getIt.registerLazySingleton<IUserRepository>(
+        () => UserRepositoryAPI(getIt()));
     getIt.registerLazySingleton<UserInteractor>(() => UserInteractor(getIt()));
 
     getIt.registerFactory<UserBloc>(() => UserBloc(getIt()));
     getIt.registerFactory<SearchUsersBloc>(() => SearchUsersBloc(getIt()));
   }
+
   //user_repository
-  void _injectBuilder(){
-    getIt.registerLazySingleton<IRouteBuilderService>(() => RouteBuilderAPI(getIt(), getIt()),);
-    getIt.registerLazySingleton<RouteBuilderInteractor>(() => RouteBuilderInteractor(getIt(), getIt()),);
+  void _injectBuilder() {
+    getIt.registerLazySingleton<IRouteBuilderService>(
+      () => RouteBuilderAPI(getIt(), getIt()),
+    );
+    getIt.registerLazySingleton<RouteBuilderInteractor>(
+      () => RouteBuilderInteractor(getIt(), getIt()),
+    );
 
     getIt.registerFactory<RouteBuilderBloc>(() => RouteBuilderBloc(getIt()));
   }
 
-  void _injectScore(){
-    getIt.registerLazySingleton<IScoreRepository>(() => ScoreRepositoryAPI(getIt()));
-    getIt.registerLazySingleton<ScoreInteractor>(() => ScoreInteractor(getIt()));
+  void _injectScore() {
+    getIt.registerLazySingleton<IScoreRepository>(
+        () => ScoreRepositoryAPI(getIt()));
+    getIt
+        .registerLazySingleton<ScoreInteractor>(() => ScoreInteractor(getIt()));
 
     getIt.registerFactory<RatingBloc>(() => RatingBloc(getIt()));
   }

@@ -3,7 +3,9 @@ import 'package:meta/meta.dart';
 import 'package:moreway/core/api/loading_status.dart';
 import 'package:moreway/module/location/domain/entity/position_point.dart';
 import 'package:moreway/module/location/domain/usecase/navigation_interactor.dart';
+import 'package:moreway/module/location/presentation/state/map/map_bloc.dart';
 import 'package:moreway/module/route/domain/entity/route_detailed.dart';
+import 'package:moreway/module/route/domain/interactor/active_route_interactor.dart';
 import 'package:moreway/module/route/domain/interactor/route_interactor.dart';
 
 part 'route_event.dart';
@@ -12,12 +14,19 @@ part 'route_state.dart';
 class RouteBloc extends Bloc<RouteEvent, RouteState> {
   final RouteInteractor _routeInteractor;
   final NavigationInteractor _navigationInteractor;
+  final ActiveRouteInteractor _activeRouteInteractor;
+  final MapBloc _mapBloc;
 
-  RouteBloc(this._routeInteractor, this._navigationInteractor)
+  RouteBloc(this._routeInteractor, this._navigationInteractor, this._mapBloc, this._activeRouteInteractor)
       : super(RouteState()) {
     on<RouteLoadEvent>(_load);
     on<LikeRouteEvent>(_like);
     on<UnlikeRouteEvent>(_unlike);
+    on<ActiveSetRouteEvent>(_setActive);
+  }
+
+  void _setActive(ActiveSetRouteEvent event, Emitter<RouteState> emit) async {
+    emit(state.copyWith(route: state.route!.copyWith(isActive: true)));
   }
 
   void _load(RouteLoadEvent event, Emitter<RouteState> emit) async {

@@ -69,14 +69,26 @@ class RouteRepositoryAPI implements IRouteRepository {
       final response = await _client.dio.get(Api.getActiveRoute(userId));
       final json = response.data['data'];
       return RouteDetailedModel.fromJson(json).toRouteDetailed();
-    }
-    on DioException catch(e, stackTrace){
-      if(e.type == DioExceptionType.badResponse){
+    } on DioException catch (e, stackTrace) {
+      if (e.type == DioExceptionType.badResponse) {
         return null;
       } else {
         log("[route repository api] $e", stackTrace: stackTrace);
         rethrow;
       }
+    } catch (e, stackTrace) {
+      log("[route repository api] $e", stackTrace: stackTrace);
+      rethrow;
+    }
+  }
+
+  @override
+  Future<RouteDetailed> setActiveRoute(String routeId, String userId) async {
+    try {
+      final response = await _client.dio
+          .put(Api.getActiveRoute(userId), data: {"routeId": routeId});
+      final json = response.data['data'];
+      return RouteDetailedModel.fromJson(json).toRouteDetailed();
     } catch (e, stackTrace) {
       log("[route repository api] $e", stackTrace: stackTrace);
       rethrow;

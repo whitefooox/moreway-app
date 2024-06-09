@@ -1,4 +1,4 @@
-import 'dart:math';
+import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,15 +7,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get_it/get_it.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:moreway/core/api/loading_status.dart';
 import 'package:moreway/core/square_widget.dart';
 import 'package:moreway/core/theme/colors.dart';
 import 'package:moreway/module/location/domain/entity/position.dart';
 import 'package:moreway/module/location/domain/entity/position_point.dart';
 import 'package:moreway/module/location/domain/usecase/navigation_interactor.dart';
-import 'package:moreway/module/location/presentation/state/location_v2/location_v2_bloc.dart';
 import 'package:moreway/module/place/domain/entity/place.dart';
 import 'package:moreway/module/place/presentation/widget/place_card.dart';
-import 'package:moreway/module/route/presentation/state/active/active_route_bloc.dart';
+import 'package:moreway/module/location/presentation/state/map/map_bloc.dart';
+import 'package:moreway/module/route/domain/entity/route_detailed.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 
 class MapPage extends StatefulWidget {
@@ -44,6 +45,103 @@ class _MapPageState extends State<MapPage> {
   //   ]);
   // }
 
+  Widget _buildRouteCard(RouteDetailed? activeRoute,
+      LoadingStatus activeRouteStatus, TextTheme textTheme) {
+    switch (activeRouteStatus) {
+      case LoadingStatus.success:
+
+        return Container(
+          decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.5),
+              borderRadius: BorderRadius.all(Radius.circular(15))),
+          child: Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  activeRoute != null ? activeRoute.name : "Нет активного маршрута",
+                  style: textTheme.titleLarge!.copyWith(
+                    color: AppColor.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                if (activeRoute != null) ...[
+                   Padding(
+                    padding: EdgeInsets.all(5.0),
+                    child: RouteProgressBar(
+                      currentProgress: activeRoute.points.where((element) => element.isCompleted! == true).toList().length,
+                      maxProgress: activeRoute.points.length,
+                    ),
+                  )
+                ]
+              ],
+            ),
+          ),
+        );
+      case LoadingStatus.failure:
+        return Placeholder();
+      default:
+        return Placeholder();
+    }
+  }
+
+  Widget _buildPositionButton(
+      LoadingStatus positionStatus, Position? position) {
+    switch (positionStatus) {
+      case LoadingStatus.success:
+        return IconButton(
+          onPressed: () {
+            if (position == null) return;
+            _mapController.move(
+              LatLng(position.point.latitude, position.point.longitude),
+              15.0,
+            );
+          },
+          icon: const CircleAvatar(
+            radius: 25,
+            backgroundColor: AppColor.black,
+            child: Icon(
+              Icons.my_location,
+              color: AppColor.white,
+              size: 20,
+            ),
+          ),
+        );
+      case LoadingStatus.failure:
+        return IconButton(
+          onPressed: () {},
+          icon: const CircleAvatar(
+            radius: 25,
+            backgroundColor: AppColor.black,
+            child: Icon(
+              Icons.warning,
+              color: AppColor.white,
+              size: 20,
+            ),
+          ),
+        );
+      default:
+        return IconButton(
+          onPressed: () {},
+          icon: const CircleAvatar(
+            radius: 25,
+            backgroundColor: AppColor.black,
+            child: SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(
+                color: AppColor.white,
+              ),
+            ),
+          ),
+        );
+    }
+  }
+
   Marker _buildCurrentPositionMarker(Position position) {
     final point = LatLng(position.point.latitude, position.point.longitude);
     return Marker(
@@ -64,18 +162,14 @@ class _MapPageState extends State<MapPage> {
         ));
   }
 
-  Widget _buildMap(Position position) {
-    // if (route == null) {
-    //   a(position);
-    // }
-
+  Widget _buildMap(Position? position) {
     return FlutterMap(
         mapController: _mapController,
-        options: MapOptions(
-          zoom: 15,
-          initialCenter:
-              LatLng(position.point.latitude, position.point.longitude),
-        ),
+        options: const MapOptions(
+            zoom: 15,
+            initialCenter:
+                //LatLng(position.point.latitude, position.point.longitude),
+                LatLng(55.3333, 86.0833)),
         children: [
           TileLayer(
             urlTemplate:
@@ -95,171 +189,189 @@ class _MapPageState extends State<MapPage> {
           //       : [],
           // ),
           MarkerLayer(markers: [
-            _buildCurrentPositionMarker(position),
-            Marker(
-              width: 30,
-              height: 30,
-              point: LatLng(55.375818, 86.072025),
-              child: CircleAvatar(
-                radius: 15,
-                backgroundColor: AppColor.pink.withOpacity(0.5),
-                child: CircleAvatar(
-                  backgroundColor: AppColor.pink,
-                  radius: 8,
-                ),
-              ),
-            )
+            if (position != null) ...[
+              _buildCurrentPositionMarker(position),
+            ],
+            // Marker(
+            //   width: 30,
+            //   height: 30,
+            //   point: LatLng(55.375818, 86.072025),
+            //   child: CircleAvatar(
+            //     radius: 15,
+            //     backgroundColor: AppColor.pink.withOpacity(0.5),
+            //     child: CircleAvatar(
+            //       backgroundColor: AppColor.pink,
+            //       radius: 8,
+            //     ),
+            //   ),
+            // )
           ]),
         ]);
   }
 
   @override
   Widget build(BuildContext context) {
-    final locationBloc = BlocProvider.of<LocationV2Bloc>(context);
+    final mapBloc = BlocProvider.of<MapBloc>(context);
     final screenSize = MediaQuery.of(context).size;
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text("Карта"),
-      // ),
-      body: BlocBuilder<LocationV2Bloc, LocationV2State>(
-        bloc: locationBloc,
-        builder: (context, state) {
-          if (state is LocationV2Loading) {
-            return const CircularProgressIndicator();
-          }
-          if (state is LocationV2Loaded) {
+      body: BlocBuilder<MapBloc, MapState>(
+          bloc: mapBloc,
+          builder: (context, state) {
+            //log(state.positionStatus.name.toString());
             return Stack(
               children: [
-                _buildMap(state.location),
+                _buildMap(state.position),
                 Positioned(
                     bottom: screenSize.width * 0.035 + 60 + 10,
                     right: screenSize.width * 0.035,
+                    //           left: screenSize.width * 0.035,
+                    child: _buildPositionButton(
+                        state.positionStatus, state.position)),
+                Positioned(
+                    top: screenSize.width * 0.035,
                     left: screenSize.width * 0.035,
-                    //height: 100,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        // Expanded(
-                        //     child: Container(
-                        //   height: 100,
-                        //   //color: AppColor.white,
-                        //   decoration: BoxDecoration(
-                        //       color: AppColor.white,
-                        //       borderRadius:
-                        //           BorderRadius.all(Radius.circular(15))),
-                        //   child: Padding(
-                        //     padding: const EdgeInsets.all(5.0),
-                        //     child: Row(
-                        //       mainAxisSize: MainAxisSize.max,
-                        //       mainAxisAlignment: MainAxisAlignment.center,
-                        //       children: [
-                        //         SquareWidget(
-                        //             child: ClipRRect(
-                        //                 borderRadius: BorderRadius.all(
-                        //                     Radius.circular(15)),
-                        //                 child: Image.network(
-                        //                     fit: BoxFit.fill,
-                        //                     "https://images-ext-1.discordapp.net/external/QNwov659XgGfaotrWzJN8h5N4h0ybB5qQoNuMIyrVyE/https/redhill-kemerovo.ru/assets/images/resources/33/zdanie-muzeya.jpg?format=webp&width=1171&height=657"))),
-                        //         Expanded(
-                        //             child: Text(
-                        //           "Красная горка",
-                        //           textAlign: TextAlign.center,
-                        //         ))
-                        //       ],
-                        //     ),
-                        //   ),
-                        // )),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            IconButton(
-                              onPressed: () {
-                                _mapController.move(
-                                  LatLng(state.location.point.latitude,
-                                      state.location.point.longitude),
-                                  15.0,
-                                );
-                              },
-                              icon: const CircleAvatar(
-                                radius: 25,
-                                child: Icon(
-                                  Icons.my_location,
-                                  color: AppColor.white,
-                                  size: 20,
-                                ),
-                                backgroundColor: AppColor.black,
-                              ),
-                            ),
-                            // ElevatedButton.icon(
-                            //     onPressed: () {},
-                            //     icon: const Icon(Icons.check),
-                            //     label: const Text("Группа"),
-                            //     style: ElevatedButton.styleFrom(
-                            //         backgroundColor: AppColor.pink,
-                            //         minimumSize: const Size(100, 40))),
-                            // ElevatedButton.icon(
-                            //     onPressed: () {},
-                            //     icon: const Icon(Icons.check),
-                            //     label: const Text("Прошел"),
-                            //     style: ElevatedButton.styleFrom(
-                            //         minimumSize: const Size(100, 40))),
-                          ],
-                        ),
-                      ],
-                    )),
-                // BlocBuilder<ActiveRouteBloc, ActiveRouteState>(
-                //   builder: (context, activeRouteState) {
-                //     return Positioned(
-                //         top: screenSize.width * 0.035,
-                //         left: screenSize.width * 0.035,
-                //         right: screenSize.width * 0.035,
-                //         child: Container(
-                //           decoration: BoxDecoration(
-                //               color: Colors.white.withOpacity(0.5),
-                //               borderRadius:
-                //                   BorderRadius.all(Radius.circular(15))),
-                //           child: Padding(
-                //             padding: const EdgeInsets.all(5.0),
-                //             child: Column(
-                //               mainAxisSize: MainAxisSize.min,
-                //               children: [
-                //                 Text(
-                //                   activeRouteState.activeRoute != null ? activeRouteState.activeRoute!.name : activeRouteState.activeRoutestatus.name,
-                //                   style: textTheme.titleLarge!.copyWith(
-                //                     color: AppColor.black,
-                //                     fontWeight: FontWeight.bold,
-                //                   ),
-                //                 ),
-                //                 const SizedBox(
-                //                   height: 10,
-                //                 ),
-                //                 const Padding(
-                //                   padding: EdgeInsets.all(5.0),
-                //                   child: RouteProgressBar(
-                //                     currentProgress: 2,
-                //                     maxProgress: 5,
-                //                   ),
-                //                 )
-                //               ],
-                //             ),
-                //           ),
-                //         ));
-                //   },
-                // )
+                    right: screenSize.width * 0.035,
+                    child: _buildRouteCard(state.activeRoute, state.activeRoutestatus, textTheme)
+                    )
               ],
             );
-          } else {
-            return const Text("Все сломалось");
           }
-        },
-      ),
+          // if (state is LocationV2Loading) {
+          //   return const CircularProgressIndicator();
+          // }
+          // if (state is LocationV2Loaded) {
+          //   return Stack(
+          //     children: [
+          //       _buildMap(state.location),
+          //       Positioned(
+          //           bottom: screenSize.width * 0.035 + 60 + 10,
+          //           right: screenSize.width * 0.035,
+          //           left: screenSize.width * 0.035,
+          //           //height: 100,
+          //           child: Row(
+          //             mainAxisSize: MainAxisSize.max,
+          //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //             crossAxisAlignment: CrossAxisAlignment.end,
+          //             children: [
+          //               // Expanded(
+          //               //     child: Container(
+          //               //   height: 100,
+          //               //   //color: AppColor.white,
+          //               //   decoration: BoxDecoration(
+          //               //       color: AppColor.white,
+          //               //       borderRadius:
+          //               //           BorderRadius.all(Radius.circular(15))),
+          //               //   child: Padding(
+          //               //     padding: const EdgeInsets.all(5.0),
+          //               //     child: Row(
+          //               //       mainAxisSize: MainAxisSize.max,
+          //               //       mainAxisAlignment: MainAxisAlignment.center,
+          //               //       children: [
+          //               //         SquareWidget(
+          //               //             child: ClipRRect(
+          //               //                 borderRadius: BorderRadius.all(
+          //               //                     Radius.circular(15)),
+          //               //                 child: Image.network(
+          //               //                     fit: BoxFit.fill,
+          //               //                     "https://images-ext-1.discordapp.net/external/QNwov659XgGfaotrWzJN8h5N4h0ybB5qQoNuMIyrVyE/https/redhill-kemerovo.ru/assets/images/resources/33/zdanie-muzeya.jpg?format=webp&width=1171&height=657"))),
+          //               //         Expanded(
+          //               //             child: Text(
+          //               //           "Красная горка",
+          //               //           textAlign: TextAlign.center,
+          //               //         ))
+          //               //       ],
+          //               //     ),
+          //               //   ),
+          //               // )),
+          //               SizedBox(
+          //                 width: 10,
+          //               ),
+          //               Column(
+          //                 crossAxisAlignment: CrossAxisAlignment.end,
+          //                 children: [
+          //                   IconButton(
+          //                     onPressed: () {
+          //                       _mapController.move(
+          //                         LatLng(state.location.point.latitude,
+          //                             state.location.point.longitude),
+          //                         15.0,
+          //                       );
+          //                     },
+          //                     icon: const CircleAvatar(
+          //                       radius: 25,
+          //                       child: Icon(
+          //                         Icons.my_location,
+          //                         color: AppColor.white,
+          //                         size: 20,
+          //                       ),
+          //                       backgroundColor: AppColor.black,
+          //                     ),
+          //                   ),
+          //                   // ElevatedButton.icon(
+          //                   //     onPressed: () {},
+          //                   //     icon: const Icon(Icons.check),
+          //                   //     label: const Text("Группа"),
+          //                   //     style: ElevatedButton.styleFrom(
+          //                   //         backgroundColor: AppColor.pink,
+          //                   //         minimumSize: const Size(100, 40))),
+          //                   // ElevatedButton.icon(
+          //                   //     onPressed: () {},
+          //                   //     icon: const Icon(Icons.check),
+          //                   //     label: const Text("Прошел"),
+          //                   //     style: ElevatedButton.styleFrom(
+          //                   //         minimumSize: const Size(100, 40))),
+          //                 ],
+          //               ),
+          //             ],
+          //           )),
+          //       // BlocBuilder<ActiveRouteBloc, ActiveRouteState>(
+          //       //   builder: (context, activeRouteState) {
+          //       //     return Positioned(
+          //       //         top: screenSize.width * 0.035,
+          //       //         left: screenSize.width * 0.035,
+          //       //         right: screenSize.width * 0.035,
+          //       //         child: Container(
+          //       //           decoration: BoxDecoration(
+          //       //               color: Colors.white.withOpacity(0.5),
+          //       //               borderRadius:
+          //       //                   BorderRadius.all(Radius.circular(15))),
+          //       //           child: Padding(
+          //       //             padding: const EdgeInsets.all(5.0),
+          //       //             child: Column(
+          //       //               mainAxisSize: MainAxisSize.min,
+          //       //               children: [
+          //       //                 Text(
+          //       //                   activeRouteState.activeRoute != null ? activeRouteState.activeRoute!.name : activeRouteState.activeRoutestatus.name,
+          //       //                   style: textTheme.titleLarge!.copyWith(
+          //       //                     color: AppColor.black,
+          //       //                     fontWeight: FontWeight.bold,
+          //       //                   ),
+          //       //                 ),
+          //       //                 const SizedBox(
+          //       //                   height: 10,
+          //       //                 ),
+          //       //                 const Padding(
+          //       //                   padding: EdgeInsets.all(5.0),
+          //       //                   child: RouteProgressBar(
+          //       //                     currentProgress: 2,
+          //       //                     maxProgress: 5,
+          //       //                   ),
+          //       //                 )
+          //       //               ],
+          //       //             ),
+          //       //           ),
+          //       //         ));
+          //       //   },
+          //       // )
+          //     ],
+          //   );
+          // } else {
+          //   return const Text("Все сломалось");
+          // }
+
+          ),
     );
   }
 }
