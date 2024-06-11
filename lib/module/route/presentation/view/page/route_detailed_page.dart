@@ -157,6 +157,8 @@ class _RouteDetailedPageState extends State<RouteDetailedPage>
     final screenSize = MediaQuery.of(context).size;
     return Scaffold(
       body: BlocListener<MapBloc, MapState>(listenWhen: (previous, current) {
+        log(previous.replaceStatus.name);
+        log(current.replaceStatus.name);
         if (previous.replaceStatus != current.replaceStatus) {
           return true;
         } else {

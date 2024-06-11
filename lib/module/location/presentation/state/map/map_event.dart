@@ -14,3 +14,5 @@ class SetActiveRouteEvent extends MapEvent {
 }
 
 class ResetMapEvent extends MapEvent {}
+
+class _CreateRouteEvent extends MapEvent {}

@@ -9,14 +9,18 @@ class MapState {
 
   final LoadingStatus replaceStatus;
 
-  //PlaceBase get targetPlace => 
+  final PlaceBase? targetPlace;
+
+  final List<PositionPoint>? route;
 
   MapState({
     this.activeRoute,
     this.position,
     this.activeRoutestatus = LoadingStatus.initial,
     this.positionStatus = LoadingStatus.initial,
-    this.replaceStatus = LoadingStatus.initial
+    this.replaceStatus = LoadingStatus.initial,
+    this.targetPlace,
+    this.route
   });
   
 
@@ -25,14 +29,18 @@ class MapState {
     LoadingStatus? activeRoutestatus,
     Position? position,
     LoadingStatus? positionStatus,
-    LoadingStatus? replaceStatus
+    LoadingStatus? replaceStatus,
+    PlaceBase? targetPlace,
+    List<PositionPoint>? route
   }) {
     return MapState(
       activeRoute: activeRoute ?? this.activeRoute,
       activeRoutestatus: activeRoutestatus ?? this.activeRoutestatus,
       position: position ?? this.position,
       positionStatus: positionStatus ?? this.positionStatus,
-      replaceStatus: replaceStatus ?? this.replaceStatus
+      replaceStatus: replaceStatus ?? this.replaceStatus,
+      targetPlace: targetPlace ?? this.targetPlace,
+      route: route ?? this.route
     );
   }
 }

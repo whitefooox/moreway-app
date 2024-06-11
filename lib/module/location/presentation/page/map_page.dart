@@ -14,6 +14,7 @@ import 'package:moreway/module/location/domain/entity/position.dart';
 import 'package:moreway/module/location/domain/entity/position_point.dart';
 import 'package:moreway/module/location/domain/usecase/navigation_interactor.dart';
 import 'package:moreway/module/place/domain/entity/place.dart';
+import 'package:moreway/module/place/domain/entity/place_base.dart';
 import 'package:moreway/module/place/presentation/widget/place_card.dart';
 import 'package:moreway/module/location/presentation/state/map/map_bloc.dart';
 import 'package:moreway/module/route/domain/entity/route_detailed.dart';
@@ -49,7 +50,6 @@ class _MapPageState extends State<MapPage> {
       LoadingStatus activeRouteStatus, TextTheme textTheme) {
     switch (activeRouteStatus) {
       case LoadingStatus.success:
-
         return Container(
           decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.5),
@@ -60,7 +60,9 @@ class _MapPageState extends State<MapPage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  activeRoute != null ? activeRoute.name : "Нет активного маршрута",
+                  activeRoute != null
+                      ? activeRoute.name
+                      : "Нет активного маршрута",
                   style: textTheme.titleLarge!.copyWith(
                     color: AppColor.black,
                     fontWeight: FontWeight.bold,
@@ -70,10 +72,13 @@ class _MapPageState extends State<MapPage> {
                   height: 10,
                 ),
                 if (activeRoute != null) ...[
-                   Padding(
+                  Padding(
                     padding: EdgeInsets.all(5.0),
                     child: RouteProgressBar(
-                      currentProgress: activeRoute.points.where((element) => element.isCompleted! == true).toList().length,
+                      currentProgress: activeRoute.points
+                          .where((element) => element.isCompleted! == true)
+                          .toList()
+                          .length,
                       maxProgress: activeRoute.points.length,
                     ),
                   )
@@ -162,7 +167,7 @@ class _MapPageState extends State<MapPage> {
         ));
   }
 
-  Widget _buildMap(Position? position) {
+  Widget _buildMap(Position? position, PlaceBase? targetPlace, List<PositionPoint>? route) {
     return FlutterMap(
         mapController: _mapController,
         options: const MapOptions(
@@ -175,36 +180,38 @@ class _MapPageState extends State<MapPage> {
             urlTemplate:
                 'https://api.maptiler.com/maps/dataviz/256/{z}/{x}/{y}.png?key=U7c9AKtTUegJLtvD7NKg',
           ),
-          // PolylineLayer(
-          //   polylines: route != null
-          //       ? [
-          //           Polyline(
-          //             points: route!
-          //                 .map((e) => LatLng(e.latitude, e.longitude))
-          //                 .toList(),
-          //             strokeWidth: 4.0,
-          //             color: AppColor.pink,
-          //           ),
-          //         ]
-          //       : [],
-          // ),
+          PolylineLayer(
+            polylines: route != null
+                ? [
+                    Polyline(
+                      points: route
+                          .map((e) => LatLng(e.latitude, e.longitude))
+                          .toList(),
+                      strokeWidth: 4.0,
+                      color: AppColor.pink,
+                    ),
+                  ]
+                : [],
+          ),
           MarkerLayer(markers: [
             if (position != null) ...[
               _buildCurrentPositionMarker(position),
             ],
-            // Marker(
-            //   width: 30,
-            //   height: 30,
-            //   point: LatLng(55.375818, 86.072025),
-            //   child: CircleAvatar(
-            //     radius: 15,
-            //     backgroundColor: AppColor.pink.withOpacity(0.5),
-            //     child: CircleAvatar(
-            //       backgroundColor: AppColor.pink,
-            //       radius: 8,
-            //     ),
-            //   ),
-            // )
+            if (targetPlace != null) ...[
+              Marker(
+                width: 30,
+                height: 30,
+                point: LatLng(targetPlace.lat, targetPlace.lon),
+                child: CircleAvatar(
+                  radius: 15,
+                  backgroundColor: AppColor.pink.withOpacity(0.5),
+                  child: CircleAvatar(
+                    backgroundColor: AppColor.pink,
+                    radius: 8,
+                  ),
+                ),
+              )
+            ]
           ]),
         ]);
   }
@@ -222,25 +229,89 @@ class _MapPageState extends State<MapPage> {
             //log(state.positionStatus.name.toString());
             return Stack(
               children: [
-                _buildMap(state.position),
-                Positioned(
-                    bottom: screenSize.width * 0.035 + 60 + 10,
-                    right: screenSize.width * 0.035,
-                    //           left: screenSize.width * 0.035,
-                    child: _buildPositionButton(
-                        state.positionStatus, state.position)),
+                _buildMap(state.position, state.targetPlace, state.route),
+                // Positioned(
+                //     bottom: screenSize.width * 0.035 + 60 + 10,
+                //     right: screenSize.width * 0.035,
+                //     //           left: screenSize.width * 0.035,
+                //     child: _buildPositionButton(
+                //         state.positionStatus, state.position)),
                 Positioned(
                     top: screenSize.width * 0.035,
                     left: screenSize.width * 0.035,
                     right: screenSize.width * 0.035,
-                    child: _buildRouteCard(state.activeRoute, state.activeRoutestatus, textTheme)
-                    )
+                    child: _buildRouteCard(
+                        state.activeRoute, state.activeRoutestatus, textTheme)),
+                Positioned(
+                  left: screenSize.width * 0.035,
+                  right: screenSize.width * 0.035,
+                  bottom: screenSize.width * 0.035 + 60 + 10,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      if (state.targetPlace != null) ...[
+                        Expanded(
+                          child: Container(
+                            height: 100,
+                            decoration: const BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(15)),
+                              color: AppColor.white,
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.all(10),
+                              child: Row(
+                                children: [
+                                  SquareWidget(
+                                      child: ClipRRect(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(15)),
+                                          child: Image.network(
+                                              fit: BoxFit.fill,
+                                              state.targetPlace!.image))),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Expanded(
+                                      child: Text(
+                                        
+                                    state.targetPlace!.name,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(fontFamily: "roboto"),
+                                  ))
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                      SizedBox(width: 10,),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _buildPositionButton(
+                              state.positionStatus, state.position),
+                        ],
+                      )
+                    ],
+                  ),
+                )
+                // if (state.targetPlace != null) ...[
+                //   Positioned(
+                //                         bottom: screenSize.width * 0.035 + 60 + 10,
+                //     left: screenSize.width * 0.035,
+                //     height: 100,
+                //     width: screenSize.width * 0.5,
+                //       child: Container(
+                //     color: AppColor.white,
+                //   ))
+                // ]
               ],
             );
           }
-          // if (state is LocationV2Loading) {
-          //   return const CircularProgressIndicator();
-          // }
           // if (state is LocationV2Loaded) {
           //   return Stack(
           //     children: [
@@ -326,51 +397,6 @@ class _MapPageState extends State<MapPage> {
           //               ),
           //             ],
           //           )),
-          //       // BlocBuilder<ActiveRouteBloc, ActiveRouteState>(
-          //       //   builder: (context, activeRouteState) {
-          //       //     return Positioned(
-          //       //         top: screenSize.width * 0.035,
-          //       //         left: screenSize.width * 0.035,
-          //       //         right: screenSize.width * 0.035,
-          //       //         child: Container(
-          //       //           decoration: BoxDecoration(
-          //       //               color: Colors.white.withOpacity(0.5),
-          //       //               borderRadius:
-          //       //                   BorderRadius.all(Radius.circular(15))),
-          //       //           child: Padding(
-          //       //             padding: const EdgeInsets.all(5.0),
-          //       //             child: Column(
-          //       //               mainAxisSize: MainAxisSize.min,
-          //       //               children: [
-          //       //                 Text(
-          //       //                   activeRouteState.activeRoute != null ? activeRouteState.activeRoute!.name : activeRouteState.activeRoutestatus.name,
-          //       //                   style: textTheme.titleLarge!.copyWith(
-          //       //                     color: AppColor.black,
-          //       //                     fontWeight: FontWeight.bold,
-          //       //                   ),
-          //       //                 ),
-          //       //                 const SizedBox(
-          //       //                   height: 10,
-          //       //                 ),
-          //       //                 const Padding(
-          //       //                   padding: EdgeInsets.all(5.0),
-          //       //                   child: RouteProgressBar(
-          //       //                     currentProgress: 2,
-          //       //                     maxProgress: 5,
-          //       //                   ),
-          //       //                 )
-          //       //               ],
-          //       //             ),
-          //       //           ),
-          //       //         ));
-          //       //   },
-          //       // )
-          //     ],
-          //   );
-          // } else {
-          //   return const Text("Все сломалось");
-          // }
-
           ),
     );
   }
