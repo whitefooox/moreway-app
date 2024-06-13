@@ -1,4 +1,4 @@
-# Moreway <img src="./assets/icons/logo432.png" alt="drawing" width="40"/>
+# Moreway <img src="./assets/icons/logo.png" alt="drawing" width="40"/>
 
 Мобильное приложение для путешествий по Кузбассу с применением игровых механик.
 

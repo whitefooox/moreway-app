@@ -126,7 +126,7 @@ class DIContainer {
     getIt.registerLazySingleton<RouteInteractor>(
         () => RouteInteractor(getIt(), getIt()));
     getIt.registerLazySingleton<ActiveRouteInteractor>(
-        () => ActiveRouteInteractor(getIt(), getIt()));
+        () => ActiveRouteInteractor(getIt(), getIt(), getIt()));
 
     getIt.registerFactory<RoutesBloc>(() => RoutesBloc(getIt()));
     getIt

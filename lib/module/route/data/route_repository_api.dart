@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:moreway/core/api/api.dart';
 import 'package:moreway/core/api/api_client.dart';
 import 'package:moreway/core/api/paginated_page.dart';
+import 'package:moreway/module/location/domain/entity/position_point.dart';
 import 'package:moreway/module/route/data/mapping/route_detailed_model.dart';
 import 'package:moreway/module/route/data/mapping/route_page_model.dart';
 import 'package:moreway/module/route/domain/dependency/i_route_repository.dart';
@@ -89,6 +90,22 @@ class RouteRepositoryAPI implements IRouteRepository {
           .put(Api.getActiveRoute(userId), data: {"routeId": routeId});
       final json = response.data['data'];
       return RouteDetailedModel.fromJson(json).toRouteDetailed();
+    } catch (e, stackTrace) {
+      log("[route repository api] $e", stackTrace: stackTrace);
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> completeRoutePoint(String routeId, String userId, PositionPoint position) async {
+        try {
+       await _client.dio
+          .put(Api.completeRoutePoint, data: {
+            "routeId": routeId,
+            "userId": userId,
+            "lat": position.latitude,
+            "lon": position.longitude
+      });
     } catch (e, stackTrace) {
       log("[route repository api] $e", stackTrace: stackTrace);
       rethrow;

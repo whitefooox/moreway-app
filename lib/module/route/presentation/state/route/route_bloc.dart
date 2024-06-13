@@ -63,14 +63,14 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
   Future<void> _loadRouteCoordinates(Emitter<RouteState> emit) async {
     emit(state.copyWith(routeCoordinatesStatus: LoadingStatus.loading));
     try {
-      final coordinates = await _navigationInteractor.getRoute(state
+      final routeInfo = await _navigationInteractor.getRoute(state
           .route!.points
           .map((e) =>
               PositionPoint(latitude: e.place.lat, longitude: e.place.lon))
           .toList());
       emit(state.copyWith(
           routeCoordinatesStatus: LoadingStatus.success,
-          routeCoordinates: coordinates));
+          routeCoordinates: routeInfo.points));
     } catch (e) {
       emit(state.copyWith(routeCoordinatesStatus: LoadingStatus.failure));
     }

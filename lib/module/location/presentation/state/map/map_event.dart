@@ -15,4 +15,12 @@ class SetActiveRouteEvent extends MapEvent {
 
 class ResetMapEvent extends MapEvent {}
 
+class CompletePlaceEvent extends MapEvent {}
+
 class _CreateRouteEvent extends MapEvent {}
+
+class _UpdateRouteProgressEvent extends MapEvent {
+  final Position position;
+
+  _UpdateRouteProgressEvent(this.position);
+}

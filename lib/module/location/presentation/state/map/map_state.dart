@@ -11,7 +11,7 @@ class MapState {
 
   final PlaceBase? targetPlace;
 
-  final List<PositionPoint>? route;
+  final RouteInfo? routeInfo;
 
   MapState({
     this.activeRoute,
@@ -20,7 +20,7 @@ class MapState {
     this.positionStatus = LoadingStatus.initial,
     this.replaceStatus = LoadingStatus.initial,
     this.targetPlace,
-    this.route
+    this.routeInfo
   });
   
 
@@ -31,7 +31,7 @@ class MapState {
     LoadingStatus? positionStatus,
     LoadingStatus? replaceStatus,
     PlaceBase? targetPlace,
-    List<PositionPoint>? route
+    RouteInfo? routeInfo
   }) {
     return MapState(
       activeRoute: activeRoute ?? this.activeRoute,
@@ -40,7 +40,7 @@ class MapState {
       positionStatus: positionStatus ?? this.positionStatus,
       replaceStatus: replaceStatus ?? this.replaceStatus,
       targetPlace: targetPlace ?? this.targetPlace,
-      route: route ?? this.route
+      routeInfo: routeInfo ?? this.routeInfo
     );
   }
 }

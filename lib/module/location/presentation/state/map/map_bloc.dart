@@ -6,11 +6,13 @@ import 'package:meta/meta.dart';
 import 'package:moreway/core/api/loading_status.dart';
 import 'package:moreway/module/location/domain/entity/position.dart';
 import 'package:moreway/module/location/domain/entity/position_point.dart';
+import 'package:moreway/module/location/domain/entity/route_info.dart';
 import 'package:moreway/module/location/domain/usecase/get_location_stream.dart';
 import 'package:moreway/module/location/domain/usecase/navigation_interactor.dart';
 import 'package:moreway/module/place/domain/entity/place_base.dart';
 import 'package:moreway/module/route/domain/entity/route_detailed.dart';
 import 'package:moreway/module/route/domain/interactor/active_route_interactor.dart';
+import 'dart:math' show cos, sqrt, asin, sin;
 
 part 'map_event.dart';
 part 'map_state.dart';
@@ -28,6 +30,28 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     on<SetActiveRouteEvent>(_setActiveRoute);
     on<ResetMapEvent>(_reset);
     on<_CreateRouteEvent>(_createRoute);
+  }
+
+  double _toRadians(double degrees) {
+    return degrees * (3.1415926535897932 / 180);
+  }
+
+  double _calculateDistance(PositionPoint point1, PositionPoint point2) {
+    const double earthRadius = 6371; // Радиус Земли в километрах
+
+    double lat1 = _toRadians(point1.latitude);
+    double lon1 = _toRadians(point1.longitude);
+    double lat2 = _toRadians(point2.latitude);
+    double lon2 = _toRadians(point2.longitude);
+
+    double dLat = lat2 - lat1;
+    double dLon = lon2 - lon1;
+
+    double a = asin(sqrt(sin(dLat / 2) * sin(dLat / 2) +
+            cos(lat1) * cos(lat2) * sin(dLon / 2) * sin(dLon / 2))) *
+        2;
+
+    return earthRadius * a;
   }
 
   PlaceBase? _getTargetPlace(RouteDetailed route) {
@@ -51,12 +75,15 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   }
 
   void _createRoute(_CreateRouteEvent event, Emitter<MapState> emit) async {
-    if(state.targetPlace == null || state.position == null) return;
-    final placePositionPoint = PositionPoint(latitude: state.targetPlace!.lat, longitude: state.targetPlace!.lon);
+    if (state.targetPlace == null || state.position == null) return;
+    final placePositionPoint = PositionPoint(
+        latitude: state.targetPlace!.lat, longitude: state.targetPlace!.lon);
     try {
-      final route = await _navigationInteractor.getRoute([state.position!.point, placePositionPoint]);
+      final routeInfo = await _navigationInteractor
+          .getRoute([state.position!.point, placePositionPoint]);
       emit(state.copyWith(
-          route: route,));
+        routeInfo: routeInfo,
+      ));
     } catch (e) {
       //emit(state.copyWith(activeRoutestatus: LoadingStatus.failure));
     }
@@ -102,14 +129,13 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     emit(state.copyWith(positionStatus: LoadingStatus.loading));
     try {
       final locationStream = await _getLocationStreamUsecase.execute();
-      await emit.forEach(locationStream,
-          onData: (position) {
-            return state.copyWith(
-              positionStatus: LoadingStatus.success, position: position);
-          },
-          onError: (error, stackTrace) {
-            return state.copyWith(positionStatus: LoadingStatus.failure);
-          });
+      await emit.onEach(locationStream, onData: (position) {
+        emit(state.copyWith(
+            positionStatus: LoadingStatus.success, position: position));
+        add(_CreateRouteEvent());
+      }, onError: (error, stackTrace) {
+        emit(state.copyWith(positionStatus: LoadingStatus.failure));
+      });
     } catch (e) {
       emit(state.copyWith(positionStatus: LoadingStatus.failure));
     }

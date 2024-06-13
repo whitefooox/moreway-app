@@ -23,4 +23,5 @@ class Api {
   static const rating = "/rating";
 
   static getActiveRoute(String userId) => "/users/$userId/active-route";
+  static const completeRoutePoint = "/routes/route-point/status";
 }

@@ -1,4 +1,5 @@
 import 'package:moreway/core/api/paginated_page.dart';
+import 'package:moreway/module/location/domain/entity/position_point.dart';
 import 'package:moreway/module/route/domain/entity/route.dart';
 import 'package:moreway/module/route/domain/entity/route_detailed.dart';
 
@@ -9,4 +10,5 @@ abstract class IRouteRepository {
   Future<void> removeToFavorite(String routeId, String userId);
   Future<RouteDetailed?> getActiveRoute(String userId);
   Future<RouteDetailed> setActiveRoute(String routeId, String userId);
+  Future<void> completeRoutePoint(String routeId, String userId, PositionPoint position);
 }

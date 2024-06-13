@@ -12,6 +12,7 @@ import 'package:moreway/core/square_widget.dart';
 import 'package:moreway/core/theme/colors.dart';
 import 'package:moreway/module/location/domain/entity/position.dart';
 import 'package:moreway/module/location/domain/entity/position_point.dart';
+import 'package:moreway/module/location/domain/entity/route_info.dart';
 import 'package:moreway/module/location/domain/usecase/navigation_interactor.dart';
 import 'package:moreway/module/place/domain/entity/place.dart';
 import 'package:moreway/module/place/domain/entity/place_base.dart';
@@ -37,14 +38,20 @@ class _MapPageState extends State<MapPage> {
     super.initState();
   }
 
-  // void a(Position position) async {
-  //   route = await navigator.getRoute([
-  //     PositionPoint(
-  //         latitude: position.point.latitude,
-  //         longitude: position.point.longitude),
-  //     PositionPoint(latitude: 55.375818, longitude: 86.072025)
-  //   ]);
-  // }
+  Widget _buildCompleteButton() {
+    return IconButton(
+      onPressed: () {},
+      icon: const CircleAvatar(
+        radius: 25,
+        backgroundColor: AppColor.black,
+        child: Icon(
+          Icons.flag,
+          color: AppColor.white,
+          size: 20,
+        ),
+      ),
+    );
+  }
 
   Widget _buildRouteCard(RouteDetailed? activeRoute,
       LoadingStatus activeRouteStatus, TextTheme textTheme) {
@@ -167,7 +174,8 @@ class _MapPageState extends State<MapPage> {
         ));
   }
 
-  Widget _buildMap(Position? position, PlaceBase? targetPlace, List<PositionPoint>? route) {
+  Widget _buildMap(
+      Position? position, PlaceBase? targetPlace, RouteInfo? routeInfo) {
     return FlutterMap(
         mapController: _mapController,
         options: const MapOptions(
@@ -181,10 +189,10 @@ class _MapPageState extends State<MapPage> {
                 'https://api.maptiler.com/maps/dataviz/256/{z}/{x}/{y}.png?key=U7c9AKtTUegJLtvD7NKg',
           ),
           PolylineLayer(
-            polylines: route != null
+            polylines: routeInfo != null
                 ? [
                     Polyline(
-                      points: route
+                      points: routeInfo.points
                           .map((e) => LatLng(e.latitude, e.longitude))
                           .toList(),
                       strokeWidth: 4.0,
@@ -229,7 +237,7 @@ class _MapPageState extends State<MapPage> {
             //log(state.positionStatus.name.toString());
             return Stack(
               children: [
-                _buildMap(state.position, state.targetPlace, state.route),
+                _buildMap(state.position, state.targetPlace, state.routeInfo),
                 // Positioned(
                 //     bottom: screenSize.width * 0.035 + 60 + 10,
                 //     right: screenSize.width * 0.035,
@@ -276,7 +284,6 @@ class _MapPageState extends State<MapPage> {
                                   ),
                                   Expanded(
                                       child: Text(
-                                        
                                     state.targetPlace!.name,
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
@@ -288,116 +295,23 @@ class _MapPageState extends State<MapPage> {
                           ),
                         ),
                       ],
-                      SizedBox(width: 10,),
+                      SizedBox(
+                        width: 10,
+                      ),
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           _buildPositionButton(
                               state.positionStatus, state.position),
+                          _buildCompleteButton()
                         ],
                       )
                     ],
                   ),
                 )
-                // if (state.targetPlace != null) ...[
-                //   Positioned(
-                //                         bottom: screenSize.width * 0.035 + 60 + 10,
-                //     left: screenSize.width * 0.035,
-                //     height: 100,
-                //     width: screenSize.width * 0.5,
-                //       child: Container(
-                //     color: AppColor.white,
-                //   ))
-                // ]
               ],
             );
-          }
-          // if (state is LocationV2Loaded) {
-          //   return Stack(
-          //     children: [
-          //       _buildMap(state.location),
-          //       Positioned(
-          //           bottom: screenSize.width * 0.035 + 60 + 10,
-          //           right: screenSize.width * 0.035,
-          //           left: screenSize.width * 0.035,
-          //           //height: 100,
-          //           child: Row(
-          //             mainAxisSize: MainAxisSize.max,
-          //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //             crossAxisAlignment: CrossAxisAlignment.end,
-          //             children: [
-          //               // Expanded(
-          //               //     child: Container(
-          //               //   height: 100,
-          //               //   //color: AppColor.white,
-          //               //   decoration: BoxDecoration(
-          //               //       color: AppColor.white,
-          //               //       borderRadius:
-          //               //           BorderRadius.all(Radius.circular(15))),
-          //               //   child: Padding(
-          //               //     padding: const EdgeInsets.all(5.0),
-          //               //     child: Row(
-          //               //       mainAxisSize: MainAxisSize.max,
-          //               //       mainAxisAlignment: MainAxisAlignment.center,
-          //               //       children: [
-          //               //         SquareWidget(
-          //               //             child: ClipRRect(
-          //               //                 borderRadius: BorderRadius.all(
-          //               //                     Radius.circular(15)),
-          //               //                 child: Image.network(
-          //               //                     fit: BoxFit.fill,
-          //               //                     "https://images-ext-1.discordapp.net/external/QNwov659XgGfaotrWzJN8h5N4h0ybB5qQoNuMIyrVyE/https/redhill-kemerovo.ru/assets/images/resources/33/zdanie-muzeya.jpg?format=webp&width=1171&height=657"))),
-          //               //         Expanded(
-          //               //             child: Text(
-          //               //           "Красная горка",
-          //               //           textAlign: TextAlign.center,
-          //               //         ))
-          //               //       ],
-          //               //     ),
-          //               //   ),
-          //               // )),
-          //               SizedBox(
-          //                 width: 10,
-          //               ),
-          //               Column(
-          //                 crossAxisAlignment: CrossAxisAlignment.end,
-          //                 children: [
-          //                   IconButton(
-          //                     onPressed: () {
-          //                       _mapController.move(
-          //                         LatLng(state.location.point.latitude,
-          //                             state.location.point.longitude),
-          //                         15.0,
-          //                       );
-          //                     },
-          //                     icon: const CircleAvatar(
-          //                       radius: 25,
-          //                       child: Icon(
-          //                         Icons.my_location,
-          //                         color: AppColor.white,
-          //                         size: 20,
-          //                       ),
-          //                       backgroundColor: AppColor.black,
-          //                     ),
-          //                   ),
-          //                   // ElevatedButton.icon(
-          //                   //     onPressed: () {},
-          //                   //     icon: const Icon(Icons.check),
-          //                   //     label: const Text("Группа"),
-          //                   //     style: ElevatedButton.styleFrom(
-          //                   //         backgroundColor: AppColor.pink,
-          //                   //         minimumSize: const Size(100, 40))),
-          //                   // ElevatedButton.icon(
-          //                   //     onPressed: () {},
-          //                   //     icon: const Icon(Icons.check),
-          //                   //     label: const Text("Прошел"),
-          //                   //     style: ElevatedButton.styleFrom(
-          //                   //         minimumSize: const Size(100, 40))),
-          //                 ],
-          //               ),
-          //             ],
-          //           )),
-          ),
+          }),
     );
   }
 }
