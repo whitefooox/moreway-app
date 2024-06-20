@@ -24,4 +24,8 @@ class Api {
 
   static getActiveRoute(String userId) => "/users/$userId/active-route";
   static const completeRoutePoint = "/routes/route-point/status";
+
+  static getFavoriteRoutes(String userId) => "/users/$userId/favorite-routes";
+  static getCreatedRoutes(String userId) => "/users/$userId/routes"; 
+  static getFriends(String userId) => "/users/$userId/friends";
 }

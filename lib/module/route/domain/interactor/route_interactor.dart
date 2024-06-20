@@ -35,4 +35,22 @@ class RouteInteractor {
       rethrow;
     }
   }
+
+  Future<PaginatedPage<Route>> getFavoriteRoutes({String? cursor}) async {
+    try {
+      final userId = await _userRepository.getUserId();
+      return _routeRepository.getFavoriteRoutes(userId: userId, cursor: cursor);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<PaginatedPage<Route>> getCreatedRoutes({String? cursor}) async {
+    try {
+      final userId = await _userRepository.getUserId();
+      return _routeRepository.getFavoriteRoutes(userId: userId, cursor: cursor);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

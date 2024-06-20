@@ -18,13 +18,17 @@ import 'package:moreway/module/place/presentation/state/place/place_bloc.dart';
 import 'package:moreway/module/place/presentation/state/places/places_bloc.dart';
 import 'package:moreway/module/location/presentation/state/map/map_bloc.dart';
 import 'package:moreway/module/route/presentation/state/builder/route_builder_bloc.dart';
+import 'package:moreway/module/route/presentation/state/created/created_routes_bloc.dart';
+import 'package:moreway/module/route/presentation/state/favorite/favorite_routes_bloc.dart';
 import 'package:moreway/module/route/presentation/state/route/route_bloc.dart';
 import 'package:moreway/module/route/presentation/state/routes/routes_bloc.dart';
+import 'package:moreway/module/route/presentation/view/page/created_routes_page.dart';
 import 'package:moreway/module/route/presentation/view/page/route_builder_page.dart';
 import 'package:moreway/module/route/presentation/view/page/route_detailed_page.dart';
 import 'package:moreway/module/setting/presentation/page/settings_page.dart';
 import 'package:moreway/module/user/presentation/state/search/search_users_bloc.dart';
 import 'package:moreway/module/user/presentation/state/user/user_bloc.dart';
+import 'package:moreway/module/route/presentation/view/page/favorite_routes_page.dart';
 import 'package:moreway/module/user/presentation/view/page/profile_page.dart';
 import 'package:moreway/module/user/presentation/view/page/search_users_page.dart';
 import 'package:moreway/module/welcome/presentation/bloc/launch_bloc.dart';
@@ -255,7 +259,67 @@ class AppRouter {
                           create: (_) => getIt<SearchUsersBloc>(),
                           child: const SearchUsersPage(),
                         ),
-                      )
+                      ),
+                      GoRoute(
+                          path: "favorite-routes",
+                          parentNavigatorKey: _rootNavigatorKey,
+                          builder: (context, state) =>
+                              BlocProvider<FavoriteRoutesBloc>(
+                                create: (_) => getIt<FavoriteRoutesBloc>()
+                                  ..add(LoadFavoriteRoutesEvent()),
+                                child: const FavoriteRoutesPage(),
+                              ),
+                          routes: [
+                            GoRoute(
+                              path: "route/:id",
+                              parentNavigatorKey: _rootNavigatorKey,
+                              builder: (context, state) {
+                                final routeId = state.pathParameters['id'];
+                                return MultiBlocProvider(
+                                  providers: [
+                                    BlocProvider(
+                                      create: (_) => getIt<RouteBloc>()
+                                        ..add(RouteLoadEvent(id: routeId!)),
+                                    ),
+                                    BlocProvider.value(
+                                      value: _mapBloc,
+                                    ),
+                                  ],
+                                  child: const RouteDetailedPage(),
+                                );
+                              },
+                            ),
+                          ]),
+                      GoRoute(
+                          path: "created-routes",
+                          parentNavigatorKey: _rootNavigatorKey,
+                          builder: (context, state) =>
+                              BlocProvider<CreatedRoutesBloc>(
+                                create: (_) => getIt<CreatedRoutesBloc>()
+                                  ..add(LoadCreatedRoutesEvent()),
+                                child: const CreatedRoutesPage(),
+                              ),
+                          routes: [
+                            GoRoute(
+                              path: "route/:id",
+                              parentNavigatorKey: _rootNavigatorKey,
+                              builder: (context, state) {
+                                final routeId = state.pathParameters['id'];
+                                return MultiBlocProvider(
+                                  providers: [
+                                    BlocProvider(
+                                      create: (_) => getIt<RouteBloc>()
+                                        ..add(RouteLoadEvent(id: routeId!)),
+                                    ),
+                                    BlocProvider.value(
+                                      value: _mapBloc,
+                                    ),
+                                  ],
+                                  child: const RouteDetailedPage(),
+                                );
+                              },
+                            ),
+                          ])
                     ]),
               ]),
             ]),

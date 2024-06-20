@@ -11,7 +11,12 @@ class MapState {
 
   final PlaceBase? targetPlace;
 
+  final double? distanceToTargetPlace;
+
   final RouteInfo? routeInfo;
+  final LoadingStatus routeInfoStatus;
+
+  final LoadingStatus passPointStatus;
 
   MapState({
     this.activeRoute,
@@ -20,7 +25,10 @@ class MapState {
     this.positionStatus = LoadingStatus.initial,
     this.replaceStatus = LoadingStatus.initial,
     this.targetPlace,
-    this.routeInfo
+    this.routeInfo,
+    this.routeInfoStatus = LoadingStatus.initial,
+    this.passPointStatus = LoadingStatus.initial,
+    this.distanceToTargetPlace
   });
   
 
@@ -31,7 +39,10 @@ class MapState {
     LoadingStatus? positionStatus,
     LoadingStatus? replaceStatus,
     PlaceBase? targetPlace,
-    RouteInfo? routeInfo
+    RouteInfo? routeInfo,
+    LoadingStatus? routeInfoStatus,
+    LoadingStatus? passPointStatus,
+    double? distanceToTargetPlace
   }) {
     return MapState(
       activeRoute: activeRoute ?? this.activeRoute,
@@ -40,7 +51,10 @@ class MapState {
       positionStatus: positionStatus ?? this.positionStatus,
       replaceStatus: replaceStatus ?? this.replaceStatus,
       targetPlace: targetPlace ?? this.targetPlace,
-      routeInfo: routeInfo ?? this.routeInfo
+      routeInfo: routeInfo ?? this.routeInfo,
+      routeInfoStatus: routeInfoStatus ?? this.routeInfoStatus,
+      passPointStatus: passPointStatus ?? this.passPointStatus,
+      distanceToTargetPlace: distanceToTargetPlace ?? this.distanceToTargetPlace
     );
   }
 }

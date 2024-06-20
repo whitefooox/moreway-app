@@ -30,28 +30,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     on<SetActiveRouteEvent>(_setActiveRoute);
     on<ResetMapEvent>(_reset);
     on<_CreateRouteEvent>(_createRoute);
-  }
-
-  double _toRadians(double degrees) {
-    return degrees * (3.1415926535897932 / 180);
-  }
-
-  double _calculateDistance(PositionPoint point1, PositionPoint point2) {
-    const double earthRadius = 6371; // Радиус Земли в километрах
-
-    double lat1 = _toRadians(point1.latitude);
-    double lon1 = _toRadians(point1.longitude);
-    double lat2 = _toRadians(point2.latitude);
-    double lon2 = _toRadians(point2.longitude);
-
-    double dLat = lat2 - lat1;
-    double dLon = lon2 - lon1;
-
-    double a = asin(sqrt(sin(dLat / 2) * sin(dLat / 2) +
-            cos(lat1) * cos(lat2) * sin(dLon / 2) * sin(dLon / 2))) *
-        2;
-
-    return earthRadius * a;
+    on<PassPointMapEvent>(_passPoint);
   }
 
   PlaceBase? _getTargetPlace(RouteDetailed route) {
@@ -63,29 +42,18 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     return null;
   }
 
-  int _getCurrentProgress(RouteDetailed route) {
-    return route.points
-        .where((element) => element.isCompleted == true)
-        .toList()
-        .length;
-  }
-
-  int _getMaxProgress(RouteDetailed route) {
-    return route.points.length;
-  }
-
   void _createRoute(_CreateRouteEvent event, Emitter<MapState> emit) async {
     if (state.targetPlace == null || state.position == null) return;
+    emit(state.copyWith(routeInfoStatus: LoadingStatus.loading));
     final placePositionPoint = PositionPoint(
         latitude: state.targetPlace!.lat, longitude: state.targetPlace!.lon);
     try {
       final routeInfo = await _navigationInteractor
           .getRoute([state.position!.point, placePositionPoint]);
       emit(state.copyWith(
-        routeInfo: routeInfo,
-      ));
+          routeInfo: routeInfo, routeInfoStatus: LoadingStatus.success));
     } catch (e) {
-      //emit(state.copyWith(activeRoutestatus: LoadingStatus.failure));
+      emit(state.copyWith(routeInfoStatus: LoadingStatus.failure));
     }
   }
 
@@ -132,12 +100,33 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       await emit.onEach(locationStream, onData: (position) {
         emit(state.copyWith(
             positionStatus: LoadingStatus.success, position: position));
-        add(_CreateRouteEvent());
+        //add(_CreateRouteEvent());
+        if (state.targetPlace != null && state.position != null) {
+          emit(state.copyWith(
+              distanceToTargetPlace: position.point.distanceTo(PositionPoint(
+                  latitude: state.targetPlace!.lat,
+                  longitude: state.targetPlace!.lon))));
+        }
       }, onError: (error, stackTrace) {
         emit(state.copyWith(positionStatus: LoadingStatus.failure));
       });
     } catch (e) {
       emit(state.copyWith(positionStatus: LoadingStatus.failure));
+    }
+  }
+
+  void _passPoint(PassPointMapEvent event, Emitter<MapState> emit) async {
+    emit(state.copyWith(passPointStatus: LoadingStatus.loading));
+    try {
+      _activeRouteInteractor.completePoint(state.targetPlace!.id);
+      emit(state.copyWith(passPointStatus: LoadingStatus.success));
+      final targetPlace = _getTargetPlace(state.activeRoute!);
+      if (targetPlace == null) {
+      } else {
+        emit(state.copyWith(targetPlace: targetPlace));
+      }
+    } catch (e) {
+      emit(state.copyWith(passPointStatus: LoadingStatus.failure));
     }
   }
 }

@@ -24,8 +24,16 @@ class _ProfilePageState extends State<ProfilePage>
     context.go("/profile/search-users");
   }
 
-  void _goToSettings(BuildContext context) {
+  void _goToSettings() {
     context.go("/profile/settings");
+  }
+
+  void _goToFavoriteRoutes(){
+    context.go("/profile/favorite-routes");
+  }
+
+  void _goToCreatedRoutes(){
+    context.go("/profile/created-routes");
   }
 
   @override
@@ -51,7 +59,7 @@ class _ProfilePageState extends State<ProfilePage>
             centerTitle: false,
             actions: [
               IconButton(
-                  onPressed: () => _goToSettings(context),
+                  onPressed: _goToSettings,
                   icon: const Icon(
                     Icons.settings,
                     color: AppColor.gray,
@@ -121,9 +129,8 @@ class _ProfilePageState extends State<ProfilePage>
                                         crossAxisSpacing: 10,
                                         mainAxisSpacing: 10,
                                         children: [
-                                          // Добавляем оформление для кнопки "Избранные маршруты"
                                           ElevatedButton(
-                                            onPressed: () {},
+                                            onPressed: _goToFavoriteRoutes,
                                             style: ElevatedButton.styleFrom(
                                               backgroundColor: AppColor.pink,
                                               padding:
@@ -156,9 +163,8 @@ class _ProfilePageState extends State<ProfilePage>
                                               ],
                                             ),
                                           ),
-                                          // Кнопка "Мои маршруты"
                                           ElevatedButton(
-                                            onPressed: () {},
+                                            onPressed: _goToCreatedRoutes,
                                             style: ElevatedButton.styleFrom(
                                               padding:
                                                   const EdgeInsets.symmetric(
@@ -346,7 +352,9 @@ class _ProfilePageState extends State<ProfilePage>
                                                   onPressed: _goToSearchUsers,
                                                   child: const Text("Найти"))
                                             ],
-                                          )
+                                            
+                                          ),
+                                          const Divider()
                                         ],
                                       )
                                     ]),

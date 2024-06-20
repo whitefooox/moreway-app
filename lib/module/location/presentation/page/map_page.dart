@@ -1,25 +1,17 @@
-import 'dart:developer';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:get_it/get_it.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:moreway/core/api/loading_status.dart';
 import 'package:moreway/core/square_widget.dart';
 import 'package:moreway/core/theme/colors.dart';
 import 'package:moreway/module/location/domain/entity/position.dart';
-import 'package:moreway/module/location/domain/entity/position_point.dart';
 import 'package:moreway/module/location/domain/entity/route_info.dart';
-import 'package:moreway/module/location/domain/usecase/navigation_interactor.dart';
-import 'package:moreway/module/place/domain/entity/place.dart';
+import 'package:moreway/module/location/presentation/widget/point_passed_popup.dart';
+import 'package:moreway/module/location/presentation/widget/route_progree_bar.dart';
 import 'package:moreway/module/place/domain/entity/place_base.dart';
-import 'package:moreway/module/place/presentation/widget/place_card.dart';
 import 'package:moreway/module/location/presentation/state/map/map_bloc.dart';
 import 'package:moreway/module/route/domain/entity/route_detailed.dart';
-import 'package:syncfusion_flutter_sliders/sliders.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -30,17 +22,17 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> {
   final MapController _mapController = MapController();
-  //final navigator = GetIt.instance.get<NavigationInteractor>();
-  //List<PositionPoint>? route;
+  late final MapBloc _mapBloc;
 
   @override
   void initState() {
     super.initState();
+    _mapBloc = BlocProvider.of<MapBloc>(context);
   }
 
   Widget _buildCompleteButton() {
     return IconButton(
-      onPressed: () {},
+      onPressed: () => _mapBloc.add(PassPointMapEvent()),
       icon: const CircleAvatar(
         radius: 25,
         backgroundColor: AppColor.black,
@@ -231,177 +223,113 @@ class _MapPageState extends State<MapPage> {
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      body: BlocBuilder<MapBloc, MapState>(
-          bloc: mapBloc,
-          builder: (context, state) {
-            //log(state.positionStatus.name.toString());
-            return Stack(
-              children: [
-                _buildMap(state.position, state.targetPlace, state.routeInfo),
-                // Positioned(
-                //     bottom: screenSize.width * 0.035 + 60 + 10,
-                //     right: screenSize.width * 0.035,
-                //     //           left: screenSize.width * 0.035,
-                //     child: _buildPositionButton(
-                //         state.positionStatus, state.position)),
-                Positioned(
-                    top: screenSize.width * 0.035,
+      body: BlocListener<MapBloc, MapState>(
+        listenWhen: (previous, current) {
+          if (previous.passPointStatus != current.passPointStatus) {
+            return true;
+          } else {
+            return false;
+          }
+        },
+        listener: (context, state) {
+          if (state.passPointStatus == LoadingStatus.failure) {
+            showDialog(
+              context: context,
+              builder: (context) => const PointPassedPopup(),
+            );
+          }
+        },
+        child: BlocBuilder<MapBloc, MapState>(
+            bloc: mapBloc,
+            builder: (context, state) {
+              //log(state.positionStatus.name.toString());
+              return Stack(
+                children: [
+                  _buildMap(state.position, state.targetPlace, state.routeInfo),
+                  // Positioned(
+                  //     bottom: screenSize.width * 0.035 + 60 + 10,
+                  //     right: screenSize.width * 0.035,
+                  //     //           left: screenSize.width * 0.035,
+                  //     child: _buildPositionButton(
+                  //         state.positionStatus, state.position)),
+                  Positioned(
+                      top: screenSize.width * 0.035,
+                      left: screenSize.width * 0.035,
+                      right: screenSize.width * 0.035,
+                      child: _buildRouteCard(state.activeRoute,
+                          state.activeRoutestatus, textTheme)),
+                  Positioned(
                     left: screenSize.width * 0.035,
                     right: screenSize.width * 0.035,
-                    child: _buildRouteCard(
-                        state.activeRoute, state.activeRoutestatus, textTheme)),
-                Positioned(
-                  left: screenSize.width * 0.035,
-                  right: screenSize.width * 0.035,
-                  bottom: screenSize.width * 0.035 + 60 + 10,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      if (state.targetPlace != null) ...[
-                        Expanded(
-                          child: Container(
-                            height: 100,
-                            decoration: const BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(15)),
-                              color: AppColor.white,
-                            ),
-                            child: Padding(
-                              padding: EdgeInsets.all(10),
-                              child: Row(
-                                children: [
-                                  SquareWidget(
-                                      child: ClipRRect(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(15)),
-                                          child: Image.network(
-                                              fit: BoxFit.fill,
-                                              state.targetPlace!.image))),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Expanded(
-                                      child: Text(
-                                    state.targetPlace!.name,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(fontFamily: "roboto"),
-                                  ))
-                                ],
+                    bottom: screenSize.width * 0.035 + 60 + 10,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        if (state.targetPlace != null && state.distanceToTargetPlace != null) ...[
+                          Expanded(
+                            child: Container(
+                              height: 100,
+                              decoration: const BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(15)),
+                                color: AppColor.white,
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.all(10),
+                                child: Row(
+                                  children: [
+                                    SquareWidget(
+                                        child: ClipRRect(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(15)),
+                                            child: Image.network(
+                                                fit: BoxFit.fill,
+                                                state.targetPlace!.image))),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Expanded(
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          state.targetPlace!.name,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style:
+                                              TextStyle(fontFamily: "roboto"),
+                                        ),
+                                        Text("~${state.distanceToTargetPlace!.toStringAsFixed(2)} км.")
+                                      ],
+                                    ))
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          _buildPositionButton(
-                              state.positionStatus, state.position),
-                          _buildCompleteButton()
                         ],
-                      )
-                    ],
-                  ),
-                )
-              ],
-            );
-          }),
-    );
-  }
-}
-
-class RouteProgressBar extends StatelessWidget {
-  final int currentProgress;
-  final int maxProgress;
-
-  const RouteProgressBar({
-    super.key,
-    required this.currentProgress,
-    required this.maxProgress,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomPaint(
-      size: const Size(double.infinity, 40),
-      painter: RouteProgressBarPainter(
-        currentProgress: currentProgress,
-        maxProgress: maxProgress,
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            _buildPositionButton(
+                                state.positionStatus, state.position),
+                            _buildCompleteButton()
+                          ],
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              );
+            }),
       ),
     );
   }
 }
 
-class RouteProgressBarPainter extends CustomPainter {
-  final int currentProgress;
-  final int maxProgress;
 
-  const RouteProgressBarPainter({
-    required this.currentProgress,
-    required this.maxProgress,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    const int radius = 5;
-
-    final paint = Paint()
-      ..color = AppColor.gray
-      ..strokeWidth = 5
-      ..strokeCap = StrokeCap.round;
-
-    final activePaint = Paint()
-      ..color = AppColor.pink
-      ..strokeWidth = 5
-      ..strokeCap = StrokeCap.round;
-
-    canvas.drawLine(const Offset(0, 0), Offset(size.width, 0), paint);
-
-    if (currentProgress > 1) {
-      canvas.drawLine(
-          const Offset(0, 0),
-          Offset(size.width / (maxProgress - 1) * (currentProgress - 1), 0),
-          activePaint);
-    } else {
-      if (currentProgress == 1) {
-        canvas.drawLine(
-            const Offset(radius * 2, 0), const Offset(0, 0), activePaint);
-      }
-    }
-
-    for (var i = 0; i < maxProgress; i++) {
-      final x = size.width / (maxProgress - 1) * i;
-      final pointPaint = i < currentProgress ? activePaint : paint;
-      if (i == 0) {
-        canvas.drawCircle(
-            Offset(x + radius, 20), radius.toDouble(), pointPaint);
-      } else if (i == maxProgress - 1) {
-        const icon = Icons.flag;
-        TextPainter textPainter = TextPainter(
-          textDirection: TextDirection.rtl,
-        );
-        textPainter.text = TextSpan(
-            text: String.fromCharCode(icon.codePoint),
-            style: TextStyle(
-                fontSize: radius * 4,
-                fontFamily: icon.fontFamily,
-                color: i < currentProgress ? AppColor.pink : AppColor.gray));
-        textPainter.layout();
-        textPainter.paint(canvas, Offset(x - radius * 2, 10));
-      } else {
-        canvas.drawCircle(Offset(x, 20), radius.toDouble(), pointPaint);
-      }
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
-  }
-}

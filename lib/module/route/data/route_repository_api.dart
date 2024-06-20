@@ -111,4 +111,30 @@ class RouteRepositoryAPI implements IRouteRepository {
       rethrow;
     }
   }
+  
+  @override
+  Future<PaginatedPage<Route>> getFavoriteRoutes({String? cursor, required String userId}) async {
+    try {
+      final response = await _client.dio.get(Api.getFavoriteRoutes(userId),
+          queryParameters: {"limit": _routesLimit, "cursor": cursor});
+      final json = response.data;
+      return RoutePageModel.fromJson(json).toRoutePage();
+    } catch (e, stacktrace) {
+      log("[route repository api] $e", stackTrace: stacktrace);
+      rethrow;
+    }
+  }
+  
+  @override
+  Future<PaginatedPage<Route>> getCreatedRoutes({String? cursor, required String userId}) async {
+    try {
+      final response = await _client.dio.get(Api.getCreatedRoutes(userId),
+          queryParameters: {"limit": _routesLimit, "cursor": cursor});
+      final json = response.data;
+      return RoutePageModel.fromJson(json).toRoutePage();
+    } catch (e, stacktrace) {
+      log("[route repository api] $e", stackTrace: stacktrace);
+      rethrow;
+    }
+  }
 }

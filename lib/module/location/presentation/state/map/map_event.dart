@@ -19,8 +19,7 @@ class CompletePlaceEvent extends MapEvent {}
 
 class _CreateRouteEvent extends MapEvent {}
 
-class _UpdateRouteProgressEvent extends MapEvent {
-  final Position position;
+class PassPointMapEvent extends MapEvent {
 
-  _UpdateRouteProgressEvent(this.position);
+  PassPointMapEvent();
 }

@@ -41,6 +41,8 @@ import 'package:moreway/module/route/domain/interactor/route_builder_interactor.
 import 'package:moreway/module/route/domain/interactor/route_interactor.dart';
 import 'package:moreway/module/location/presentation/state/map/map_bloc.dart';
 import 'package:moreway/module/route/presentation/state/builder/route_builder_bloc.dart';
+import 'package:moreway/module/route/presentation/state/created/created_routes_bloc.dart';
+import 'package:moreway/module/route/presentation/state/favorite/favorite_routes_bloc.dart';
 import 'package:moreway/module/route/presentation/state/route/route_bloc.dart';
 import 'package:moreway/module/route/presentation/state/routes/routes_bloc.dart';
 import 'package:moreway/module/user/data/user_repository_api.dart';
@@ -104,7 +106,8 @@ class DIContainer {
     getIt.registerLazySingleton<NavigationInteractor>(
         () => NavigationInteractor(getIt()));
 
-    getIt.registerLazySingleton<MapBloc>(() => MapBloc(getIt(), getIt(), getIt()));
+    getIt.registerLazySingleton<MapBloc>(
+        () => MapBloc(getIt(), getIt(), getIt()));
   }
 
   void _injectPlace() {
@@ -129,8 +132,11 @@ class DIContainer {
         () => ActiveRouteInteractor(getIt(), getIt(), getIt()));
 
     getIt.registerFactory<RoutesBloc>(() => RoutesBloc(getIt()));
+    getIt.registerFactory<RouteBloc>(
+        () => RouteBloc(getIt(), getIt(), getIt(), getIt()));
     getIt
-        .registerFactory<RouteBloc>(() => RouteBloc(getIt(), getIt(), getIt(), getIt()));
+        .registerFactory<FavoriteRoutesBloc>(() => FavoriteRoutesBloc(getIt()));
+    getIt.registerFactory<CreatedRoutesBloc>(() => CreatedRoutesBloc(getIt()));
   }
 
   void _injectLaunch() {
