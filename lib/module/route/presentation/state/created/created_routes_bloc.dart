@@ -19,7 +19,7 @@ class CreatedRoutesBloc extends Bloc<CreatedRoutesEvent, CreatedRoutesState> {
       LoadCreatedRoutesEvent event, Emitter<CreatedRoutesState> emit) async {
     emit(state.resetData());
     try {
-      final routePage = await _routeInteractor.getFavoriteRoutes();
+      final routePage = await _routeInteractor.getCreatedRoutes();
       emit(state.copyWith(
           status: LoadingStatus.success,
           routes: () => routePage.items,
@@ -36,7 +36,7 @@ class CreatedRoutesBloc extends Bloc<CreatedRoutesEvent, CreatedRoutesState> {
     emit(state.copyWith(status: LoadingStatus.initial));
     try {
       final routePage =
-          await _routeInteractor.getFavoriteRoutes(cursor: state.cursor);
+          await _routeInteractor.getCreatedRoutes(cursor: state.cursor);
       emit(state.copyWith(
           status: LoadingStatus.success,
           routes: () => state.routes! + routePage.items,

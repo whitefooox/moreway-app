@@ -45,7 +45,7 @@ class _CreatedRoutesPageState extends State<CreatedRoutesPage> {
     final screenSize = MediaQuery.of(context).size;
     return Scaffold(
         appBar: AppBar(
-          title: Text("Избранные маршруты"),
+          title: Text("Мои маршруты"),
         ),
         body: RefreshIndicator(
           color: AppColor.pink,
@@ -73,7 +73,7 @@ class _CreatedRoutesPageState extends State<CreatedRoutesPage> {
                           child: RouteListTile(route: route),
                           onTap: () {
                             context.go(
-                                "/profile/favorite-routes/route/${route.id}");
+                                "/profile/created-routes/route/${route.id}");
                           },
                         );
                       },
