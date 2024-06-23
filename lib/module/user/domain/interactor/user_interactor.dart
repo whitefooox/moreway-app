@@ -14,8 +14,12 @@ class UserInteractor {
     return _userRepository.getProfileData();
   }
 
-  Future<UserPreview> getFriends(){
-    throw UnimplementedError();
+  Future<PaginatedPage<UserPreview>> getFriends() async {
+    return _userRepository.getFriends(userId: await _userRepository.getUserId());
+  }
+
+  Future<PaginatedPage<UserPreview>> getFriendRequests() async {
+    return _userRepository.getFriendRequests(userId: await _userRepository.getUserId());
   }
 
   Future<PaginatedPage<UserRelationship>> searchUsers({String? name, String? cursor}){

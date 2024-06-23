@@ -28,7 +28,7 @@ class UserRepositoryAPI implements IUserRepository {
       _userId = profile.id;
       return profile;
     } catch (e) {
-      log("[auth  api] $e");
+      log("[user  api] $e");
       rethrow;
     }
   }
@@ -46,39 +46,55 @@ class UserRepositoryAPI implements IUserRepository {
         _userId = profile.id;
         return _userId!;
       } catch (e) {
-        log("[auth  api] $e");
+        log("[user  api] $e");
         rethrow;
       }
     }
   }
 
   @override
-  Future<PaginatedPage<UserRelationship>> getUsersByName({String? name, String? cursor}) async {
+  Future<PaginatedPage<UserRelationship>> getUsersByName(
+      {String? name, String? cursor}) async {
     try {
       final response = await _client.dio
           .get(Api.users, queryParameters: {"name": name, "cursor": cursor});
       final json = response.data;
       return UsersPageModel.fromJson(json).toUsersRelationship();
     } catch (e) {
-      log("[auth  api] $e");
+      log("[user  api] $e");
       rethrow;
     }
   }
-  
+
   @override
   void removeUserId() {
     _userId = null;
   }
 
   @override
-  Future<PaginatedPage<UserPreview>> getFriends({String? cursor, required String userId}) async {
+  Future<PaginatedPage<UserPreview>> getFriends(
+      {String? cursor, required String userId}) async {
     try {
-      final response = await _client.dio
-          .get(Api.getFriends(userId), queryParameters: {"cursor": cursor, "limit": _friendsLimit});
+      final response = await _client.dio.get(Api.getFriends(userId),
+          queryParameters: {"cursor": cursor, "limit": _friendsLimit});
       final json = response.data;
       return FriendsPageModel.fromJson(json).toUsersPreview();
     } catch (e) {
-      log("[auth  api] $e");
+      log("[user  api] $e");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<PaginatedPage<UserPreview>> getFriendRequests(
+      {String? cursor, required String userId}) async {
+    try {
+      final response = await _client.dio.get(Api.getFriendRequests(userId),
+          queryParameters: {"cursor": cursor, "limit": _friendsLimit});
+      final json = response.data;
+      return FriendsPageModel.fromJson(json).toUsersPreview();
+    } catch (e) {
+      log("[user  api] $e");
       rethrow;
     }
   }

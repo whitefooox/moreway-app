@@ -31,6 +31,7 @@ class RouteListTile extends StatelessWidget {
           ),
         ],
       ),
+      trailing: Icon(Icons.chevron_right),
     );
   }
 }

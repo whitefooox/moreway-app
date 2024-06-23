@@ -1,12 +1,10 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moreway/core/api/loading_status.dart';
-import 'package:moreway/core/const/assets.dart';
 import 'package:moreway/module/user/domain/entity/user_relationship.dart';
-import 'package:moreway/module/user/presentation/state/search/search_users_bloc.dart';
+import 'package:moreway/module/user/presentation/state/friends/friends_bloc.dart';
 
 class SearchUsersPage extends StatefulWidget {
   const SearchUsersPage({super.key});
@@ -17,14 +15,15 @@ class SearchUsersPage extends StatefulWidget {
 
 class _SearchUsersPageState extends State<SearchUsersPage> {
   final TextEditingController _searchController = TextEditingController();
-  late final SearchUsersBloc _searchUsersBloc;
+  late final FriendsBloc _searchUsersBloc;
 
   Timer? _debounce;
 
   @override
   void initState() {
     super.initState();
-    _searchUsersBloc = BlocProvider.of<SearchUsersBloc>(context);
+    _searchUsersBloc = BlocProvider.of<FriendsBloc>(context);
+    _searchUsersBloc.add(ResetSearchEvent());
     _searchController.addListener(_onSearchQueryChanged);
   }
 
@@ -96,14 +95,14 @@ Widget buildFriendAction(UserRelationshipType? type) {
             const SizedBox(
               height: 10,
             ),
-            Expanded(child: BlocBuilder<SearchUsersBloc, SearchUsersState>(
+            Expanded(child: BlocBuilder<FriendsBloc, FriendsState>(
               builder: (context, state) {
-                if (state.users != null && state.users!.isNotEmpty) {
+                if (state.searchedUsers != null && state.searchedUsers!.isNotEmpty) {
                   return ListView.builder(
-                    itemCount: state.users!.length,
+                    itemCount: state.searchedUsers!.length,
                     itemBuilder: (context, index) {
-                      final user = state.users![index].user;
-                      final relationship = state.users![index].relationship;
+                      final user = state.searchedUsers![index].user;
+                      final relationship = state.searchedUsers![index].relationship;
                       return ListTile(
                         title: Text(user.name),
                         leading: CircleAvatar(
@@ -117,11 +116,11 @@ Widget buildFriendAction(UserRelationshipType? type) {
                   );
                 }
                 // Если данные о пользователях есть, но возникла ошибка
-                else if (state.status == LoadingStatus.failure) {
+                else if (state.searchStatus == LoadingStatus.failure) {
                   return const Center(child: Text("Возникла ошибка"));
                 }
                 // Если данных нет, но идет загрузка
-                else if (state.status == LoadingStatus.loading) {
+                else if (state.searchStatus == LoadingStatus.loading) {
                   return const Center(child: CircularProgressIndicator());
                 }
                 // Начальное состояние или данные отсутствуют

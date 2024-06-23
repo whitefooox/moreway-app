@@ -5,6 +5,7 @@ import 'package:moreway/core/api/loading_status.dart';
 import 'package:moreway/core/square_widget.dart';
 import 'package:moreway/core/theme/colors.dart';
 import 'package:moreway/module/game/presentation/state/rating/rating_bloc.dart';
+import 'package:moreway/module/user/presentation/state/friends/friends_bloc.dart';
 import 'package:moreway/module/user/presentation/state/user/user_bloc.dart';
 import 'package:moreway/module/user/presentation/view/widget/profile_card.dart';
 
@@ -28,11 +29,11 @@ class _ProfilePageState extends State<ProfilePage>
     context.go("/profile/settings");
   }
 
-  void _goToFavoriteRoutes(){
+  void _goToFavoriteRoutes() {
     context.go("/profile/favorite-routes");
   }
 
-  void _goToCreatedRoutes(){
+  void _goToCreatedRoutes() {
     context.go("/profile/created-routes");
   }
 
@@ -340,22 +341,49 @@ class _ProfilePageState extends State<ProfilePage>
                                           }
                                         },
                                       )),
-                                      Column(
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              const Text(
-                                                  "Хотите добавить друзей?"),
-                                              ElevatedButton(
-                                                  onPressed: _goToSearchUsers,
-                                                  child: const Text("Найти"))
-                                            ],
-                                            
-                                          ),
-                                          const Divider()
-                                        ],
+                                      BlocBuilder<FriendsBloc, FriendsState>(
+                                        builder: (context, state) {
+                                          if (state.friendsStatus ==
+                                                  LoadingStatus.success &&
+                                              state.friendRequestsStatus ==
+                                                  LoadingStatus.success) {
+                                            return Column(
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    const Text(
+                                                        "Хотите добавить друзей?"),
+                                                    ElevatedButton(
+                                                        onPressed:
+                                                            _goToSearchUsers,
+                                                        child:
+                                                            const Text("Найти"))
+                                                  ],
+                                                ),
+                                                const Divider(),
+                                                Row(
+                                                  children: [
+                                                    Text("Друзья"),
+                                                    //Text("У вас их ${state.friends!.items.length}")
+                                                  ],
+                                                ),
+                                                const Divider(),
+                                                Row(
+                                                  children: [
+                                                    Text("Заявки в друзья"),
+                                                    Text(
+                                                        "У вас их ${state.friendRequests!.items.length}")
+                                                  ],
+                                                ),
+                                              ],
+                                            );
+                                          } else {
+                                            return Text("Ошибка");
+                                          }
+                                        },
                                       )
                                     ]),
                               ),

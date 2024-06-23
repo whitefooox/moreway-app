@@ -28,4 +28,5 @@ class Api {
   static getFavoriteRoutes(String userId) => "/users/$userId/favorite-routes";
   static getCreatedRoutes(String userId) => "/users/$userId/routes"; 
   static getFriends(String userId) => "/users/$userId/friends";
+  static getFriendRequests(String userId) => "/users/$userId/friends/requests";
 }

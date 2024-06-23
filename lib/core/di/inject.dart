@@ -48,7 +48,7 @@ import 'package:moreway/module/route/presentation/state/routes/routes_bloc.dart'
 import 'package:moreway/module/user/data/user_repository_api.dart';
 import 'package:moreway/module/user/domain/dependency/i_user_repository.dart';
 import 'package:moreway/module/user/domain/interactor/user_interactor.dart';
-import 'package:moreway/module/user/presentation/state/search/search_users_bloc.dart';
+import 'package:moreway/module/user/presentation/state/friends/friends_bloc.dart';
 import 'package:moreway/module/user/presentation/state/user/user_bloc.dart';
 import 'package:moreway/module/welcome/data/launch_checker.dart';
 import 'package:moreway/module/welcome/domain/dependency/i_launch_checker.dart';
@@ -156,7 +156,7 @@ class DIContainer {
     getIt.registerLazySingleton<UserInteractor>(() => UserInteractor(getIt()));
 
     getIt.registerFactory<UserBloc>(() => UserBloc(getIt()));
-    getIt.registerFactory<SearchUsersBloc>(() => SearchUsersBloc(getIt()));
+    getIt.registerFactory<FriendsBloc>(() => FriendsBloc(getIt()));
   }
 
   //user_repository

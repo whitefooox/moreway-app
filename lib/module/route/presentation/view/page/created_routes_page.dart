@@ -45,7 +45,7 @@ class _CreatedRoutesPageState extends State<CreatedRoutesPage> {
     final screenSize = MediaQuery.of(context).size;
     return Scaffold(
         appBar: AppBar(
-          title: Text("Мои маршруты"),
+          title: const Text("Мои маршруты"),
         ),
         body: RefreshIndicator(
           color: AppColor.pink,
@@ -57,7 +57,7 @@ class _CreatedRoutesPageState extends State<CreatedRoutesPage> {
             builder: (context, state) {
               if (state.routes != null) {
                 if (state.routes!.isEmpty) {
-                  return Center(
+                  return const Center(
                     child: Text("Не найдено"),
                   );
                 } else {
@@ -82,9 +82,9 @@ class _CreatedRoutesPageState extends State<CreatedRoutesPage> {
                 }
               } else {
                 if (state.status == LoadingStatus.failure) {
-                  return Center(child: Text('Что-то сломалось'));
+                  return const Center(child: Text('Что-то сломалось'));
                 } else {
-                  return Center(
+                  return const Center(
                     child: CircularProgressIndicator(color: AppColor.pink),
                   );
                 }

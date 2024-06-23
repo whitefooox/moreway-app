@@ -9,4 +9,5 @@ abstract class IUserRepository {
   void removeUserId();
   Future<PaginatedPage<UserRelationship>> getUsersByName({String? name, String? cursor});
   Future<PaginatedPage<UserPreview>> getFriends({String? cursor, required String userId});
+  Future<PaginatedPage<UserPreview>> getFriendRequests({String? cursor, required String userId});
 }

@@ -26,7 +26,7 @@ import 'package:moreway/module/route/presentation/view/page/created_routes_page.
 import 'package:moreway/module/route/presentation/view/page/route_builder_page.dart';
 import 'package:moreway/module/route/presentation/view/page/route_detailed_page.dart';
 import 'package:moreway/module/setting/presentation/page/settings_page.dart';
-import 'package:moreway/module/user/presentation/state/search/search_users_bloc.dart';
+import 'package:moreway/module/user/presentation/state/friends/friends_bloc.dart';
 import 'package:moreway/module/user/presentation/state/user/user_bloc.dart';
 import 'package:moreway/module/route/presentation/view/page/favorite_routes_page.dart';
 import 'package:moreway/module/user/presentation/view/page/profile_page.dart';
@@ -43,6 +43,7 @@ class AppRouter {
   late final RouteBuilderBloc _builderBloc;
   late final MapBloc _mapBloc;
   late final RatingBloc _ratingBloc;
+  late final FriendsBloc _friendsBloc;
   late GoRouter router;
   final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -56,6 +57,7 @@ class AppRouter {
     _authBloc = getIt<AuthBloc>();
     _mapBloc = getIt<MapBloc>();
     _ratingBloc = getIt<RatingBloc>();
+    _friendsBloc = getIt<FriendsBloc>();
     _authBloc.stream.listen((state) {
       if (state.status == AuthStatus.authorized) {
         _userBloc.add(LoadUserEvent());
@@ -69,6 +71,7 @@ class AppRouter {
               ..add(SubscribeToPositionsEvent())
               ..add(LoadActiveRouteEvent());
             _ratingBloc.add(LoadRatingEvent());
+            _friendsBloc..add(LoadFriendsEvent())..add(LoadFriendRequestsEvent());
           }
         });
       } else if (state.status == AuthStatus.unauthorized) {
@@ -76,6 +79,7 @@ class AppRouter {
         _builderBloc = getIt<RouteBuilderBloc>();
         _mapBloc.add(ResetMapEvent());
         _ratingBloc = getIt<RatingBloc>();
+        _friendsBloc = getIt<FriendsBloc>();
       }
     });
     _authBloc.add(AuthCheckAuthorizationEvent());
@@ -238,6 +242,7 @@ class AppRouter {
                             BlocProvider<RatingBloc>.value(
                               value: _ratingBloc,
                             ),
+                            BlocProvider<FriendsBloc>.value(value: _friendsBloc)
                           ],
                           child: const ProfilePage(),
                         ),
@@ -254,9 +259,8 @@ class AppRouter {
                       GoRoute(
                         path: "search-users",
                         parentNavigatorKey: _rootNavigatorKey,
-                        builder: (context, state) =>
-                            BlocProvider<SearchUsersBloc>(
-                          create: (_) => getIt<SearchUsersBloc>(),
+                        builder: (context, state) => BlocProvider<FriendsBloc>.value(
+                          value: _friendsBloc,
                           child: const SearchUsersPage(),
                         ),
                       ),
